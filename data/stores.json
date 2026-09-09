@@ -1,5 +1,5 @@
 {
- "sweptAt": 1788964798277,
+ "sweptAt": 1788965003561,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
@@ -174,8 +174,8 @@
     "Saludable",
     "Mexicana"
    ],
-   "group": "Saludable",
-   "exotic": false,
+   "group": "Mexicano",
+   "exotic": true,
    "status": "OPEN",
    "when": "",
    "next": null,
@@ -192,7 +192,7 @@
     "Italiana",
     "Bocadillos"
    ],
-   "group": "Dulce / café",
+   "group": "Pizza / italiano",
    "exotic": false,
    "status": "OPEN",
    "when": "",
@@ -226,8 +226,8 @@
     "Pollo",
     "Alta Cocina"
    ],
-   "group": "Hamburguesas",
-   "exotic": false,
+   "group": "Alta cocina / grill",
+   "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta las 20:00",
    "next": 1788976800000,
@@ -310,7 +310,7 @@
     "Japonesa",
     "Sushi"
    ],
-   "group": "Tailandés / chino",
+   "group": "Japonés / sushi / ramen",
    "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta las 19:00",
@@ -411,7 +411,7 @@
     "Bocadillos",
     "Dulces"
    ],
-   "group": "Bocadillos",
+   "group": "Dulce / café",
    "exotic": false,
    "status": "SCHEDULABLE",
    "when": "Programar para: 19:30",
@@ -428,8 +428,8 @@
     "Hamburguesas",
     "Internacional"
    ],
-   "group": "Hamburguesas",
-   "exotic": false,
+   "group": "Internacional",
+   "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
    "next": 1789038000000,
@@ -497,7 +497,7 @@
     "Asiática",
     "Japonesa"
    ],
-   "group": "Tailandés / chino",
+   "group": "Japonés / sushi / ramen",
    "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: 19:30",
@@ -531,8 +531,8 @@
     "Mediterránea",
     "Alta Cocina"
    ],
-   "group": "Mediterráneo / español",
-   "exotic": false,
+   "group": "Alta cocina / grill",
+   "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta las 18:30",
    "next": 1788971400000,
@@ -548,7 +548,7 @@
     "Gourmet",
     "Latina"
    ],
-   "group": "Alta cocina / grill",
+   "group": "Latino / venezolano",
    "exotic": true,
    "status": "OPEN",
    "when": "",
@@ -600,8 +600,8 @@
     "Latina",
     "Milanesa"
    ],
-   "group": "Hamburguesas",
-   "exotic": false,
+   "group": "Latino / venezolano",
+   "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: 19:30",
    "next": 1788975000000,
@@ -650,7 +650,7 @@
     "Asiática",
     "Sushi"
    ],
-   "group": "Tailandés / chino",
+   "group": "Japonés / sushi / ramen",
    "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
@@ -700,8 +700,8 @@
     "Poke",
     "Vegetariana"
    ],
-   "group": "Saludable",
-   "exotic": false,
+   "group": "Poke",
+   "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
    "next": 1789023600000,
@@ -869,7 +869,7 @@
     "Latina",
     "Mexicana"
    ],
-   "group": "Internacional",
+   "group": "Mexicano",
    "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
@@ -887,7 +887,7 @@
     "Japonesa",
     "Vegetariana"
    ],
-   "group": "Tailandés / chino",
+   "group": "Japonés / sushi / ramen",
    "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: 20:00",
@@ -1109,7 +1109,7 @@
     "Italiana",
     "Pizza"
    ],
-   "group": "Dulce / café",
+   "group": "Pizza / italiano",
    "exotic": false,
    "status": "OPEN",
    "when": "",
@@ -1178,8 +1178,8 @@
     "Poke",
     "Vegetariana"
    ],
-   "group": "Saludable",
-   "exotic": false,
+   "group": "Poke",
+   "exotic": true,
    "status": "OPEN",
    "when": "",
    "next": null,
@@ -1229,7 +1229,7 @@
     "Japonesa",
     "Sushi"
    ],
-   "group": "Tailandés / chino",
+   "group": "Japonés / sushi / ramen",
    "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: 20:00",
@@ -1427,7 +1427,7 @@
     "Internacional",
     "Latina"
    ],
-   "group": "Internacional",
+   "group": "Latino / venezolano",
    "exotic": true,
    "status": "OPEN",
    "when": "",
@@ -1497,7 +1497,7 @@
     "Asiática",
     "Japonesa"
    ],
-   "group": "Tailandés / chino",
+   "group": "Japonés / sushi / ramen",
    "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta las 19:30",
@@ -1531,7 +1531,7 @@
     "Internacional",
     "Latina"
    ],
-   "group": "Internacional",
+   "group": "Latino / venezolano",
    "exotic": true,
    "status": "OPEN",
    "when": "",
@@ -1548,8 +1548,8 @@
     "Hamburguesas",
     "Internacional"
    ],
-   "group": "Hamburguesas",
-   "exotic": false,
+   "group": "Internacional",
+   "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
    "next": 1789038000000,
@@ -1582,8 +1582,8 @@
     "Gourmet",
     "Mediterránea"
    ],
-   "group": "Hamburguesas",
-   "exotic": false,
+   "group": "Alta cocina / grill",
+   "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
    "next": 1789027200000,
@@ -1732,8 +1732,8 @@
     "Saludable",
     "Poke"
    ],
-   "group": "Saludable",
-   "exotic": false,
+   "group": "Poke",
+   "exotic": true,
    "status": "OPEN",
    "when": "",
    "next": null,
@@ -1767,8 +1767,8 @@
     "Internacional",
     "Mediterránea"
    ],
-   "group": "Hamburguesas",
-   "exotic": false,
+   "group": "Internacional",
+   "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
    "next": 1789030800000,
@@ -1937,8 +1937,8 @@
     "Pollo",
     "Internacional"
    ],
-   "group": "Pollo",
-   "exotic": false,
+   "group": "Internacional",
+   "exotic": true,
    "status": "OPEN",
    "when": "",
    "next": null,
@@ -1972,7 +1972,7 @@
     "Pollo",
     "Pizza"
    ],
-   "group": "Pollo",
+   "group": "Pizza / italiano",
    "exotic": false,
    "status": "OPEN",
    "when": "",
@@ -2022,7 +2022,7 @@
     "Bocadillos",
     "Española"
    ],
-   "group": "Bocadillos",
+   "group": "Mediterráneo / español",
    "exotic": false,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
@@ -2040,7 +2040,7 @@
     "Pizza",
     "Bocadillos"
    ],
-   "group": "Mediterráneo / español",
+   "group": "Pizza / italiano",
    "exotic": false,
    "status": "CLOSED",
    "when": "Cerrado",
@@ -2242,8 +2242,8 @@
     "Desayuno",
     "Brunch"
    ],
-   "group": "Dulce / café",
-   "exotic": false,
+   "group": "Poke",
+   "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado",
    "next": null,
@@ -2307,7 +2307,7 @@
     "Saludable",
     "Snacks"
    ],
-   "group": "Saludable",
+   "group": "Dulce / café",
    "exotic": false,
    "status": "OPEN",
    "when": "",
@@ -2372,7 +2372,7 @@
     "Saludable",
     "Snacks"
    ],
-   "group": "Saludable",
+   "group": "Dulce / café",
    "exotic": false,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",

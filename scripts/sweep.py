@@ -25,8 +25,8 @@ GROUPS = [("Japonés / sushi / ramen", {"Japonesa", "Sushi"}), ("Poke", {"Poke"}
           ("Turco / árabe", {"Árabe", "Kebab"}), ("Alta cocina / grill", {"Alta Cocina", "Grill", "Gourmet"}),
           ("Internacional", {"Internacional"}), ("Hamburguesas", {"Hamburguesas", "Americana"}), ("Pizza / italiano", {"Pizza", "Italiana"}),
           ("Mediterráneo / español", {"Mediterránea", "Española", "Comida local"}), ("Pollo", {"Pollo"}),
-          ("Saludable", {"Saludable", "Vegetariana", "Vegana"}), ("Bocadillos", {"Bocadillos"}),
-          ("Dulce / café", {"Panadería", "Desayuno", "Dulces", "Helado", "Snacks", "Té y café", "Bebidas", "Brunch"})]
+          ("Dulce / café", {"Panadería", "Desayuno", "Dulces", "Helado", "Snacks", "Té y café", "Bebidas", "Brunch"}),
+          ("Saludable", {"Saludable", "Vegetariana", "Vegana"}), ("Bocadillos", {"Bocadillos"})]
 
 
 OUT_OF_ZONE = "260002"  # Glovo: "No available store address found"
@@ -55,14 +55,11 @@ GROUP_OVERRIDES = {"mumbai-curry-san-sebastian": "Indio"}  # Glovo lo etiqueta c
 
 
 def group_of(slug, filters):
-    """Manda la primera etiqueta de Glovo que caiga en algún grupo (es la principal de la tienda)."""
+    """Manda el orden de GROUPS (lo específico primero), no el orden de etiquetas de Glovo."""
     if slug in GROUP_OVERRIDES:
         return GROUP_OVERRIDES[slug]
-    for f in filters:
-        for name, tags in GROUPS:
-            if f in tags:
-                return name
-    return "Otros"
+    fs = set(filters)
+    return next((name for name, tags in GROUPS if fs & tags), "Otros")
 
 
 OUT_FILE = ROOT / "data/stores.json"
