@@ -1,0 +1,18 @@
+name: sweep
+on:
+  schedule:
+    - cron: "*/30 6-21 * * *"   # UTC; ~08:00-23:30 en Madrid
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/sweep.py
+      - run: |
+          git config user.name "sweep-bot"
+          git config user.email "sweep-bot@users.noreply.github.com"
+          git add data/stores.json index.html
+          git diff --cached --quiet || git commit -m "chore: refresh Glovo availability" && git push

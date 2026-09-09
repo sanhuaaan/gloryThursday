@@ -2,7 +2,7 @@
 """Barrido de Glovo: que tiendas reparten a unas coordenadas.
 
 Uso: python3 scripts/sweep.py [lat] [lon]  (por defecto, la oficina de Zuatzu)
-Lee data/slugs.txt y escribe data/stores.json con el formato que consume index.html.
+Lee data/slugs.txt, escribe data/stores.json y lo inyecta en index.html (entre DATA-START y DATA-END).
 Las tiendas fuera de zona devuelven 404 "No available store address found".
 """
 import json, subprocess, sys, time, uuid
@@ -59,11 +59,15 @@ for slug in (ROOT / "data/slugs.txt").read_text().split():
                "fee": (d.get("deliveryFeeInfo") or {}).get("fee"), "dist": d.get("distance"), "tags": filters[:3],
                "group": group_of(filters), "exotic": bool(set(filters) & EXOTIC), "status": av.get("status"),
                "when": (((av.get("footerLabel") or {}).get("data") or {}).get("text") or "").replace(" EAS", ""),
-               "slug": slug})
+               "next": av.get("nextSchedulingOrOpeningTime"), "slug": slug})
     time.sleep(0.25)
 
 ok.sort(key=lambda r: -int(r["rating"][:-1]) if r["rating"] else 1)
 for i, r in enumerate(ok, 1):
     r["n"] = i
-(ROOT / "data/stores.json").write_text(json.dumps({"rows": ok, "excluded": excluded}, ensure_ascii=False, indent=1))
+out = {"sweptAt": int(time.time() * 1000), "rows": ok, "excluded": excluded}
+(ROOT / "data/stores.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
+html = (ROOT / "index.html").read_text()
+a, b = html.index("/*DATA-START*/"), html.index("/*DATA-END*/")
+(ROOT / "index.html").write_text(html[:a] + "/*DATA-START*/const DATA=" + json.dumps(out, ensure_ascii=False) + ";" + html[b:])
 print(f"{len(ok)} llegan, {len(excluded)} no")
