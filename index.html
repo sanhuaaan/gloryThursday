@@ -56,8 +56,12 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 .card{display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:start;background:var(--paper);color:var(--paper-ink);border-radius:.4rem;padding:.9rem 1rem;box-shadow:0 .25rem 0 rgba(0,0,0,.3);position:relative;transition:transform .15s}
 .card:hover{transform:translateY(-.15rem)}
 .card.winner{outline:.3rem solid var(--yellow);outline-offset:.15rem}
-.card.dim{opacity:.55}
-.card h3{margin:0;font-size:1.05rem;font-variation-settings:"wdth" 95,"wght" 800;line-height:1.2}
+.card.dim{opacity:.5;filter:saturate(.4)}
+.card .out{position:absolute;top:.55rem;right:.55rem;font:inherit;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-variation-settings:"wght" 700;padding:.2rem .5rem;border-radius:.2rem;border:.1rem solid var(--paper-dim);background:transparent;color:var(--paper-dim);cursor:pointer}
+.card .out:hover,.card.dim .out{background:var(--red);border-color:var(--red);color:var(--paper)}
+.card .out:focus-visible{outline:.15rem solid var(--red);outline-offset:.1rem}
+.chip.reset{border-style:dashed;color:var(--yellow);border-color:var(--yellow)}
+.card h3{margin:0;padding-right:3.5rem;font-size:1.05rem;font-variation-settings:"wdth" 95,"wght" 800;line-height:1.2}
 .card h3 a{color:inherit;text-decoration:none}
 .card h3 a:hover{text-decoration:underline;text-decoration-color:var(--red)}
 .card .tags{font-size:.78rem;color:var(--paper-dim);margin:.1rem 0 .4rem}
@@ -116,9 +120,14 @@ const colors=['red','yellow','blue','green','white'];
 const groupsOrder=[...new Set(rows.map(r=>r.group))];
 const gcolor=Object.fromEntries(groupsOrder.map((g,i)=>[g,colors[i%colors.length]]));
 document.getElementById('tot').textContent=rows.length;
-let active=null; const exoticBox=document.getElementById('exotic');
+const store={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const offGroups=new Set(store.get('offGroups',[])),offSlugs=new Set(store.get('offSlugs',[]));
+const exoticBox=document.getElementById('exotic');exoticBox.checked=store.get('exotic',true);
+function persist(){store.set('offGroups',[...offGroups]);store.set('offSlugs',[...offSlugs]);store.set('exotic',exoticBox.checked);}
 const controls=document.getElementById('controls');
-function visible(){return rows.filter(r=>(!exoticBox.checked||r.exotic)&&(!active||r.group===active));}
+function shown(){return rows.filter(r=>!exoticBox.checked||r.exotic);}
+function inDrum(r){return !offGroups.has(r.group)&&!offSlugs.has(r.slug);}
+function visible(){return shown().filter(inDrum);}
 const TZ='Europe/Madrid';
 const hhmm=ms=>new Date(ms).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',timeZone:TZ});
 const dayName=ms=>new Date(ms).toLocaleDateString('es-ES',{weekday:'long',timeZone:TZ});
@@ -144,31 +153,35 @@ function renderUpdated(){
 }
 function renderChips(){
   controls.querySelectorAll('.chip').forEach(c=>c.remove());
-  const pool=rows.filter(r=>!exoticBox.checked||r.exotic);
-  const counts={};pool.forEach(r=>counts[r.group]=(counts[r.group]||0)+1);
+  const counts={};shown().forEach(r=>counts[r.group]=(counts[r.group]||0)+1);
+  const anchor=controls.querySelector('.toggle');
   groupsOrder.filter(g=>counts[g]).forEach(g=>{
-    const b=document.createElement('button');b.className='chip';b.type='button';b.setAttribute('aria-pressed',String(active===g));
-    b.innerHTML=`${g}<small>${counts[g]}</small>`;b.onclick=()=>{active=active===g?null:g;render();};
-    controls.insertBefore(b,controls.querySelector('.toggle'));
+    const b=document.createElement('button');b.className='chip';b.type='button';b.setAttribute('aria-pressed',String(!offGroups.has(g)));
+    b.title=offGroups.has(g)?'Meter en el bombo':'Sacar del bombo';
+    b.innerHTML=`${g}<small>${counts[g]}</small>`;b.onclick=()=>{offGroups.has(g)?offGroups.delete(g):offGroups.add(g);persist();render();};
+    controls.insertBefore(b,anchor);
   });
+  if(offGroups.size||offSlugs.size){const b=document.createElement('button');b.className='chip reset';b.type='button';b.textContent='Todos dentro';b.onclick=()=>{offGroups.clear();offSlugs.clear();persist();render();};controls.insertBefore(b,anchor);}
 }
 function render(){
   renderChips();
-  const v=visible();
-  document.getElementById('count').textContent=`${v.length} bolas en el bombo`;
+  const all=shown(),v=all.filter(inDrum);
+  document.getElementById('count').textContent=`${v.length} bolas en el bombo`+(all.length-v.length?` · ${all.length-v.length} fuera`:'');
   const g=document.getElementById('grid');g.innerHTML='';
-  v.forEach(r=>{
-    const li=document.createElement('li');li.className='card';li.dataset.n=r.n;
+  all.forEach(r=>{
+    const out=!inDrum(r);
+    const li=document.createElement('li');li.className='card'+(out?' dim':'');li.dataset.n=r.n;
     li.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
       <h3><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">${r.name}</a></h3>
       <p class="tags">${r.tags.join(' · ')}</p>
       <div class="meta"><span><b>${r.rating||'sin nota'}</b></span><span>envío <b>${r.fee.toFixed(2)} €</b></span><span>${r.dist}</span></div>
       ${whenBadge(r)}
-    </div>`;
+    </div><button class="out" type="button" aria-pressed="${out}" title="${offGroups.has(r.group)?'Toda la cocina está fuera; pulsa el chip para meterla':''}">${out?'Meter':'Sacar'}</button>`;
+    li.querySelector('.out').onclick=()=>{if(offGroups.has(r.group)){offGroups.delete(r.group);shown().filter(x=>x.group===r.group&&x.slug!==r.slug).forEach(x=>offSlugs.add(x.slug));}else{offSlugs.has(r.slug)?offSlugs.delete(r.slug):offSlugs.add(r.slug);}persist();render();};
     g.appendChild(li);
   });
 }
-exoticBox.onchange=()=>{active=null;render();};
+exoticBox.onchange=()=>{persist();render();};
 render();renderUpdated();
 setInterval(()=>{render();renderUpdated();},60000);
 fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
