@@ -53,13 +53,28 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 .toggle input{accent-color:var(--red);width:1.1rem;height:1.1rem}
 .count{color:var(--chalk-dim);font-size:.9rem;margin:0 0 1rem;font-variant-numeric:tabular-nums}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:.9rem;list-style:none;margin:0;padding:0}
-.card{display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:start;background:var(--paper);color:var(--paper-ink);border-radius:.4rem;padding:.9rem 1rem;box-shadow:0 .25rem 0 rgba(0,0,0,.3);position:relative;transition:transform .15s}
+.card{display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:start;background:var(--paper);color:var(--paper-ink);border-radius:.4rem;padding:.9rem 1rem 1.9rem;box-shadow:0 .25rem 0 rgba(0,0,0,.3);position:relative;transition:transform .15s}
 .card:hover{transform:translateY(-.15rem)}
 .card.winner{outline:.3rem solid var(--yellow);outline-offset:.15rem}
 .card.dim{opacity:.5;filter:saturate(.4)}
 .card .out{position:absolute;top:.55rem;right:.55rem;font:inherit;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-variation-settings:"wght" 700;padding:.2rem .5rem;border-radius:.2rem;border:.1rem solid var(--paper-dim);background:transparent;color:var(--paper-dim);cursor:pointer}
 .card .out:hover,.card.dim .out{background:var(--red);border-color:var(--red);color:var(--paper)}
 .card .out:focus-visible{outline:.15rem solid var(--red);outline-offset:.1rem}
+.card .won{font-size:.78rem;margin-top:.4rem;display:inline-block;padding:.1rem .5rem;border-radius:.2rem;background:#f3d6d9;color:#7a1220;font-variation-settings:"wght" 700}
+.card.quarantine{opacity:.55;filter:saturate(.3)}
+.card .reg{position:absolute;right:.55rem;bottom:.55rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-variation-settings:"wght" 700;color:var(--paper-dim);text-decoration:none;border-bottom:.1rem dotted var(--paper-dim)}
+.card .reg:hover{color:var(--red);border-color:var(--red)}
+.result .actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:.6rem;align-items:center}
+.btn{display:inline-block;font:inherit;font-size:.85rem;font-variation-settings:"wght" 700;padding:.4rem .9rem;border-radius:.3rem;background:var(--red);color:var(--paper)!important;text-decoration:none;border:0;cursor:pointer}
+.btn:hover{background:#e63347}
+.roll{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));gap:.6rem}
+.roll li{display:grid;grid-template-columns:auto 1fr;gap:.7rem;align-items:center;background:rgba(0,0,0,.25);border-radius:.4rem;padding:.6rem .8rem;font-size:.9rem}
+.roll img{width:2.2rem;height:2.2rem;border-radius:50%;border:.15rem solid var(--yellow)}
+.roll b{color:var(--paper)}
+.roll small{display:block;color:var(--chalk-dim);font-variant-numeric:tabular-nums}
+.roll a{color:var(--chalk-dim)}
+.roll .back{color:var(--yellow)}
+.empty{color:var(--chalk-dim);font-style:italic}
 .chip.reset{border-style:dashed;color:var(--yellow);border-color:var(--yellow)}
 .card h3{margin:0;padding-right:3.5rem;font-size:1.05rem;font-variation-settings:"wdth" 95,"wght" 800;line-height:1.2}
 .card h3 a{color:inherit;text-decoration:none}
@@ -106,6 +121,12 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 <ul class="grid" id="grid"></ul>
 
 <section class="section">
+  <h2>Palmarés</h2>
+  <p class="sub">Un sitio que sale elegido queda en cuarentena los 6 sorteos siguientes. Cada ganador es un issue del repo: quien lo registra queda a la vista, y para anular un sorteo basta con cerrar el issue.</p>
+  <ul class="roll" id="roll"><li class="empty">Cargando el libro de actas…</li></ul>
+</section>
+
+<section class="section">
   <h2>Cartones anulados</h2>
   <p class="sub">Salen en Glovo Donostia pero no reparten hasta Zuatzu. Casi todos son de Centro y Gros y el radio se les queda corto.</p>
   <ul class="void" id="void"></ul>
@@ -123,10 +144,42 @@ document.getElementById('tot').textContent=rows.length;
 const store={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const offGroups=new Set(store.get('offGroups',[])),offSlugs=new Set(store.get('offSlugs',[]));
 const exoticBox=document.getElementById('exotic');exoticBox.checked=store.get('exotic',true);
+const REPO='sanhuaaan/gloryThursday',COOLDOWN=6;
+let winners=[];// [{slug,name,date,user,avatar,url}] más reciente primero
+const quarantine={};// slug -> sorteos que faltan para volver
+function issueUrl(r,date){
+  const d=date||new Date().toISOString().slice(0,10);
+  const body=`tienda: ${r.slug}\nfecha: ${d}\n\n${r.name} · ${r.tags.join(' · ')}\nhttps://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}`;
+  return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
+}
+function loadWinners(){
+  fetch(`https://api.github.com/repos/${REPO}/issues?state=open&per_page=100&sort=created&direction=desc`,{headers:{Accept:'application/vnd.github+json'}})
+  .then(r=>r.ok?r.json():[]).then(list=>{
+    winners=list.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).map(i=>{
+      const slug=(i.body.match(/^\s*tienda:\s*(\S+)/m)||[])[1];
+      const date=(i.body.match(/^\s*fecha:\s*(\d{4}-\d{2}-\d{2})/m)||[])[1]||i.created_at.slice(0,10);
+      const row=rows.find(r=>r.slug===slug);
+      return {slug,name:row?row.name:slug,date,user:i.user.login,avatar:i.user.avatar_url,url:i.html_url};
+    }).sort((a,b)=>b.date.localeCompare(a.date));
+    Object.keys(quarantine).forEach(k=>delete quarantine[k]);
+    winners.forEach((w,i)=>{if(i<COOLDOWN&&quarantine[w.slug]==null)quarantine[w.slug]=COOLDOWN-i;});
+    renderRoll();render();
+  }).catch(()=>{document.getElementById('roll').innerHTML='<li class="empty">No se pudo leer el palmarés de GitHub.</li>';});
+}
+const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+function renderRoll(){
+  const ul=document.getElementById('roll');ul.innerHTML='';
+  if(!winners.length){ul.innerHTML='<li class="empty">Todavía no hay ganadores registrados.</li>';return;}
+  winners.forEach((w,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<img src="${w.avatar}&s=88" alt=""><div><b>${w.name}</b><small>${fmtDate(w.date)} · registrado por <a href="${w.url}" target="_blank" rel="noopener">${w.user}</a>${i<COOLDOWN?` · <span class="back">vuelve en ${COOLDOWN-i} sorteo${COOLDOWN-i>1?'s':''}</span>`:''}</small></div>`;
+    ul.appendChild(li);
+  });
+}
 function persist(){store.set('offGroups',[...offGroups]);store.set('offSlugs',[...offSlugs]);store.set('exotic',exoticBox.checked);}
 const controls=document.getElementById('controls');
 function shown(){return rows.filter(r=>!exoticBox.checked||r.exotic);}
-function inDrum(r){return !offGroups.has(r.group)&&!offSlugs.has(r.slug);}
+function inDrum(r){return !offGroups.has(r.group)&&!offSlugs.has(r.slug)&&quarantine[r.slug]==null;}
 function visible(){return shown().filter(inDrum);}
 const TZ='Europe/Madrid';
 const hhmm=ms=>new Date(ms).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',timeZone:TZ});
@@ -166,23 +219,25 @@ function renderChips(){
 function render(){
   renderChips();
   const all=shown(),v=all.filter(inDrum);
-  document.getElementById('count').textContent=`${v.length} bolas en el bombo`+(all.length-v.length?` · ${all.length-v.length} fuera`:'');
+  const q=all.filter(r=>quarantine[r.slug]!=null).length,off=all.length-v.length-q;
+  document.getElementById('count').textContent=`${v.length} bolas en el bombo`+(off?` · ${off} fuera`:'')+(q?` · ${q} en cuarentena`:'');
   const g=document.getElementById('grid');g.innerHTML='';
   all.forEach(r=>{
-    const out=!inDrum(r);
-    const li=document.createElement('li');li.className='card'+(out?' dim':'');li.dataset.n=r.n;
+    const q=quarantine[r.slug],out=q==null&&!inDrum(r);
+    const li=document.createElement('li');li.className='card'+(out?' dim':'')+(q!=null?' quarantine':'');li.dataset.n=r.n;
     li.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
       <h3><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">${r.name}</a></h3>
       <p class="tags">${r.tags.join(' · ')}</p>
       <div class="meta"><span><b>${r.rating||'sin nota'}</b></span><span>envío <b>${r.fee.toFixed(2)} €</b></span><span>${r.dist}</span></div>
-      ${whenBadge(r)}
-    </div><button class="out" type="button" aria-pressed="${out}" title="${offGroups.has(r.group)?'Toda la cocina está fuera; pulsa el chip para meterla':''}">${out?'Meter':'Sacar'}</button>`;
-    li.querySelector('.out').onclick=()=>{if(offGroups.has(r.group)){offGroups.delete(r.group);shown().filter(x=>x.group===r.group&&x.slug!==r.slug).forEach(x=>offSlugs.add(x.slug));}else{offSlugs.has(r.slug)?offSlugs.delete(r.slug):offSlugs.add(r.slug);}persist();render();};
+      ${q!=null?`<span class="won">Salió elegido · vuelve en ${q} sorteo${q>1?'s':''}</span>`:whenBadge(r)}
+    </div>${q!=null?'':`<button class="out" type="button" aria-pressed="${out}" title="${offGroups.has(r.group)?'Toda la cocina está fuera; pulsa el chip para meterla':''}">${out?'Meter':'Sacar'}</button>`}
+    <a class="reg" href="${issueUrl(r)}" target="_blank" rel="noopener" title="Registrar como ganador sin sorteo en la web (bombo físico)">Salió elegido</a>`;
+    const ob=li.querySelector('.out');if(ob)ob.onclick=()=>{if(offGroups.has(r.group)){offGroups.delete(r.group);shown().filter(x=>x.group===r.group&&x.slug!==r.slug).forEach(x=>offSlugs.add(x.slug));}else{offSlugs.has(r.slug)?offSlugs.delete(r.slug):offSlugs.add(r.slug);}persist();render();};
     g.appendChild(li);
   });
 }
 exoticBox.onchange=()=>{persist();render();};
-render();renderUpdated();
+render();renderUpdated();loadWinners();
 setInterval(()=>{render();renderUpdated();},60000);
 fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
   if(!d||!d.rows)return;Object.assign(DATA,d);rows=DATA.rows;document.getElementById('tot').textContent=rows.length;render();renderUpdated();
@@ -253,7 +308,7 @@ function finish(){
   res.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
     <h2>¡${r.name}!</h2>
     <p>${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br>
-    <a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></p></div>`;
+    </p><div class="actions"><a class="btn" href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></div></div>`;
   res.classList.add('show');
   const card=document.querySelector(`.card[data-n="${r.n}"]`);if(card){card.classList.add('winner');card.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});}
 }
