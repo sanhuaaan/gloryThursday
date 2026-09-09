@@ -102,7 +102,7 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
   <div>
     <p class="eyebrow">Juan Fermín Gilisagasti · Zuatzu · 20018</p>
     <h1>Jueves de Gloria</h1>
-    <p class="lede">Los <b id="tot"></b> restaurantes de Glovo que sí llegan a la oficina, comprobados bola a bola contra nuestras coordenadas. Filtra la cocina, dale al bombo y a comer lo que salga.</p>
+    <p class="lede">Los <b id="tot"></b> restaurantes de Glovo que sí llegan a la oficina, comprobados bola a bola contra nuestras coordenadas. Filtra la cocina, dale al bombo y a comer lo que salga. El bombo elige primero una cocina, con la misma probabilidad para todas, y luego un sitio dentro de ella.</p>
     <p class="updated" id="updated"></p>
   </div>
   <div class="drum">
@@ -220,7 +220,8 @@ function render(){
   renderChips();
   const all=shown(),v=all.filter(inDrum);
   const q=all.filter(r=>quarantine[r.slug]!=null).length,off=all.length-v.length-q;
-  document.getElementById('count').textContent=`${v.length} bolas en el bombo`+(off?` · ${off} fuera`:'')+(q?` · ${q} en cuarentena`:'');
+  const nc=new Set(v.map(r=>r.group)).size;
+  document.getElementById('count').textContent=`${v.length} bolas en el bombo · ${nc} cocina${nc!==1?'s':''} al ${nc?Math.round(100/nc):0} % cada una`+(off?` · ${off} fuera`:'')+(q?` · ${q} en cuarentena`:'');
   const g=document.getElementById('grid');g.innerHTML='';
   all.forEach(r=>{
     const q=quarantine[r.slug],out=q==null&&!inDrum(r);
@@ -297,7 +298,10 @@ const btn=document.getElementById('spin'),res=document.getElementById('result');
 let pending=null;
 btn.onclick=()=>{
   const v=visible();if(!v.length)return;
-  pending=v[Math.floor(Math.random()*v.length)];
+  // dos fases: cocina al azar (mismo peso para todas) y luego sitio al azar dentro de ella
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  const cuisine=pick([...new Set(v.map(r=>r.group))]);
+  pending=pick(v.filter(r=>r.group===cuisine));
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('winner'));
   res.classList.remove('show');
   if(reduce){finish();return;}
