@@ -20,8 +20,6 @@ HEADERS = {
     "Glovo-Api-Version": "14", "Glovo-App-Platform": "WEB", "Glovo-App-Type": "customer",
     "Glovo-Language-Code": "es", "Glovo-App-Version": "7",
 }
-EXOTIC = {"Asiática", "Japonesa", "Sushi", "Poke", "Tailandesa", "India", "Mexicana", "Latina", "Venezolana",
-          "Árabe", "Kebab", "Internacional", "Alta Cocina", "Grill", "Gourmet", "Vegana", "Coreana"}
 GROUPS = [("Japonés / sushi / ramen", {"Japonesa", "Sushi"}), ("Poke", {"Poke"}), ("Tailandés / chino", {"Tailandesa", "Asiática"}),
           ("Indio", {"India"}), ("Mexicano", {"Mexicana"}), ("Latino / venezolano", {"Latina", "Venezolana"}),
           ("Turco / árabe", {"Árabe", "Kebab"}), ("Alta cocina / grill", {"Alta Cocina", "Grill", "Gourmet"}),
@@ -51,10 +49,20 @@ def fetch(slug):
     return "error", None
 
 
-def group_of(filters):
-    fs = set(filters)
-    g = next((n for n, s in GROUPS if fs & s), "Otros")
-    return "Japonés / sushi / ramen" if g == "Tailandés / chino" and fs & {"Japonesa", "Sushi"} else g
+EXOTIC_GROUPS = {"Japonés / sushi / ramen", "Poke", "Tailandés / chino", "Indio", "Mexicano", "Latino / venezolano",
+                 "Turco / árabe", "Alta cocina / grill", "Internacional"}
+GROUP_OVERRIDES = {"mumbai-curry-san-sebastian": "Indio"}  # Glovo lo etiqueta como árabe
+
+
+def group_of(slug, filters):
+    """Manda la primera etiqueta de Glovo que caiga en algún grupo (es la principal de la tienda)."""
+    if slug in GROUP_OVERRIDES:
+        return GROUP_OVERRIDES[slug]
+    for f in filters:
+        for name, tags in GROUPS:
+            if f in tags:
+                return name
+    return "Otros"
 
 
 OUT_FILE = ROOT / "data/stores.json"
@@ -78,7 +86,7 @@ for slug in (ROOT / "data/slugs.txt").read_text().split():
     rating = (d.get("ratingInfo") or {}).get("cardLabel")
     ok.append({"name": d["name"], "rating": rating if rating and rating.endswith("%") else None,
                "fee": (d.get("deliveryFeeInfo") or {}).get("fee"), "dist": d.get("distance"), "tags": filters[:3],
-               "group": group_of(filters), "exotic": bool(set(filters) & EXOTIC), "status": av.get("status"),
+               "group": group_of(slug, filters), "exotic": group_of(slug, filters) in EXOTIC_GROUPS, "status": av.get("status"),
                "when": (((av.get("footerLabel") or {}).get("data") or {}).get("text") or "").replace(" EAS", ""),
                "next": av.get("nextSchedulingOrOpeningTime"), "slug": slug})
     time.sleep(0.6)
