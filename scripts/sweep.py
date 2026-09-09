@@ -31,13 +31,24 @@ GROUPS = [("Japonés / sushi / ramen", {"Japonesa", "Sushi"}), ("Poke", {"Poke"}
           ("Dulce / café", {"Panadería", "Desayuno", "Dulces", "Helado", "Snacks", "Té y café", "Bebidas", "Brunch"})]
 
 
+OUT_OF_ZONE = "260002"  # Glovo: "No available store address found"
+
+
 def fetch(slug):
+    """Devuelve ("ok", datos), ("out", None) si no reparte aqui, o ("error", None) si Glovo no contesta bien."""
     args = ["curl", "-s", "-w", "\n%{http_code}", "-A", "Mozilla/5.0"]
     for k, v in HEADERS.items():
         args += ["-H", f"{k}: {v}"]
-    body, _, code = subprocess.run(args + [f"https://api.glovoapp.com/v3/stores/{slug}"],
-                                   capture_output=True, text=True).stdout.rpartition("\n")
-    return code, (json.loads(body) if code == "200" else None)
+    for attempt in range(4):
+        body, _, code = subprocess.run(args + [f"https://api.glovoapp.com/v3/stores/{slug}"],
+                                       capture_output=True, text=True).stdout.rpartition("\n")
+        if code == "200":
+            return "ok", json.loads(body)
+        if code == "404" and body.startswith("{") and json.loads(body).get("error", {}).get("code") == OUT_OF_ZONE:
+            return "out", None
+        print(f"  {slug}: HTTP {code}, reintento {attempt + 1}", file=sys.stderr)
+        time.sleep(3 * (attempt + 1))  # ponytail: backoff lineal; Glovo corta tras ~100 peticiones seguidas desde IPs de GitHub
+    return "error", None
 
 
 def group_of(filters):
@@ -46,11 +57,21 @@ def group_of(filters):
     return "Japonés / sushi / ramen" if g == "Tailandés / chino" and fs & {"Japonesa", "Sushi"} else g
 
 
-ok, excluded = [], []
+OUT_FILE = ROOT / "data/stores.json"
+previous = json.loads(OUT_FILE.read_text()) if OUT_FILE.exists() else {"rows": [], "excluded": []}
+prev_rows = {r["slug"]: r for r in previous["rows"]}
+ok, excluded, unknown = [], [], []
 for slug in (ROOT / "data/slugs.txt").read_text().split():
-    code, d = fetch(slug)
-    if code != "200":
+    result, d = fetch(slug)
+    if result == "out":
         excluded.append(slug)
+        continue
+    if result == "error":
+        unknown.append(slug)
+        if slug in prev_rows:
+            ok.append(prev_rows[slug])
+        elif slug in previous["excluded"]:
+            excluded.append(slug)
         continue
     av = d.get("availability") or {}
     filters = [f["displayName"] for f in d.get("filters") or []]
@@ -60,8 +81,12 @@ for slug in (ROOT / "data/slugs.txt").read_text().split():
                "group": group_of(filters), "exotic": bool(set(filters) & EXOTIC), "status": av.get("status"),
                "when": (((av.get("footerLabel") or {}).get("data") or {}).get("text") or "").replace(" EAS", ""),
                "next": av.get("nextSchedulingOrOpeningTime"), "slug": slug})
-    time.sleep(0.25)
+    time.sleep(0.6)
 
+if unknown:
+    print(f"{len(unknown)} tiendas sin respuesta fiable, se conserva su dato anterior: {' '.join(unknown)}", file=sys.stderr)
+if len(unknown) > 20:
+    sys.exit("Demasiados errores; no se escribe nada")
 ok.sort(key=lambda r: -int(r["rating"][:-1]) if r["rating"] else 1)
 for i, r in enumerate(ok, 1):
     r["n"] = i
