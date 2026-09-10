@@ -1,0 +1,18 @@
+name: remind
+on:
+  schedule:
+    - cron: "0 6 * * 3"   # miércoles 06:00 UTC = 08:00 Madrid en verano, 07:00 en invierno; el script decide si toca
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Enviar aunque no sea el miércoles anterior al segundo jueves"
+        type: boolean
+        default: false
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/remind.py ${{ inputs.force && '--force' || '' }}
+        env:
+          CHAT_WEBHOOK: ${{ secrets.CHAT_WEBHOOK }}
