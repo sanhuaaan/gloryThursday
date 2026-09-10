@@ -39,24 +39,8 @@ h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.4rem,6vw,4.
 .spin:active,.spin[disabled]{transform:translateY(.3rem);box-shadow:0 .1rem 0 #8a1420}
 .spin:focus-visible{outline:.25rem dashed var(--yellow);outline-offset:.25rem}
 .spin[disabled]{cursor:wait;opacity:.85}
-.tv-btn{font:inherit;font-size:.8rem;font-variation-settings:"wdth" 110,"wght" 700;text-transform:uppercase;letter-spacing:.15em;padding:.4rem .9rem;border-radius:999rem;border:.125rem solid var(--felt-line);background:transparent;color:var(--chalk-dim);cursor:pointer}
-.tv-btn:hover{color:var(--chalk);border-color:var(--chalk-dim)}
-.tv-btn:focus-visible{outline:.2rem solid var(--yellow);outline-offset:.15rem}
 #c.shake{animation:shake .08s linear infinite}
 @keyframes shake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(.15rem,-.1rem) rotate(.4deg)}50%{transform:translate(-.12rem,.12rem) rotate(-.4deg)}75%{transform:translate(.1rem,.15rem) rotate(.3deg)}100%{transform:translate(0,0) rotate(0)}}
-/* modo tele: solo bombo, marcador y ganador, a lo grande */
-body.tv .wrap{max-width:none;min-height:100vh;padding:1.5rem;display:grid;grid-template-rows:auto auto;align-content:center;justify-items:center;gap:1.5rem}
-body.tv .wrap>*:not(header):not(#result){display:none}
-body.tv header{grid-template-columns:1fr;margin:0}
-body.tv header>.dimmable{display:none}
-body.tv #c{width:min(62vh,40rem)}
-body.tv .display .num{font-size:3.4rem}
-body.tv .display{padding:.5rem 1.4rem}
-body.tv .spin{font-size:1.9rem;padding:.9rem 2.6rem}
-body.tv .result{width:min(60rem,95vw);font-size:1.25rem;padding:1.6rem 2rem}
-body.tv .result h2{font-size:3rem}
-body.tv .result .ball{width:7.5rem;height:7.5rem;font-size:2.8rem}
-body.tv .tv-btn{position:fixed;top:1rem;right:1rem}
 .result{margin:1.5rem 0 2.5rem;display:none;grid-template-columns:auto 1fr;gap:1.25rem;align-items:center;background:var(--paper);color:var(--paper-ink);border-radius:.5rem;padding:1.25rem 1.5rem;box-shadow:0 0 0 .5rem rgba(0,0,0,.25),inset 0 0 0 .125rem var(--paper-dim),inset 0 0 0 .3rem var(--paper)}
 .result.show{display:grid;animation:reveal 1s ease-out both}
 @keyframes reveal{0%{opacity:0;transform:translateY(-1rem) scale(.96);filter:blur(.4rem)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none}}
@@ -148,7 +132,6 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
     <div class="display" id="display" aria-live="off"><span class="lbl">Bola</span><span class="num" id="dnum">--</span></div>
     <canvas id="c" width="480" height="570" aria-label="Bombo de bingo con bolas girando"></canvas>
     <button class="spin" id="spin">¡Sortear!</button>
-    <button class="tv-btn" id="tv" type="button" aria-pressed="false">Modo tele</button>
   </div>
 </header>
 
@@ -454,16 +437,6 @@ function finish(){
   const card=document.querySelector(`.card[data-n="${r.n}"]`);if(card)card.classList.add('winner');
   if(!reduce)confetti();
 }
-// ---- modo tele
-const tvBtn=document.getElementById('tv');
-function setTv(on){document.body.classList.toggle('tv',on);tvBtn.setAttribute('aria-pressed',String(on));tvBtn.textContent=on?'Salir del modo tele':'Modo tele';}
-tvBtn.onclick=()=>{
-  const on=!document.body.classList.contains('tv');setTv(on);
-  if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});
-  else if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{});
-};
-document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('tv'))setTv(false);});
-document.addEventListener('keydown',e=>{if(document.body.classList.contains('tv')&&(e.key===' '||e.key==='Enter')&&!btn.disabled&&e.target===document.body){e.preventDefault();btn.click();}});
 // ---- confeti
 const cc=document.getElementById('confetti'),cctx=cc.getContext('2d');
 function confetti(){
