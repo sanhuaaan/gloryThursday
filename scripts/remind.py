@@ -44,7 +44,7 @@ def name(slug):
     return rows[slug]["name"] if slug in rows else slug
 
 
-lines = ["*Mañana es Jueves de Gloria* 🎱", ""]
+lines = ["*Mañana es Jueves de Gloria* 🍽️🙌", ""]
 if winners:
     lines.append(f"Última vez salió *{name(winners[0][1])}* ({fmt(winners[0][0])}).")
     quarantine = [name(s) for _, s in winners[:COOLDOWN]]
