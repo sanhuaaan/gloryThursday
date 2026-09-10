@@ -292,7 +292,7 @@ const W=480,R=190,CX=240,CY=240,GATE=Math.PI*0.36,TRAY_Y=540;// GATE: ángulo de
 const cols={red:'#d3283a',yellow:'#f0bf3d',blue:'#2a6fb0',green:'#3f9a5a',white:'#f6f2e8'};
 const balls=[];for(let i=0;i<26;i++){const a=Math.random()*6.28,d=Math.random()*(R-40);balls.push({x:CX+Math.cos(a)*d,y:CY+Math.sin(a)*d,vx:0,vy:0,r:18,c:colors[i%5],n:rows[i%rows.length].n});}
 let ang=0,speed=0,spinning=false,stopping=false,revealed=false,exit=null;
-const REVEAL_AT=9,TICK_FROM=6;// segundos del audio: el marcador canta bolas desde TICK_FROM y se clava en el ganador en REVEAL_AT
+const REVEAL_AT=9,TICK_FROM=6,TRAY_PAUSE=1500;// ms que la bola descansa en la bandeja antes de volar a la tarjeta// segundos del audio: el marcador canta bolas desde TICK_FROM y se clava en el ganador en REVEAL_AT
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function drawBall(b,x,y,r,n){
   ctx.beginPath();ctx.arc(x,y,r,0,6.29);ctx.fillStyle=cols[b];ctx.fill();
@@ -312,7 +312,7 @@ function step(){
   for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){const a=balls[i],b=balls[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,m=a.r+b.r;if(d<m){const o=(m-d)/2,nx=dx/d,ny=dy/d;a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o;}}
   if(exit&&!exit.landed){
     exit.vy+=.55;exit.x+=exit.vx;exit.y+=exit.vy;
-    if(exit.y>=TRAY_Y-exit.r){exit.y=TRAY_Y-exit.r;if(Math.abs(exit.vy)>2.5){exit.vy=-exit.vy*.35;}else{exit.landed=true;flyToCard();}}
+    if(exit.y>=TRAY_Y-exit.r){exit.y=TRAY_Y-exit.r;if(Math.abs(exit.vy)>2.5){exit.vy=-exit.vy*.35;}else{exit.landed=true;setTimeout(flyToCard,TRAY_PAUSE);}}
   }
   draw();
   if(spinning){
