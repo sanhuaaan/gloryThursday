@@ -283,7 +283,7 @@ const W=480,R=190,CX=240,CY=240;
 const cols={red:'#d3283a',yellow:'#f0bf3d',blue:'#2a6fb0',green:'#3f9a5a',white:'#f6f2e8'};
 const balls=[];for(let i=0;i<26;i++){const a=Math.random()*6.28,d=Math.random()*(R-40);balls.push({x:CX+Math.cos(a)*d,y:CY+Math.sin(a)*d,vx:0,vy:0,r:18,c:colors[i%5],n:rows[i%rows.length].n});}
 let ang=0,speed=0,spinning=false,stopping=false,revealed=false;
-const REVEAL_AT=9;// segundo del audio en el que sale el ganador; el bombo sigue hasta que acaba
+const REVEAL_AT=9;// segundo del audio en el que sale el ganador y el bombo se para; el audio sigue hasta el final
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function step(){
   ang+=speed;
@@ -297,7 +297,7 @@ function step(){
   for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){const a=balls[i],b=balls[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,m=a.r+b.r;if(d<m){const o=(m-d)/2,nx=dx/d,ny=dy/d;a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o;}}
   draw();
   if(spinning){
-    if(stopping){speed=Math.max(0,speed-.006);if(speed===0){spinning=false;stopping=false;if(!revealed)finish();}}
+    if(stopping){speed=Math.max(0,speed-.02);if(speed===0){spinning=false;stopping=false;if(!revealed)finish();}}
     else speed=Math.min(.22,speed+.006);
   }
   requestAnimationFrame(step);
@@ -332,7 +332,7 @@ function draw(){
 }
 const btn=document.getElementById('spin'),res=document.getElementById('result'),drumroll=document.getElementById('drumroll');
 let pending=null;
-drumroll.addEventListener('timeupdate',()=>{if(spinning&&!revealed&&drumroll.currentTime>=REVEAL_AT)finish();});
+drumroll.addEventListener('timeupdate',()=>{if(spinning&&!revealed&&drumroll.currentTime>=REVEAL_AT){finish();stopping=true;}});
 drumroll.addEventListener('ended',()=>{stopping=true;});
 drumroll.addEventListener('error',()=>{stopping=true;});
 btn.onclick=()=>{
