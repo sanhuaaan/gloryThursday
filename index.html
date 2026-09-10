@@ -33,8 +33,9 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 .spin:focus-visible{outline:.25rem dashed var(--yellow);outline-offset:.25rem}
 .spin[disabled]{cursor:wait;opacity:.85}
 .result{margin:1.5rem 0 2.5rem;display:none;grid-template-columns:auto 1fr;gap:1.25rem;align-items:center;background:var(--paper);color:var(--paper-ink);border-radius:.5rem;padding:1.25rem 1.5rem;box-shadow:0 0 0 .5rem rgba(0,0,0,.25),inset 0 0 0 .125rem var(--paper-dim),inset 0 0 0 .3rem var(--paper)}
-.result.show{display:grid;animation:drop .5s cubic-bezier(.2,1.4,.4,1)}
-@keyframes drop{from{transform:translateY(-1.5rem) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.result.show{display:grid;animation:reveal 1.6s ease-out both}
+@keyframes reveal{0%{opacity:0;transform:translateY(-1rem) scale(.96);filter:blur(.4rem)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none}}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
 .result .ball{width:5.5rem;height:5.5rem;font-size:2rem}
 .result h2{font-family:var(--font-display);font-weight:400;font-size:2rem;margin:0;line-height:1.05}
 .result p{margin:.35rem 0 0;color:var(--paper-dim)}
@@ -100,7 +101,7 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 .void li{padding:.3rem .7rem;border-radius:.25rem;background:rgba(0,0,0,.25);color:var(--chalk-dim);font-size:.85rem;text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:.12rem}
 .method{font-size:.85rem;color:var(--chalk-dim);border-top:.125rem dashed var(--felt-line);padding-top:1rem;margin-top:3rem;max-width:44rem}
 .method code{font-family:ui-monospace,Menlo,monospace;color:var(--chalk);font-size:.8rem}
-@media (prefers-reduced-motion:reduce){.result.show{animation:none}.card{transition:none}}
+@media (prefers-reduced-motion:reduce){.result.show{animation:none}.card{transition:none}#confetti{display:none}}
 </style>
 </head>
 <body>
@@ -119,6 +120,8 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 </header>
 
 <div class="result" id="result" aria-live="polite"></div>
+<audio id="drumroll" src="assets/bombo.mp3" preload="auto"></audio>
+<canvas id="confetti" aria-hidden="true"></canvas>
 
 <div class="controls" id="controls">
   <span class="lbl">Cocina</span>
@@ -279,7 +282,7 @@ const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 const W=480,R=190,CX=240,CY=240;
 const cols={red:'#d3283a',yellow:'#f0bf3d',blue:'#2a6fb0',green:'#3f9a5a',white:'#f6f2e8'};
 const balls=[];for(let i=0;i<26;i++){const a=Math.random()*6.28,d=Math.random()*(R-40);balls.push({x:CX+Math.cos(a)*d,y:CY+Math.sin(a)*d,vx:0,vy:0,r:18,c:colors[i%5],n:rows[i%rows.length].n});}
-let ang=0,speed=0,spinning=false,t0=0;
+let ang=0,speed=0,spinning=false,stopping=false;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function step(){
   ang+=speed;
@@ -292,7 +295,10 @@ function step(){
   });
   for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){const a=balls[i],b=balls[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,m=a.r+b.r;if(d<m){const o=(m-d)/2,nx=dx/d,ny=dy/d;a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o;}}
   draw();
-  if(spinning){const el=performance.now()-t0;speed=el<1800?Math.min(.22,speed+.006):Math.max(0,speed-.004);if(el>3400&&speed===0){spinning=false;finish();}}
+  if(spinning){
+    if(stopping){speed=Math.max(0,speed-.006);if(speed===0){spinning=false;stopping=false;finish();}}
+    else speed=Math.min(.22,speed+.006);
+  }
   requestAnimationFrame(step);
 }
 function draw(){
@@ -323,11 +329,12 @@ function draw(){
   // axle
   ctx.fillStyle='#f0bf3d';ctx.beginPath();ctx.arc(CX,CY,10,0,6.29);ctx.fill();ctx.fillStyle='#8a1420';ctx.beginPath();ctx.arc(CX,CY,4,0,6.29);ctx.fill();
 }
-const btn=document.getElementById('spin'),res=document.getElementById('result');
+const btn=document.getElementById('spin'),res=document.getElementById('result'),drumroll=document.getElementById('drumroll');
 let pending=null;
+drumroll.addEventListener('ended',()=>{stopping=true;});
+drumroll.addEventListener('error',()=>{stopping=true;});
 btn.onclick=()=>{
   const v=visible();if(!v.length)return;
-  // dos fases: cocina al azar (mismo peso para todas) y luego sitio al azar dentro de ella
   const pick=a=>a[Math.floor(Math.random()*a.length)];
   const gs=[...new Set(v.map(r=>r.group))];let x=Math.random()*gs.reduce((a,g)=>a+weightOf(g),0),cuisine=gs[gs.length-1];
   for(const g of gs){x-=weightOf(g);if(x<0){cuisine=g;break;}}
@@ -335,7 +342,10 @@ btn.onclick=()=>{
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('winner'));
   res.classList.remove('show');
   if(reduce){finish();return;}
-  btn.disabled=true;spinning=true;t0=performance.now();
+  btn.disabled=true;spinning=true;stopping=false;
+  // el bombo gira mientras suena el audio; al acabar, frena y sale la bola
+  drumroll.currentTime=0;
+  drumroll.play().catch(()=>{setTimeout(()=>{stopping=true;},3000);});
 };
 function finish(){
   const r=pending;if(!r)return;btn.disabled=false;
@@ -344,7 +354,21 @@ function finish(){
     <p>${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br>
     </p><div class="actions"><a class="btn" href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></div></div>`;
   res.classList.add('show');
-  const card=document.querySelector(`.card[data-n="${r.n}"]`);if(card){card.classList.add('winner');card.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});}
+  const card=document.querySelector(`.card[data-n="${r.n}"]`);if(card)card.classList.add('winner');
+  if(!reduce)confetti();
+}
+// ---- confeti
+const cc=document.getElementById('confetti'),cctx=cc.getContext('2d');
+function confetti(){
+  cc.width=innerWidth;cc.height=innerHeight;
+  const hues=['#d3283a','#f0bf3d','#2a6fb0','#3f9a5a','#f6f2e8'];
+  const ps=Array.from({length:180},()=>({x:Math.random()*cc.width,y:-20-Math.random()*cc.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*4,r:4+Math.random()*6,a:Math.random()*6.28,va:(Math.random()-.5)*.3,c:hues[Math.floor(Math.random()*5)]}));
+  const t0=performance.now();
+  (function frame(){
+    const t=performance.now()-t0;cctx.clearRect(0,0,cc.width,cc.height);
+    ps.forEach(p=>{p.x+=p.vx+Math.sin(t/300+p.a)*.6;p.y+=p.vy;p.a+=p.va;cctx.save();cctx.translate(p.x,p.y);cctx.rotate(p.a);cctx.fillStyle=p.c;cctx.globalAlpha=t>3500?Math.max(0,1-(t-3500)/800):1;cctx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);cctx.restore();});
+    if(t<4300)requestAnimationFrame(frame);else cctx.clearRect(0,0,cc.width,cc.height);
+  })();
 }
 draw();requestAnimationFrame(step);
 </script>
