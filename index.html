@@ -26,14 +26,21 @@ h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.4rem,6vw,4.
 .drum{display:flex;flex-direction:column;align-items:center;gap:1rem}
 .updated{font-size:.8rem;color:var(--chalk-dim);margin:.75rem 0 0;font-variant-numeric:tabular-nums}
 .updated.stale{color:var(--yellow)}
-canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(0 1rem 1.5rem rgba(0,0,0,.5))}
+#c{width:17rem;height:auto;max-width:100%;display:block;filter:drop-shadow(0 1rem 1.5rem rgba(0,0,0,.5))}
+.display{display:grid;grid-template-columns:auto auto;align-items:baseline;gap:.6rem;background:#1a1208;border:.25rem solid var(--yellow);border-radius:.5rem;padding:.35rem 1rem;box-shadow:inset 0 0 .6rem #000,0 .3rem .6rem rgba(0,0,0,.5)}
+.display .lbl{font-variation-settings:"wdth" 110,"wght" 700;text-transform:uppercase;letter-spacing:.2em;font-size:.7rem;color:var(--chalk-dim)}
+.display .num{font-family:var(--font-body);font-variation-settings:"wdth" 90,"wght" 900;font-variant-numeric:tabular-nums;font-size:2.2rem;line-height:1;color:var(--red);min-width:2.4ch;text-align:right;text-shadow:0 0 .6rem rgba(211,40,58,.6)}
+.display.lock .num{color:var(--yellow);text-shadow:0 0 1rem rgba(240,191,61,.9);animation:lockflash .35s 3}
+@keyframes lockflash{50%{opacity:.2}}
+.flyball{position:fixed;z-index:6;transition:transform .8s cubic-bezier(.3,1.3,.4,1);will-change:transform;margin:0}
+.result.show.pre{animation:none;opacity:0}
 .spin{font-family:var(--font-display);font-size:1.4rem;padding:.75rem 2rem;border:.25rem solid var(--paper);border-radius:999rem;background:var(--red);color:var(--paper);cursor:pointer;box-shadow:0 .4rem 0 #8a1420,0 .8rem 1rem rgba(0,0,0,.4);transition:transform .1s,box-shadow .1s;letter-spacing:.05em}
 .spin:hover{background:#e63347}
 .spin:active,.spin[disabled]{transform:translateY(.3rem);box-shadow:0 .1rem 0 #8a1420}
 .spin:focus-visible{outline:.25rem dashed var(--yellow);outline-offset:.25rem}
 .spin[disabled]{cursor:wait;opacity:.85}
 .result{margin:1.5rem 0 2.5rem;display:none;grid-template-columns:auto 1fr;gap:1.25rem;align-items:center;background:var(--paper);color:var(--paper-ink);border-radius:.5rem;padding:1.25rem 1.5rem;box-shadow:0 0 0 .5rem rgba(0,0,0,.25),inset 0 0 0 .125rem var(--paper-dim),inset 0 0 0 .3rem var(--paper)}
-.result.show{display:grid;animation:reveal 1.6s ease-out both}
+.result.show{display:grid;animation:reveal 1s ease-out both}
 @keyframes reveal{0%{opacity:0;transform:translateY(-1rem) scale(.96);filter:blur(.4rem)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none}}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
 .result .ball{width:5.5rem;height:5.5rem;font-size:2rem}
@@ -101,7 +108,7 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 .void li{padding:.3rem .7rem;border-radius:.25rem;background:rgba(0,0,0,.25);color:var(--chalk-dim);font-size:.85rem;text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:.12rem}
 .method{font-size:.85rem;color:var(--chalk-dim);border-top:.125rem dashed var(--felt-line);padding-top:1rem;margin-top:3rem;max-width:44rem}
 .method code{font-family:ui-monospace,Menlo,monospace;color:var(--chalk);font-size:.8rem}
-@media (prefers-reduced-motion:reduce){.result.show{animation:none}.card{transition:none}#confetti{display:none}}
+@media (prefers-reduced-motion:reduce){.result.show{animation:none}.card{transition:none}#confetti{display:none}.display.lock .num{animation:none}}
 </style>
 </head>
 <body>
@@ -114,7 +121,8 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
     <p class="updated" id="updated"></p>
   </div>
   <div class="drum">
-    <canvas id="c" width="480" height="480" aria-label="Bombo de bingo con bolas girando"></canvas>
+    <div class="display" id="display" aria-live="off"><span class="lbl">Bola</span><span class="num" id="dnum">--</span></div>
+    <canvas id="c" width="480" height="570" aria-label="Bombo de bingo con bolas girando"></canvas>
     <button class="spin" id="spin">¡Sortear!</button>
   </div>
 </header>
@@ -279,12 +287,18 @@ const vl=document.getElementById('void');DATA.excluded.forEach(n=>{const li=docu
 
 // ---- bombo
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
-const W=480,R=190,CX=240,CY=240;
+const W=480,R=190,CX=240,CY=240,GATE=Math.PI*0.36,TRAY_Y=540;// GATE: ángulo de la compuerta (abajo a la derecha)
 const cols={red:'#d3283a',yellow:'#f0bf3d',blue:'#2a6fb0',green:'#3f9a5a',white:'#f6f2e8'};
 const balls=[];for(let i=0;i<26;i++){const a=Math.random()*6.28,d=Math.random()*(R-40);balls.push({x:CX+Math.cos(a)*d,y:CY+Math.sin(a)*d,vx:0,vy:0,r:18,c:colors[i%5],n:rows[i%rows.length].n});}
-let ang=0,speed=0,spinning=false,stopping=false,revealed=false;
-const REVEAL_AT=9;// segundo del audio en el que sale el ganador y el bombo se para; el audio sigue hasta el final
+let ang=0,speed=0,spinning=false,stopping=false,revealed=false,exit=null;
+const REVEAL_AT=9,TICK_FROM=6;// segundos del audio: el marcador canta bolas desde TICK_FROM y se clava en el ganador en REVEAL_AT
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function drawBall(b,x,y,r,n){
+  ctx.beginPath();ctx.arc(x,y,r,0,6.29);ctx.fillStyle=cols[b];ctx.fill();
+  ctx.beginPath();ctx.arc(x-r*.28,y-r*.33,r*.5,0,6.29);ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();
+  ctx.beginPath();ctx.arc(x,y,r*.55,0,6.29);ctx.fillStyle='rgba(255,255,255,.7)';ctx.fill();
+  ctx.fillStyle='#1a1208';ctx.font=`900 ${Math.round(r*.72)}px Archivo, Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n,x,y+1);
+}
 function step(){
   ang+=speed;
   const g=speed>0.01?speed*40:0.35;
@@ -295,44 +309,64 @@ function step(){
     if(d>lim){const nx=dx/d,ny=dy/d;b.x=CX+nx*lim;b.y=CY+ny*lim;const dot=b.vx*nx+b.vy*ny;b.vx-=1.7*dot*nx;b.vy-=1.7*dot*ny;b.vx+=-ny*speed*60;b.vy+=nx*speed*60;}
   });
   for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){const a=balls[i],b=balls[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,m=a.r+b.r;if(d<m){const o=(m-d)/2,nx=dx/d,ny=dy/d;a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o;}}
+  if(exit&&!exit.landed){
+    exit.vy+=.55;exit.x+=exit.vx;exit.y+=exit.vy;
+    if(exit.y>=TRAY_Y-exit.r){exit.y=TRAY_Y-exit.r;if(Math.abs(exit.vy)>2.5){exit.vy=-exit.vy*.35;}else{exit.landed=true;flyToCard();}}
+  }
   draw();
   if(spinning){
-    if(stopping){speed=Math.max(0,speed-.02);if(speed===0){spinning=false;stopping=false;if(!revealed)finish();}}
+    if(stopping){speed=Math.max(0,speed-.02);if(speed===0){spinning=false;stopping=false;if(!revealed)reveal();}}
     else speed=Math.min(.22,speed+.006);
   }
+  tickDisplay();
   requestAnimationFrame(step);
 }
 function draw(){
-  ctx.clearRect(0,0,W,W);
-  // stand
+  ctx.clearRect(0,0,W,cv.height);
+  // pie y bandeja
   ctx.fillStyle='#3a2a18';ctx.fillRect(CX-70,CY+R-10,140,30);ctx.fillStyle='#2a1c0f';ctx.fillRect(CX-110,CY+R+18,220,16);
-  // cage back
+  ctx.fillStyle='#2a1c0f';ctx.beginPath();ctx.roundRect(CX+40,TRAY_Y-6,160,22,6);ctx.fill();ctx.fillStyle='#4a3620';ctx.beginPath();ctx.roundRect(CX+46,TRAY_Y-2,148,10,4);ctx.fill();
+  // rampa desde la compuerta hasta la bandeja
+  const gx=CX+Math.cos(GATE)*R,gy=CY+Math.sin(GATE)*R;
+  ctx.strokeStyle='#f0bf3d';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(gx+22,gy+4);ctx.lineTo(gx+22,TRAY_Y-40);ctx.stroke();ctx.lineCap='butt';
+  // jaula trasera
   ctx.save();ctx.translate(CX,CY);ctx.rotate(ang);
   ctx.strokeStyle='rgba(243,230,200,.25)';ctx.lineWidth=2;
   for(let i=0;i<12;i++){ctx.beginPath();ctx.ellipse(0,0,R*Math.abs(Math.cos(i*Math.PI/12))+2,R,i*Math.PI/12,0,6.29);ctx.stroke();}
   ctx.restore();
-  // felt inside
   const grd=ctx.createRadialGradient(CX-40,CY-60,20,CX,CY,R);grd.addColorStop(0,'rgba(20,82,56,.9)');grd.addColorStop(1,'rgba(8,37,24,.95)');
   ctx.fillStyle=grd;ctx.beginPath();ctx.arc(CX,CY,R-4,0,6.29);ctx.fill();
-  balls.forEach(b=>{
-    ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,6.29);ctx.fillStyle=cols[b.c];ctx.fill();
-    ctx.beginPath();ctx.arc(b.x-5,b.y-6,b.r*.5,0,6.29);ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();
-    ctx.beginPath();ctx.arc(b.x,b.y,b.r*.55,0,6.29);ctx.fillStyle='rgba(255,255,255,.7)';ctx.fill();
-    ctx.fillStyle='#1a1208';ctx.font='900 13px Archivo, Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(b.n,b.x,b.y+1);
-  });
-  // cage front
+  balls.forEach(b=>drawBall(b.c,b.x,b.y,b.r,b.n));
+  // jaula delantera
   ctx.save();ctx.translate(CX,CY);ctx.rotate(ang);
   ctx.strokeStyle='rgba(243,230,200,.7)';ctx.lineWidth=3;
   for(let i=0;i<12;i++){ctx.beginPath();ctx.ellipse(0,0,R*Math.abs(Math.cos(i*Math.PI/12))+2,R,i*Math.PI/12,0,6.29);ctx.stroke();}
   ctx.restore();
   ctx.strokeStyle='#f0bf3d';ctx.lineWidth=8;ctx.beginPath();ctx.arc(CX,CY,R+2,0,6.29);ctx.stroke();
   ctx.strokeStyle='#d3283a';ctx.lineWidth=3;ctx.beginPath();ctx.arc(CX,CY,R+9,0,6.29);ctx.stroke();
-  // axle
+  // compuerta: cerrada = tapa amarilla; abierta = hueco oscuro con la tapa girada
+  ctx.save();ctx.translate(gx,gy);ctx.rotate(GATE);
+  if(exit){ctx.fillStyle='#082518';ctx.fillRect(-14,-24,28,48);ctx.rotate(1.1);ctx.fillStyle='#f0bf3d';ctx.fillRect(-4,-24,8,48);}
+  else{ctx.fillStyle='#f0bf3d';ctx.fillRect(-6,-24,12,48);ctx.fillStyle='#8a1420';ctx.beginPath();ctx.arc(0,0,3,0,6.29);ctx.fill();}
+  ctx.restore();
+  // eje
   ctx.fillStyle='#f0bf3d';ctx.beginPath();ctx.arc(CX,CY,10,0,6.29);ctx.fill();ctx.fillStyle='#8a1420';ctx.beginPath();ctx.arc(CX,CY,4,0,6.29);ctx.fill();
+  if(exit&&!exit.flown)drawBall(exit.c,exit.x,exit.y,exit.r,exit.n);
 }
+// ---- marcador
+const display=document.getElementById('display'),dnum=document.getElementById('dnum');
+let lastTick=0;
+function tickDisplay(){
+  if(!spinning||revealed||reduce)return;
+  const t=drumroll.currentTime;if(!(t>=TICK_FROM&&t<REVEAL_AT))return;
+  const interval=50+((t-TICK_FROM)/(REVEAL_AT-TICK_FROM))**2*300;// de 50 ms a 350 ms: se va frenando
+  const now=performance.now();if(now-lastTick<interval)return;lastTick=now;
+  const pool=visible();dnum.textContent=pool[Math.floor(Math.random()*pool.length)].n;
+}
+// ---- sorteo
 const btn=document.getElementById('spin'),res=document.getElementById('result'),drumroll=document.getElementById('drumroll');
 let pending=null;
-drumroll.addEventListener('timeupdate',()=>{if(spinning&&!revealed&&drumroll.currentTime>=REVEAL_AT){finish();stopping=true;}});
+drumroll.addEventListener('timeupdate',()=>{if(spinning&&!revealed&&drumroll.currentTime>=REVEAL_AT){reveal();stopping=true;}});
 drumroll.addEventListener('ended',()=>{stopping=true;});
 drumroll.addEventListener('error',()=>{stopping=true;});
 btn.onclick=()=>{
@@ -342,20 +376,43 @@ btn.onclick=()=>{
   for(const g of gs){x-=weightOf(g);if(x<0){cuisine=g;break;}}
   pending=pick(v.filter(r=>r.group===cuisine));
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('winner'));
-  res.classList.remove('show');
+  res.classList.remove('show','pre');res.innerHTML='';display.classList.remove('lock');dnum.textContent='--';exit=null;
   if(reduce){finish();return;}
   btn.disabled=true;spinning=true;stopping=false;revealed=false;
-  // el bombo gira mientras suena el audio; al acabar, frena y sale la bola
   drumroll.currentTime=0;
   drumroll.play().catch(()=>{setTimeout(()=>{stopping=true;},3000);});
 };
-function finish(){
-  const r=pending;if(!r)return;revealed=true;btn.disabled=false;
-  res.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
+function panelHtml(r){
+  return `<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
     <h2>¡${r.name}!</h2>
     <p>${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br>
     </p><div class="actions"><a class="btn" href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></div></div>`;
-  res.classList.add('show');
+}
+// segundo 9: el marcador se clava, el bombo frena y la bola del ganador sale por la compuerta
+function reveal(){
+  const r=pending;if(!r)return;revealed=true;
+  dnum.textContent=r.n;display.classList.add('lock');
+  res.innerHTML=panelHtml(r);res.classList.add('show','pre');
+  const gx=CX+Math.cos(GATE)*R,gy=CY+Math.sin(GATE)*R;
+  exit={x:gx-6,y:gy+6,vx:1.6,vy:1,r:22,c:gcolor[r.group],n:r.n,landed:false,flown:false};
+}
+// la bola aterriza en la bandeja: pasa a ser un elemento de la página y vuela hasta el hueco de la tarjeta
+function flyToCard(){
+  const r=pending;const target=res.querySelector('.ball').getBoundingClientRect();
+  const cr=cv.getBoundingClientRect(),k=cr.width/W;
+  const fb=document.createElement('span');fb.className=`ball flyball ${gcolor[r.group]}`;fb.innerHTML=`<span>${r.n}</span>`;
+  const size=exit.r*2*k;fb.style.width=fb.style.height=size+'px';fb.style.fontSize=size*.42+'px';
+  fb.style.left=(cr.left+(exit.x-exit.r)*k)+'px';fb.style.top=(cr.top+(exit.y-exit.r)*k)+'px';
+  document.body.appendChild(fb);exit.flown=true;
+  const dx=target.left+target.width/2-(cr.left+exit.x*k),dy=target.top+target.height/2-(cr.top+exit.y*k),sc=target.width/size;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{fb.style.transform=`translate(${dx}px,${dy}px) scale(${sc})`;}));
+  const done=()=>{res.classList.remove('pre');finish();setTimeout(()=>fb.remove(),1000);};
+  fb.addEventListener('transitionend',done,{once:true});setTimeout(()=>{if(fb.isConnected)done();},1200);
+}
+function finish(){
+  const r=pending;if(!r)return;revealed=true;btn.disabled=false;
+  if(!res.innerHTML)res.innerHTML=panelHtml(r);
+  res.classList.remove('pre');res.classList.add('show');
   const card=document.querySelector(`.card[data-n="${r.n}"]`);if(card)card.classList.add('winner');
   if(!reduce)confetti();
 }
