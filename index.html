@@ -75,6 +75,13 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 .roll a{color:var(--chalk-dim)}
 .roll .back{color:var(--yellow)}
 .empty{color:var(--chalk-dim);font-style:italic}
+.chip .w{margin-left:.35rem;color:var(--red);font-variation-settings:"wght" 800}
+.chip[aria-pressed="true"] .w{color:#8a1420}
+.rules{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.9rem}
+.rules li{background:var(--paper);color:var(--paper-ink);border-radius:.4rem;padding:1rem 1.1rem;box-shadow:0 .25rem 0 rgba(0,0,0,.3)}
+.rules h3{font-family:var(--font-display);font-weight:400;font-size:1.15rem;margin:0 0 .4rem;color:var(--red)}
+.rules p{margin:0;font-size:.9rem}
+.rules b{font-variation-settings:"wght" 700}
 .chip.reset{border-style:dashed;color:var(--yellow);border-color:var(--yellow)}
 .card h3{margin:0;padding-right:3.5rem;font-size:1.05rem;font-variation-settings:"wdth" 95,"wght" 800;line-height:1.2}
 .card h3 a{color:inherit;text-decoration:none}
@@ -102,7 +109,7 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
   <div>
     <p class="eyebrow">Juan Fermín Gilisagasti · Zuatzu · 20018</p>
     <h1>Jueves de Gloria</h1>
-    <p class="lede">Los <b id="tot"></b> restaurantes de Glovo que sí llegan a la oficina, comprobados bola a bola contra nuestras coordenadas. Filtra la cocina, dale al bombo y a comer lo que salga. El bombo elige primero una cocina, con la misma probabilidad para todas, y luego un sitio dentro de ella.</p>
+    <p class="lede">Los <b id="tot"></b> restaurantes de Glovo que sí llegan a la oficina, comprobados bola a bola contra nuestras coordenadas. Filtra la cocina, dale al bombo y a comer lo que salga. El bombo elige primero una cocina y luego un sitio dentro de ella; las reglas están más abajo.</p>
     <p class="updated" id="updated"></p>
   </div>
   <div class="drum">
@@ -121,8 +128,18 @@ canvas{width:17rem;height:17rem;max-width:100%;display:block;filter:drop-shadow(
 <ul class="grid" id="grid"></ul>
 
 <section class="section">
+  <h2>Reglas del bombo</h2>
+  <ul class="rules">
+    <li><h3>Dos fases</h3><p>Primero sale una <b>cocina</b>, después un <b>sitio</b> al azar dentro de ella. Da igual que una cocina tenga 25 sitios y otra 3: sin penalizaciones, todas pesan lo mismo.</p></li>
+    <li><h3>Cuarentena de sitio</h3><p>Un sitio que sale elegido no vuelve a entrar hasta que hayan pasado <b>6 sorteos</b> más. Se cuenta por sorteos registrados, no por fechas.</p></li>
+    <li><h3>Cocina penalizada</h3><p>La cocina del ganador pesa <b>la mitad</b> durante los 2 meses siguientes, <b>tres cuartos</b> hasta el cuarto mes, y a partir de ahí vuelve a pesar entera. Se mide por la fecha del último sorteo que ganó esa cocina.</p></li>
+    <li><h3>Libro de actas</h3><p>Cada sorteo es un issue del repo, lo saque el bombo de la web o el físico. Quien lo registra queda a la vista. Cerrar el issue anula el sorteo.</p></li>
+  </ul>
+</section>
+
+<section class="section">
   <h2>Palmarés</h2>
-  <p class="sub">Un sitio que sale elegido queda en cuarentena los 6 sorteos siguientes. Cada ganador es un issue del repo: quien lo registra queda a la vista, y para anular un sorteo basta con cerrar el issue.</p>
+  <p class="sub">Los últimos 6 marcan la cuarentena de sitio; la fecha de cada uno, la penalización de su cocina.</p>
   <ul class="roll" id="roll"><li class="empty">Cargando el libro de actas…</li></ul>
 </section>
 
@@ -147,6 +164,12 @@ const exoticBox=document.getElementById('exotic');exoticBox.checked=store.get('e
 const REPO='sanhuaaan/gloryThursday',COOLDOWN=6;
 let winners=[];// [{slug,name,date,user,avatar,url}] más reciente primero
 const quarantine={};// slug -> sorteos que faltan para volver
+const lastWin={};// group -> fecha (AAAA-MM-DD) del último sorteo que ganó esa cocina
+// ponytail: tabla [meses, peso]; el primer tramo cuyo límite supere la antigüedad manda. Cambiar aquí si se ajusta la regla
+const PENALTY=[[2,0.5],[4,0.75]];
+const monthsSince=d=>(Date.now()-new Date(d+'T12:00:00'))/(30.44*86400000);
+function weightOf(group){const d=lastWin[group];if(!d)return 1;const m=monthsSince(d);const t=PENALTY.find(([lim])=>m<lim);return t?t[1]:1;}
+const frac=w=>w===0.5?'½':w===0.75?'¾':w===0.25?'¼':String(w);
 function issueUrl(r,date){
   const d=date||new Date().toISOString().slice(0,10);
   const body=`tienda: ${r.slug}\nfecha: ${d}\n\n${r.name} · ${r.tags.join(' · ')}\nhttps://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}`;
@@ -163,6 +186,8 @@ function loadWinners(){
     }).sort((a,b)=>b.date.localeCompare(a.date));
     Object.keys(quarantine).forEach(k=>delete quarantine[k]);
     winners.forEach((w,i)=>{if(i<COOLDOWN&&quarantine[w.slug]==null)quarantine[w.slug]=COOLDOWN-i;});
+    Object.keys(lastWin).forEach(k=>delete lastWin[k]);
+    winners.forEach(w=>{const row=rows.find(r=>r.slug===w.slug);if(row&&(!lastWin[row.group]||w.date>lastWin[row.group]))lastWin[row.group]=w.date;});
     renderRoll();render();
   }).catch(()=>{document.getElementById('roll').innerHTML='<li class="empty">No se pudo leer el palmarés de GitHub.</li>';});
 }
@@ -211,7 +236,11 @@ function renderChips(){
   groupsOrder.filter(g=>counts[g]).forEach(g=>{
     const b=document.createElement('button');b.className='chip';b.type='button';b.setAttribute('aria-pressed',String(!offGroups.has(g)));
     b.title=offGroups.has(g)?'Meter en el bombo':'Sacar del bombo';
-    b.innerHTML=`${g}<small>${counts[g]}</small>`;b.onclick=()=>{offGroups.has(g)?offGroups.delete(g):offGroups.add(g);persist();render();};
+    const w=weightOf(g),pool=visible(),tot=[...new Set(pool.map(r=>r.group))].reduce((a,x)=>a+weightOf(x),0);
+    const pct=offGroups.has(g)||!pool.some(r=>r.group===g)?0:Math.round(100*w/tot);
+    b.innerHTML=`${g}<small>${counts[g]}</small>${w<1?`<span class="w">×${frac(w)}</span>`:''}`;
+    b.title=(offGroups.has(g)?'Fuera del bombo. ':`${pct} % de salir. `)+(w<1?`Cocina penalizada desde el ${fmtDate(lastWin[g])}: pesa ${frac(w)}.`:'');
+    b.onclick=()=>{offGroups.has(g)?offGroups.delete(g):offGroups.add(g);persist();render();};
     controls.insertBefore(b,anchor);
   });
   if(offGroups.size||offSlugs.size){const b=document.createElement('button');b.className='chip reset';b.type='button';b.textContent='Todos dentro';b.onclick=()=>{offGroups.clear();offSlugs.clear();persist();render();};controls.insertBefore(b,anchor);}
@@ -220,8 +249,8 @@ function render(){
   renderChips();
   const all=shown(),v=all.filter(inDrum);
   const q=all.filter(r=>quarantine[r.slug]!=null).length,off=all.length-v.length-q;
-  const nc=new Set(v.map(r=>r.group)).size;
-  document.getElementById('count').textContent=`${v.length} bolas en el bombo · ${nc} cocina${nc!==1?'s':''} al ${nc?Math.round(100/nc):0} % cada una`+(off?` · ${off} fuera`:'')+(q?` · ${q} en cuarentena`:'');
+  const groupsIn=[...new Set(v.map(r=>r.group))],nc=groupsIn.length,pen=groupsIn.filter(x=>weightOf(x)<1).length;
+  document.getElementById('count').textContent=`${v.length} bolas en el bombo · ${nc} cocina${nc!==1?'s':''}`+(pen?` (${pen} penalizada${pen>1?'s':''})`:` al ${nc?Math.round(100/nc):0} % cada una`)+(off?` · ${off} fuera`:'')+(q?` · ${q} en cuarentena`:'');
   const g=document.getElementById('grid');g.innerHTML='';
   all.forEach(r=>{
     const q=quarantine[r.slug],out=q==null&&!inDrum(r);
@@ -300,7 +329,8 @@ btn.onclick=()=>{
   const v=visible();if(!v.length)return;
   // dos fases: cocina al azar (mismo peso para todas) y luego sitio al azar dentro de ella
   const pick=a=>a[Math.floor(Math.random()*a.length)];
-  const cuisine=pick([...new Set(v.map(r=>r.group))]);
+  const gs=[...new Set(v.map(r=>r.group))];let x=Math.random()*gs.reduce((a,g)=>a+weightOf(g),0),cuisine=gs[gs.length-1];
+  for(const g of gs){x-=weightOf(g);if(x<0){cuisine=g;break;}}
   pending=pick(v.filter(r=>r.group===cuisine));
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('winner'));
   res.classList.remove('show');
