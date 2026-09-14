@@ -52,6 +52,21 @@ def fetch(slug):
 EXOTIC_GROUPS = {"Japonés / sushi / ramen", "Poke", "Tailandés / chino", "Indio", "Mexicano", "Latino / venezolano",
                  "Turco / árabe", "Alta cocina / grill", "Internacional"}
 GROUP_OVERRIDES = {"mumbai-curry-san-sebastian": "Indio"}  # Glovo lo etiqueta como árabe
+FRANCHISES = {  # grandes cadenas: reparten, pero no entran en el bombo
+    "mcdonaldseas",  # McDonald's®,
+    "burger-king-eas1",  # Burger King,
+    "tgb-the-good-burger-10",  # TGB - The Good Burger,
+    "goiko-san-sebastian",  # Goiko,
+    "vips-san-sebastian",  # VIPS,
+    "vips-desayunos-san-sebastian",  # VIPS Desayunos,
+    "telepizza-san-sebastian",  # Telepizza,
+    "dominos-pizza-san-sebastian",  # Domino's Pizza,
+    "papa-johns-donostia-san-sebastian",  # Papa Johns,
+    "ginos-san-sebastian",  # Ginos,
+    "la-tagliatella-eas",  # La Tagliatella,
+    "starbucks-san-sebastian",  # Starbucks,
+    "manolo-bakes-donostia-san-sebastian",  # Manolo Bakes
+}
 
 
 def group_of(slug, filters):
@@ -65,11 +80,14 @@ def group_of(slug, filters):
 OUT_FILE = ROOT / "data/stores.json"
 previous = json.loads(OUT_FILE.read_text()) if OUT_FILE.exists() else {"rows": [], "excluded": []}
 prev_rows = {r["slug"]: r for r in previous["rows"]}
-ok, excluded, unknown = [], [], []
+ok, excluded, unknown, franchises = [], [], [], []
 for slug in (ROOT / "data/slugs.txt").read_text().split():
     result, d = fetch(slug)
     if result == "out":
         excluded.append(slug)
+        continue
+    if slug in FRANCHISES:
+        franchises.append(d["name"])
         continue
     if result == "error":
         unknown.append(slug)
@@ -95,9 +113,9 @@ if len(unknown) > 20:
 ok.sort(key=lambda r: -int(r["rating"][:-1]) if r["rating"] else 1)
 for i, r in enumerate(ok, 1):
     r["n"] = i
-out = {"sweptAt": int(time.time() * 1000), "rows": ok, "excluded": excluded}
+out = {"sweptAt": int(time.time() * 1000), "rows": ok, "excluded": excluded, "franchises": sorted(franchises)}
 (ROOT / "data/stores.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
 html = (ROOT / "index.html").read_text()
 a, b = html.index("/*DATA-START*/"), html.index("/*DATA-END*/")
 (ROOT / "index.html").write_text(html[:a] + "/*DATA-START*/const DATA=" + json.dumps(out, ensure_ascii=False) + ";" + html[b:])
-print(f"{len(ok)} llegan, {len(excluded)} no")
+print(f"{len(ok)} llegan, {len(excluded)} no, {len(franchises)} franquicias fuera")
