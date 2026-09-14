@@ -62,14 +62,25 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 .ball.red{--c:var(--red)} .ball.yellow{--c:var(--yellow)} .ball.blue{--c:var(--blue)} .ball.green{--c:var(--green-ball)} .ball.white{--c:var(--white)}
 .controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:1.5rem;padding:1rem;border:.125rem dashed var(--felt-line);border-radius:.5rem}
 .controls .lbl{font-variation-settings:"wdth" 110,"wght" 700;text-transform:uppercase;letter-spacing:.15em;font-size:.7rem;color:var(--chalk-dim);margin-right:.5rem}
-.chip{font:inherit;font-size:.85rem;padding:.35rem .8rem;border-radius:999rem;border:.125rem solid var(--felt-line);background:transparent;color:var(--chalk);cursor:pointer;font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:stretch;font-size:.85rem;border-radius:999rem;border:.125rem solid var(--felt-line);color:var(--chalk);font-variant-numeric:tabular-nums;overflow:hidden}
+.chip button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer;padding:.35rem .7rem}
+.chip .cnt{border-left:.125rem solid var(--felt-line);padding:.35rem .6rem;opacity:.75}
+.chip .cnt:hover{background:rgba(255,255,255,.12);opacity:1}
+.chip .tg:hover{background:rgba(255,255,255,.08)}
+.chip button:focus-visible{outline:.2rem solid var(--yellow);outline-offset:-.2rem}
 .chip[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:#1a1208;font-variation-settings:"wght" 700}
-.chip:focus-visible{outline:.2rem solid var(--yellow);outline-offset:.15rem}
-.chip small{opacity:.7;margin-left:.3rem}
+.chip[aria-pressed="true"] .cnt{border-color:rgba(0,0,0,.2)}
 .toggle{margin-left:auto;display:flex;align-items:center;gap:.5rem;font-size:.9rem;cursor:pointer}
 .toggle input{accent-color:var(--red);width:1.1rem;height:1.1rem}
 .count{color:var(--chalk-dim);font-size:.9rem;margin:0 0 1rem;font-variant-numeric:tabular-nums}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:.9rem;list-style:none;margin:0;padding:0}
+.ghead{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem;margin-top:1.2rem;padding-bottom:.35rem;border-bottom:.125rem dashed var(--felt-line);scroll-margin-top:1rem}
+.ghead:first-child{margin-top:0}
+.ghead h3{font-family:var(--font-display);font-weight:400;font-size:1.35rem;margin:0;color:var(--paper)}
+.ghead .meta{color:var(--chalk-dim);font-size:.85rem;font-variant-numeric:tabular-nums}
+.ghead .meta .w{color:var(--yellow);font-variation-settings:"wght" 700}
+.ghead .chip{margin-left:auto;font-size:.75rem}
+.ghead.off h3{color:var(--chalk-dim);text-decoration:line-through;text-decoration-color:var(--red)}
 .card{display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:start;background:var(--paper);color:var(--paper-ink);border-radius:.4rem;padding:.9rem 1rem 1.9rem;box-shadow:0 .25rem 0 rgba(0,0,0,.3);position:relative;transition:transform .15s}
 .card:hover{transform:translateY(-.15rem)}
 .card.winner{outline:.3rem solid var(--yellow);outline-offset:.15rem}
@@ -257,13 +268,12 @@ function renderChips(){
   const counts={};shown().forEach(r=>counts[r.group]=(counts[r.group]||0)+1);
   const anchor=controls.querySelector('.toggle');
   groupsOrder.filter(g=>counts[g]).forEach(g=>{
-    const b=document.createElement('button');b.className='chip';b.type='button';b.setAttribute('aria-pressed',String(!offGroups.has(g)));
-    b.title=offGroups.has(g)?'Meter en el bombo':'Sacar del bombo';
+    const b=document.createElement('span');b.className='chip';b.setAttribute('aria-pressed',String(!offGroups.has(g)));
     const w=weightOf(g),pool=visible(),tot=[...new Set(pool.map(r=>r.group))].reduce((a,x)=>a+weightOf(x),0);
     const pct=offGroups.has(g)||!pool.some(r=>r.group===g)?0:Math.round(100*w/tot);
-    b.innerHTML=`${g}<small>${counts[g]}</small>${w<1?`<span class="w">×${frac(w)}</span>`:''}`;
-    b.title=(offGroups.has(g)?'Fuera del bombo. ':`${pct} % de salir. `)+(w<1?`Cocina penalizada desde el ${fmtDate(lastWin[g])}: pesa ${frac(w)}.`:'');
-    b.onclick=()=>{offGroups.has(g)?offGroups.delete(g):offGroups.add(g);persist();render();};
+    b.innerHTML=`<button type="button" class="tg" title="${offGroups.has(g)?'Meter la cocina en el bombo':`${pct} % de salir. Pulsa para sacarla del bombo`}${w<1?`. Penalizada desde el ${fmtDate(lastWin[g])}: pesa ${frac(w)}`:''}">${g}${w<1?`<span class="w">×${frac(w)}</span>`:''}</button><button type="button" class="cnt" title="Ver los ${counts[g]} sitios de ${g}">${counts[g]}</button>`;
+    b.querySelector('.tg').onclick=()=>{offGroups.has(g)?offGroups.delete(g):offGroups.add(g);persist();render();};
+    b.querySelector('.cnt').onclick=()=>{const h=document.getElementById('g-'+groupsOrder.indexOf(g));if(h)h.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});};
     controls.insertBefore(b,anchor);
   });
   if(offGroups.size||offSlugs.size){const b=document.createElement('button');b.className='chip reset';b.type='button';b.textContent='Todos dentro';b.onclick=()=>{offGroups.clear();offSlugs.clear();persist();render();};controls.insertBefore(b,anchor);}
@@ -275,7 +285,14 @@ function render(){
   const groupsIn=[...new Set(v.map(r=>r.group))],nc=groupsIn.length,pen=groupsIn.filter(x=>weightOf(x)<1).length;
   document.getElementById('count').textContent=`${v.length} bolas en el bombo · ${nc} cocina${nc!==1?'s':''}`+(pen?` (${pen} penalizada${pen>1?'s':''})`:` al ${nc?Math.round(100/nc):0} % cada una`)+(off?` · ${off} fuera`:'')+(q?` · ${q} en cuarentena`:'');
   const g=document.getElementById('grid');g.innerHTML='';
-  all.forEach(r=>{
+  groupsOrder.forEach(gr=>{
+    const items=all.filter(r=>r.group===gr);if(!items.length)return;
+    const inside=items.filter(inDrum).length,w=weightOf(gr),offG=offGroups.has(gr);
+    const h=document.createElement('li');h.className='ghead'+(offG?' off':'');h.id='g-'+groupsOrder.indexOf(gr);
+    h.innerHTML=`<h3>${gr}</h3><span class="meta">${inside} de ${items.length} en el bombo${w<1?` · <span class="w">pesa ×${frac(w)}</span>`:''}</span><span class="chip" aria-pressed="${!offG}"><button type="button" class="tg">${offG?'Meter la cocina':'Sacar la cocina'}</button></span>`;
+    h.querySelector('.tg').onclick=()=>{offG?offGroups.delete(gr):offGroups.add(gr);persist();render();};
+    g.appendChild(h);
+    items.forEach(r=>{
     const q=quarantine[r.slug],out=q==null&&!inDrum(r);
     const li=document.createElement('li');li.className='card'+(out?' dim':'')+(q!=null?' quarantine':'');li.dataset.n=r.n;
     li.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
@@ -287,6 +304,7 @@ function render(){
     <a class="reg" href="${issueUrl(r)}" target="_blank" rel="noopener" title="Registrar como ganador sin sorteo en la web (bombo físico)">Salió elegido</a>`;
     const ob=li.querySelector('.out');if(ob)ob.onclick=()=>{if(offGroups.has(r.group)){offGroups.delete(r.group);shown().filter(x=>x.group===r.group&&x.slug!==r.slug).forEach(x=>offSlugs.add(x.slug));}else{offSlugs.has(r.slug)?offSlugs.delete(r.slug):offSlugs.add(r.slug);}persist();render();};
     g.appendChild(li);
+    });
   });
 }
 exoticBox.onchange=()=>{persist();render();};
