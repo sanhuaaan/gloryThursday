@@ -95,6 +95,16 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 .result .actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:.6rem;align-items:center}
 .btn{display:inline-block;font:inherit;font-size:.85rem;font-variation-settings:"wght" 700;padding:.4rem .9rem;border-radius:.3rem;background:var(--red);color:var(--paper)!important;text-decoration:none;border:0;cursor:pointer}
 .btn:hover{background:#e63347}
+.btn.alt{background:transparent;color:var(--paper-ink)!important;border:.125rem solid var(--paper-dim)}
+.btn.alt:hover{border-color:var(--red);color:var(--red)!important}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.subs{grid-column:1/-1;display:grid;gap:.5rem;margin-top:.9rem;padding-top:.9rem;border-top:.125rem dashed var(--paper-dim)}
+.subs .lbl{font-variation-settings:"wdth" 110,"wght" 700;text-transform:uppercase;letter-spacing:.15em;font-size:.7rem;color:var(--paper-dim)}
+.sub{display:grid;grid-template-columns:auto 1fr;gap:.8rem;align-items:center;animation:reveal .6s ease-out both}
+.sub .ball{width:3rem;height:3rem;font-size:1.1rem}
+.sub p{margin:0;font-size:.9rem}
+.sub b{font-variation-settings:"wght" 800}
+.sub a{color:var(--red);font-variation-settings:"wght" 700;margin-left:.4rem}
 .roll{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));gap:.6rem}
 .roll li{display:grid;grid-template-columns:auto 1fr;gap:.7rem;align-items:center;background:rgba(0,0,0,.25);border-radius:.4rem;padding:.6rem .8rem;font-size:.9rem}
 .roll img{width:2.2rem;height:2.2rem;border-radius:50%;border:.15rem solid var(--yellow)}
@@ -416,7 +426,7 @@ btn.onclick=()=>{
   const pick=a=>a[Math.floor(Math.random()*a.length)];
   const gs=[...new Set(v.map(r=>r.group))];let x=Math.random()*gs.reduce((a,g)=>a+weightOf(g),0),cuisine=gs[gs.length-1];
   for(const g of gs){x-=weightOf(g);if(x<0){cuisine=g;break;}}
-  pending=pick(v.filter(r=>r.group===cuisine));
+  pending=pick(v.filter(r=>r.group===cuisine));subs=[];
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('winner'));
   res.classList.remove('show','pre');res.innerHTML='';display.classList.remove('lock');dnum.textContent='--';exit=null;lights='off';
   if(reduce){finish();return;}
@@ -428,8 +438,27 @@ function panelHtml(r){
   return `<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
     <h2>¡${r.name}!</h2>
     <p>${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br>
-    </p><div class="actions"><a class="btn" href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></div></div>`;
+    </p><div class="actions"><a class="btn" href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a><button type="button" class="btn alt" id="subBtn" title="Por si el ganador falla: otro sitio de la misma cocina">Sortear suplente</button></div></div>`;
 }
+// suplentes: otro sitio de la misma cocina, por si el ganador falla; cada uno excluye a los anteriores
+let subs=[];
+function subCandidates(){return visible().filter(r=>r.group===pending.group&&r.slug!==pending.slug&&!subs.includes(r.slug));}
+function drawSub(){
+  const c=subCandidates();const b=document.getElementById('subBtn');if(!c.length||!b||b.disabled)return;
+  const r=c[Math.floor(Math.random()*c.length)];subs.push(r.slug);
+  const show=()=>{
+    dnum.textContent=r.n;display.classList.remove('lock');void display.offsetWidth;display.classList.add('lock');
+    let box=res.querySelector('.subs');if(!box){box=document.createElement('div');box.className='subs';box.innerHTML='<span class="lbl">Suplentes, por orden</span>';res.appendChild(box);}
+    const el=document.createElement('div');el.className='sub';
+    el.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><p><b>${r.name}</b> · ${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br><a href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar como ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></p>`;
+    box.appendChild(el);
+    b.disabled=false;if(!subCandidates().length){b.disabled=true;b.textContent='No quedan suplentes';}
+  };
+  if(reduce){show();return;}
+  b.disabled=true;const pool=[r,...c];let n=0;
+  const t=setInterval(()=>{dnum.textContent=pool[Math.floor(Math.random()*pool.length)].n;if(++n>=12){clearInterval(t);show();}},90);
+}
+res.addEventListener('click',e=>{if(e.target.id==='subBtn')drawSub();});
 // segundo 9: el marcador se clava, el bombo frena y la bola del ganador sale por la compuerta
 function reveal(){
   const r=pending;if(!r)return;revealed=true;
