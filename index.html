@@ -174,7 +174,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
   <ul class="rules">
     <li><h3>Dos fases</h3><p>Primero sale una <b>cocina</b>, después un <b>sitio</b> al azar dentro de ella. Da igual que una cocina tenga 25 sitios y otra 3: sin penalizaciones, todas pesan lo mismo.</p></li>
     <li><h3>Cuarentena de sitio</h3><p>Un sitio que sale elegido no vuelve a entrar hasta que hayan pasado <b>6 sorteos</b> más. Se cuenta por sorteos registrados, no por fechas.</p></li>
-    <li><h3>Cocina penalizada</h3><p>La cocina del ganador pesa <b>un cuarto</b> durante los 2 meses siguientes, <b>la mitad</b> hasta el cuarto mes, <b>tres cuartos</b> hasta el sexto, y a partir de ahí vuelve a pesar entera. Se mide por la fecha del último sorteo que ganó esa cocina.</p></li>
+    <li><h3>Cocina penalizada</h3><p>La cocina del ganador pesa <b>un cuarto</b> en los 2 sorteos siguientes, <b>la mitad</b> en los 2 siguientes, <b>tres cuartos</b> en otros 2, y desde el séptimo vuelve a pesar entera. Cuenta el último sorteo que ganó esa cocina.</p></li>
     <li><h3>Libro de actas</h3><p>Cada sorteo es un issue del repo, lo saque el bombo de la web o el físico. Quien lo registra queda a la vista. Cerrar el issue anula el sorteo.</p></li>
   </ul>
 </section>
@@ -209,10 +209,11 @@ const REPO='sanhuaaan/gloryThursday',COOLDOWN=6;
 let winners=[];// [{slug,name,date,user,avatar,url}] más reciente primero
 const quarantine={};// slug -> sorteos que faltan para volver
 const lastWin={};// group -> fecha (AAAA-MM-DD) del último sorteo que ganó esa cocina
+const lastIdx={};// group -> cuántos sorteos registrados han pasado desde que ganó (0 = el último)
 // ponytail: tabla [meses, peso]; el primer tramo cuyo límite supere la antigüedad manda. Cambiar aquí si se ajusta la regla
 const PENALTY=[[2,0.25],[4,0.5],[6,0.75]];
-const monthsSince=d=>(Date.now()-new Date(d+'T12:00:00'))/(30.44*86400000);
-function weightOf(group){const d=lastWin[group];if(!d)return 1;const m=monthsSince(d);const t=PENALTY.find(([lim])=>m<lim);return t?t[1]:1;}
+// tramos por sorteos: [límite, peso]; con índice 0 y 1 pesa ¼, con 2 y 3 ½, con 4 y 5 ¾, desde 6 entera
+function weightOf(group){const i=lastIdx[group];if(i==null)return 1;const t=PENALTY.find(([lim])=>i<lim);return t?t[1]:1;}
 const frac=w=>w===0.5?'½':w===0.75?'¾':w===0.25?'¼':String(w);
 function issueUrl(r,date){
   const d=date||new Date().toISOString().slice(0,10);
@@ -230,8 +231,8 @@ function loadWinners(){
     }).sort((a,b)=>b.date.localeCompare(a.date));
     Object.keys(quarantine).forEach(k=>delete quarantine[k]);
     winners.forEach((w,i)=>{if(i<COOLDOWN&&quarantine[w.slug]==null)quarantine[w.slug]=COOLDOWN-i;});
-    Object.keys(lastWin).forEach(k=>delete lastWin[k]);
-    winners.forEach(w=>{const row=rows.find(r=>r.slug===w.slug);if(row&&(!lastWin[row.group]||w.date>lastWin[row.group]))lastWin[row.group]=w.date;});
+    [lastWin,lastIdx].forEach(o=>Object.keys(o).forEach(k=>delete o[k]));
+    winners.forEach((w,i)=>{const row=rows.find(r=>r.slug===w.slug);if(row&&lastIdx[row.group]==null){lastIdx[row.group]=i;lastWin[row.group]=w.date;}});
     renderRoll();render();
   }).catch(()=>{document.getElementById('roll').innerHTML='<li class="empty">No se pudo leer el palmarés de GitHub.</li>';});
 }
@@ -281,7 +282,7 @@ function renderChips(){
     const b=document.createElement('span');b.className='chip';b.setAttribute('aria-pressed',String(!offGroups.has(g)));
     const w=weightOf(g),pool=visible(),tot=[...new Set(pool.map(r=>r.group))].reduce((a,x)=>a+weightOf(x),0);
     const pct=offGroups.has(g)||!pool.some(r=>r.group===g)?0:Math.round(100*w/tot);
-    b.innerHTML=`<button type="button" class="tg" title="${offGroups.has(g)?'Meter la cocina en el bombo':`${pct} % de salir. Pulsa para sacarla del bombo`}${w<1?`. Penalizada desde el ${fmtDate(lastWin[g])}: pesa ${frac(w)}`:''}">${g}${w<1?`<span class="w">×${frac(w)}</span>`:''}</button><button type="button" class="cnt" title="Ver los ${counts[g]} sitios de ${g}">${counts[g]}</button>`;
+    b.innerHTML=`<button type="button" class="tg" title="${offGroups.has(g)?'Meter la cocina en el bombo':`${pct} % de salir. Pulsa para sacarla del bombo`}${w<1?`. Ganó el ${fmtDate(lastWin[g])}: pesa ${frac(w)} este sorteo`:''}">${g}${w<1?`<span class="w">×${frac(w)}</span>`:''}</button><button type="button" class="cnt" title="Ver los ${counts[g]} sitios de ${g}">${counts[g]}</button>`;
     b.querySelector('.tg').onclick=()=>{offGroups.has(g)?offGroups.delete(g):offGroups.add(g);persist();render();};
     b.querySelector('.cnt').onclick=()=>{const h=document.getElementById('g-'+groupsOrder.indexOf(g));if(h)h.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});};
     controls.insertBefore(b,anchor);

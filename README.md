@@ -21,7 +21,7 @@ La página lee `data/stores.json` al abrirse y proyecta el estado de cada tienda
 
 - Dos fases: primero una cocina, luego un sitio al azar dentro de ella.
 - Cuarentena de sitio: los ganadores de los últimos 6 sorteos no entran.
-- Cocina penalizada: pesa ¼ durante los 2 meses siguientes a su último sorteo ganado, ½ hasta el cuarto mes, ¾ hasta el sexto, y entera después (tabla `PENALTY` en `index.html`).
+- Cocina penalizada: pesa ¼ en los 2 sorteos siguientes a su último sorteo ganado, ½ en los 2 siguientes, ¾ en otros 2, y entera desde el séptimo (tabla `PENALTY` en `index.html`).
 
 ## Ganadores y cuarentena
 

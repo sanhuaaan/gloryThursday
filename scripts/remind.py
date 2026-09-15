@@ -50,13 +50,12 @@ if winners:
     quarantine = [name(s) for _, s in winners[:COOLDOWN]]
     lines.append("En cuarentena: " + ", ".join(quarantine) + ".")
     last_by_group = {}
-    for d, s in winners:
+    for i, (_, s) in enumerate(winners):
         if s in rows:
-            last_by_group.setdefault(rows[s]["group"], d)
+            last_by_group.setdefault(rows[s]["group"], i)  # sorteos registrados desde que ganó
     penalised = []
-    for g, d in last_by_group.items():
-        months = (today - date.fromisoformat(d)).days / 30.44
-        w = next((w for lim, w in PENALTY if months < lim), None)
+    for g, i in last_by_group.items():
+        w = next((w for lim, w in PENALTY if i < lim), None)
         if w:
             penalised.append(f"{g} ×{w}")
     if penalised:
