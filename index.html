@@ -174,7 +174,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
   <ul class="rules">
     <li><h3>Dos fases</h3><p>Primero sale una <b>cocina</b>, después un <b>sitio</b> al azar dentro de ella. Da igual que una cocina tenga 25 sitios y otra 3: sin penalizaciones, todas pesan lo mismo.</p></li>
     <li><h3>Cuarentena de sitio</h3><p>Un sitio que sale elegido no vuelve a entrar hasta que hayan pasado <b>6 sorteos</b> más. Se cuenta por sorteos registrados, no por fechas.</p></li>
-    <li><h3>Cocina penalizada</h3><p>La cocina del ganador pesa <b>la mitad</b> durante los 2 meses siguientes, <b>tres cuartos</b> hasta el cuarto mes, y a partir de ahí vuelve a pesar entera. Se mide por la fecha del último sorteo que ganó esa cocina.</p></li>
+    <li><h3>Cocina penalizada</h3><p>La cocina del ganador pesa <b>un cuarto</b> durante los 2 meses siguientes, <b>la mitad</b> hasta el cuarto mes, <b>tres cuartos</b> hasta el sexto, y a partir de ahí vuelve a pesar entera. Se mide por la fecha del último sorteo que ganó esa cocina.</p></li>
     <li><h3>Libro de actas</h3><p>Cada sorteo es un issue del repo, lo saque el bombo de la web o el físico. Quien lo registra queda a la vista. Cerrar el issue anula el sorteo.</p></li>
   </ul>
 </section>
@@ -210,7 +210,7 @@ let winners=[];// [{slug,name,date,user,avatar,url}] más reciente primero
 const quarantine={};// slug -> sorteos que faltan para volver
 const lastWin={};// group -> fecha (AAAA-MM-DD) del último sorteo que ganó esa cocina
 // ponytail: tabla [meses, peso]; el primer tramo cuyo límite supere la antigüedad manda. Cambiar aquí si se ajusta la regla
-const PENALTY=[[2,0.5],[4,0.75]];
+const PENALTY=[[2,0.25],[4,0.5],[6,0.75]];
 const monthsSince=d=>(Date.now()-new Date(d+'T12:00:00'))/(30.44*86400000);
 function weightOf(group){const d=lastWin[group];if(!d)return 1;const m=monthsSince(d);const t=PENALTY.find(([lim])=>m<lim);return t?t[1]:1;}
 const frac=w=>w===0.5?'½':w===0.75?'¾':w===0.25?'¼':String(w);

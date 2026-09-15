@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REPO = "sanhuaaan/gloryThursday"
 PAGE = "https://sanhuaaan.github.io/gloryThursday/"
-COOLDOWN, PENALTY = 6, [(2, "½"), (4, "¾")]  # mismas reglas que index.html
+COOLDOWN, PENALTY = 6, [(2, "¼"), (4, "½"), (6, "¾")]  # mismas reglas que index.html
 MONTHS = "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split()
 
 os.environ["TZ"] = "Europe/Madrid"
