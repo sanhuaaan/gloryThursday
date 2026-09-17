@@ -5,7 +5,7 @@ Uso: python3 scripts/sweep.py [lat] [lon]  (por defecto, la oficina de Zuatzu)
 Lee data/slugs.txt, escribe data/stores.json y lo inyecta en index.html (entre DATA-START y DATA-END).
 Las tiendas fuera de zona devuelven 404 "No available store address found".
 """
-import json, subprocess, sys, time, uuid
+import html, json, re, subprocess, sys, time, uuid
 from pathlib import Path
 
 LAT, LON = (sys.argv[1], sys.argv[2]) if len(sys.argv) > 2 else ("43.2970256", "-2.0050771")
@@ -79,6 +79,33 @@ def group_of(slug, filters):
     return next((name for name, tags in GROUPS if fs & tags), "Otros")
 
 
+CITY_URL = "https://glovoapp.com/es/es/donostia-san-sebastian"
+UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+
+
+def get_page(url):
+    return subprocess.run(["curl", "-sL", "-A", UA, "-H", "Accept-Language: es-ES", url], capture_output=True, text=True).stdout
+
+
+def fetch_promos():
+    """Etiqueta de promo de cada tienda ("2x1 en algunos productos"), sacada de las tarjetas de los listados por cocina.
+
+    Son páginas de glovoapp.com, no de la API; una página que falle simplemente no aporta etiquetas.
+    """
+    types = sorted(set(re.findall(r"categories/comida_1\?type=([a-z0-9-]+_\d+)", get_page(f"{CITY_URL}/restaurantes_1/"))))
+    promos = {}
+    for t in types:
+        page = get_page(f"{CITY_URL}/categories/comida_1?type={t}")
+        for m in re.finditer(r'href="/es/es/donostia-san-sebastian/stores/([a-z0-9-]+)"', page):
+            text = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "|", page[m.end():m.end() + 6000])))
+            first = next((p.strip() for p in text.split("|") if p.strip() and not p.strip().startswith(("<", ">"))), "")
+            if re.search(r"2x1|3x2|%|gratis|€", first, re.I) and not re.fullmatch(r"\d+%", first):
+                promos.setdefault(m.group(1), first)
+        time.sleep(0.3)
+    print(f"{len(types)} listados leídos, {len(promos)} tiendas con promo")
+    return promos
+
+
 OUT_FILE = ROOT / "data/stores.json"
 previous = json.loads(OUT_FILE.read_text()) if OUT_FILE.exists() else {"rows": [], "excluded": []}
 prev_rows = {r["slug"]: r for r in previous["rows"]}
@@ -112,6 +139,9 @@ if unknown:
     print(f"{len(unknown)} tiendas sin respuesta fiable, se conserva su dato anterior: {' '.join(unknown)}", file=sys.stderr)
 if len(unknown) > 20:
     sys.exit("Demasiados errores; no se escribe nada")
+promos = fetch_promos()
+for r in ok:
+    r["promo"] = promos.get(r["slug"])
 ok.sort(key=lambda r: -int(r["rating"][:-1]) if r["rating"] else 1)
 for i, r in enumerate(ok, 1):
     r["n"] = i
