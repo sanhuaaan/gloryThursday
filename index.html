@@ -177,6 +177,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
     <li><h3>Dos fases</h3><p>Primero sale una <b>cocina</b>, después un <b>sitio</b> al azar dentro de ella. Da igual que una cocina tenga 25 sitios y otra 3: sin penalizaciones, todas pesan lo mismo.</p></li>
     <li><h3>Cuarentena de sitio</h3><p>Un sitio que sale elegido no vuelve a entrar hasta que hayan pasado <b>6 sorteos</b> más. Se cuenta por sorteos registrados, no por fechas.</p></li>
     <li><h3>Cocina penalizada</h3><p>La cocina del ganador pesa <b>un cuarto</b> en los 2 sorteos siguientes, <b>la mitad</b> en los 2 siguientes, <b>tres cuartos</b> en otros 2, y desde el séptimo vuelve a pesar entera. Cuenta el último sorteo que ganó esa cocina.</p></li>
+    <li><h3>Sitios con promo</h3><p>Dentro de su cocina, un sitio con <b>2x1</b> en Glovo pesa <b>el doble</b> y uno con <b>descuento en porcentaje</b> pesa <b>una vez y media</b>. Se usan las promos del último barrido; no cambian la elección de cocina.</p></li>
     <li><h3>Libro de actas</h3><p>Cada sorteo es un issue del repo, lo saque el bombo de la web o el físico. Quien lo registra queda a la vista. Cerrar el issue anula el sorteo.</p></li>
   </ul>
 </section>
@@ -216,6 +217,9 @@ const lastIdx={};// group -> cuántos sorteos registrados han pasado desde que g
 const PENALTY=[[2,0.25],[4,0.5],[6,0.75]];
 // tramos por sorteos: [límite, peso]; con índice 0 y 1 pesa ¼, con 2 y 3 ½, con 4 y 5 ¾, desde 6 entera
 function weightOf(group){const i=lastIdx[group];if(i==null)return 1;const t=PENALTY.find(([lim])=>i<lim);return t?t[1]:1;}
+// promo de Glovo: el 2x1 lleva dos bolas, un descuento en porcentaje bola y media, el resto una
+const promoWeight=r=>!r.promo?1:/\b(2x1|3x2)\b/i.test(r.promo)?2:/%/.test(r.promo)?1.5:1;
+function weightedPick(list){let x=Math.random()*list.reduce((a,r)=>a+promoWeight(r),0);for(const r of list){x-=promoWeight(r);if(x<0)return r;}return list[list.length-1];}
 const frac=w=>w===0.5?'½':w===0.75?'¾':w===0.25?'¼':String(w);
 function issueUrl(r,date){
   const d=date||new Date().toISOString().slice(0,10);
@@ -310,7 +314,7 @@ function render(){
     const li=document.createElement('li');li.className='card'+(out?' dim':'')+(q!=null?' quarantine':'');li.dataset.n=r.n;
     li.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
       <h3><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">${r.name}</a></h3>
-      <p class="tags">${r.tags.join(' · ')}</p>${r.promo?`<span class="promo">${r.promo}</span>`:''}
+      <p class="tags">${r.tags.join(' · ')}</p>${r.promo?`<span class="promo">${r.promo}${promoWeight(r)>1?` · ×${promoWeight(r)===2?2:'1,5'}`:''}</span>`:''}
       <div class="meta"><span><b>${r.rating||'sin nota'}</b></span><span>envío <b>${r.fee.toFixed(2)} €</b></span><span>${r.dist}</span></div>
       ${q!=null?`<span class="won">Salió elegido · vuelve en ${q} sorteo${q>1?'s':''}</span>`:whenBadge(r)}
     </div>${q!=null?'':`<button class="out" type="button" aria-pressed="${out}" title="${offGroups.has(r.group)?'Toda la cocina está fuera; pulsa el chip para meterla':''}">${out?'Meter':'Sacar'}</button>`}
@@ -429,7 +433,7 @@ btn.onclick=()=>{
   const pick=a=>a[Math.floor(Math.random()*a.length)];
   const gs=[...new Set(v.map(r=>r.group))];let x=Math.random()*gs.reduce((a,g)=>a+weightOf(g),0),cuisine=gs[gs.length-1];
   for(const g of gs){x-=weightOf(g);if(x<0){cuisine=g;break;}}
-  pending=pick(v.filter(r=>r.group===cuisine));subs=[];
+  pending=weightedPick(v.filter(r=>r.group===cuisine));subs=[];
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('winner'));
   res.classList.remove('show','pre');res.innerHTML='';display.classList.remove('lock');dnum.textContent='--';exit=null;lights='off';
   if(reduce){finish();return;}
@@ -439,7 +443,7 @@ btn.onclick=()=>{
 };
 function panelHtml(r){
   return `<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
-    <h2>¡${r.name}!</h2>${r.promo?`<span class="promo">${r.promo}</span>`:''}
+    <h2>¡${r.name}!</h2>${r.promo?`<span class="promo">${r.promo}${promoWeight(r)>1?` · ×${promoWeight(r)===2?2:'1,5'}`:''}</span>`:''}
     <p>${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br>
     </p><div class="actions"><a class="btn" href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a><button type="button" class="btn alt" id="subBtn" title="Por si el ganador falla: otro sitio de la misma cocina">Sortear suplente</button></div></div>`;
 }
@@ -448,12 +452,12 @@ let subs=[];
 function subCandidates(){return visible().filter(r=>r.group===pending.group&&r.slug!==pending.slug&&!subs.includes(r.slug));}
 function drawSub(){
   const c=subCandidates();const b=document.getElementById('subBtn');if(!c.length||!b||b.disabled)return;
-  const r=c[Math.floor(Math.random()*c.length)];subs.push(r.slug);
+  const r=weightedPick(c);subs.push(r.slug);
   const show=()=>{
     dnum.textContent=r.n;display.classList.remove('lock');void display.offsetWidth;display.classList.add('lock');
     let box=res.querySelector('.subs');if(!box){box=document.createElement('div');box.className='subs';box.innerHTML='<span class="lbl">Suplentes, por orden</span>';res.appendChild(box);}
     const el=document.createElement('div');el.className='sub';
-    el.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><p><b>${r.name}</b>${r.promo?` <span class="promo">${r.promo}</span>`:''} · ${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br><a href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar como ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></p>`;
+    el.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><p><b>${r.name}</b>${r.promo?` <span class="promo">${r.promo}${promoWeight(r)>1?` · ×${promoWeight(r)===2?2:'1,5'}`:''}</span>`:''} · ${r.tags.join(' · ')} · ${r.rating||'sin nota'} · envío ${r.fee.toFixed(2)} € · ${r.dist} · ${statusOf(r).text.toLowerCase()}<br><a href="${issueUrl(r)}" target="_blank" rel="noopener">Registrar como ganador</a><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">Abrir en Glovo →</a></p>`;
     box.appendChild(el);
     b.disabled=false;if(!subCandidates().length){b.disabled=true;b.textContent='No quedan suplentes';}
   };

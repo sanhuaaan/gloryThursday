@@ -21,6 +21,7 @@ La página lee `data/stores.json` al abrirse y proyecta el estado de cada tienda
 
 - Dos fases: primero una cocina, luego un sitio al azar dentro de ella.
 - Cuarentena de sitio: los ganadores de los últimos 6 sorteos no entran.
+- Sitios con promo de Glovo: dentro de su cocina, el 2x1 pesa ×2 y un descuento en porcentaje ×1,5 (función `promoWeight` en `index.html`).
 - Cocina penalizada: pesa ¼ en los 2 sorteos siguientes a su último sorteo ganado, ½ en los 2 siguientes, ¾ en otros 2, y entera desde el séptimo (tabla `PENALTY` en `index.html`).
 
 ## Ganadores y cuarentena
