@@ -58,7 +58,6 @@ LEFT_OUT_GROUPS = {"Dulce / café", "Bocadillos"}  # no son comida de mediodía 
 FRANCHISES = {  # grandes cadenas: reparten, pero no entran en el bombo
     "mcdonaldseas",  # McDonald's®,
     "burger-king-eas1",  # Burger King,
-    "tgb-the-good-burger-10",  # TGB - The Good Burger,
     "goiko-san-sebastian",  # Goiko,
     "vips-san-sebastian",  # VIPS,
     "vips-desayunos-san-sebastian",  # VIPS Desayunos,
