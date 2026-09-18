@@ -127,8 +127,10 @@ for slug in (ROOT / "data/slugs.txt").read_text().split():
         continue
     av = d.get("availability") or {}
     filters = [f["displayName"] for f in d.get("filters") or []]
-    rating = (d.get("ratingInfo") or {}).get("cardLabel")
+    ri = d.get("ratingInfo") or {}
+    rating = ri.get("cardLabel")
     ok.append({"name": d["name"], "rating": rating if rating and rating.endswith("%") else None,
+               "rv": ri.get("ratingValue"), "rc": ri.get("ratingCount") or 0,
                "fee": (d.get("deliveryFeeInfo") or {}).get("fee"), "dist": d.get("distance"), "tags": filters[:3],
                "group": group_of(slug, filters), "exotic": group_of(slug, filters) in EXOTIC_GROUPS, "status": av.get("status"),
                "when": (((av.get("footerLabel") or {}).get("data") or {}).get("text") or "").replace(" EAS", ""),
