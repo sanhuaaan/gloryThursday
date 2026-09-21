@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: sweep
+  cancel-in-progress: false
 jobs:
   sweep:
     runs-on: ubuntu-latest
@@ -15,4 +18,4 @@ jobs:
           git config user.name "sweep-bot"
           git config user.email "sweep-bot@users.noreply.github.com"
           git add data/stores.json index.html
-          git diff --cached --quiet || git commit -m "chore: refresh Glovo availability" && git push
+          git diff --cached --quiet || { git commit -m "chore: refresh Glovo availability" && git pull --rebase origin main && git push; }

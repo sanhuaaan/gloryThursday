@@ -115,15 +115,15 @@ for slug in (ROOT / "data/slugs.txt").read_text().split():
     if result == "out":
         excluded.append(slug)
         continue
-    if slug in FRANCHISES or group_of(slug, [f["displayName"] for f in d.get("filters") or []]) in LEFT_OUT_GROUPS:
-        left_out.append(d["name"])
-        continue
     if result == "error":
         unknown.append(slug)
         if slug in prev_rows:
             ok.append(prev_rows[slug])
         elif slug in previous["excluded"]:
             excluded.append(slug)
+        continue
+    if slug in FRANCHISES or group_of(slug, [f["displayName"] for f in d.get("filters") or []]) in LEFT_OUT_GROUPS:
+        left_out.append(d["name"])
         continue
     av = d.get("availability") or {}
     filters = [f["displayName"] for f in d.get("filters") or []]
