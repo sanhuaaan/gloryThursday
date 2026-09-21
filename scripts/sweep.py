@@ -2,7 +2,8 @@
 """Barrido de Glovo: que tiendas reparten a unas coordenadas.
 
 Uso: python3 scripts/sweep.py [lat] [lon]  (por defecto, la oficina de Zuatzu)
-Lee data/slugs.txt, escribe data/stores.json y lo inyecta en index.html (entre DATA-START y DATA-END).
+Lee data/slugs.txt más las tiendas que aparezcan en los listados de Glovo, actualiza data/slugs.txt,
+escribe data/stores.json y lo inyecta en index.html (entre DATA-START y DATA-END).
 Las tiendas fuera de zona devuelven 404 "No available store address found".
 """
 import html, json, re, subprocess, sys, time, uuid
@@ -30,10 +31,11 @@ GROUPS = [("Japonés / sushi / ramen", {"Japonesa", "Sushi"}), ("Poke", {"Poke"}
 
 
 OUT_OF_ZONE = "260002"  # Glovo: "No available store address found"
+GONE = "108040"  # Glovo: "Store not found" (la tienda se ha dado de baja)
 
 
 def fetch(slug):
-    """Devuelve ("ok", datos), ("out", None) si no reparte aqui, o ("error", None) si Glovo no contesta bien."""
+    """Devuelve ("ok", datos), ("out", None) si no reparte aqui, ("gone", None) si ya no existe, o ("error", None) si Glovo no contesta bien."""
     args = ["curl", "-s", "-w", "\n%{http_code}", "-A", "Mozilla/5.0"]
     for k, v in HEADERS.items():
         args += ["-H", f"{k}: {v}"]
@@ -42,8 +44,11 @@ def fetch(slug):
                                        capture_output=True, text=True).stdout.rpartition("\n")
         if code == "200":
             return "ok", json.loads(body)
-        if code == "404" and body.startswith("{") and json.loads(body).get("error", {}).get("code") == OUT_OF_ZONE:
+        err = json.loads(body).get("error", {}).get("code") if code == "404" and body.startswith("{") else None
+        if err == OUT_OF_ZONE:
             return "out", None
+        if err == GONE:
+            return "gone", None
         print(f"  {slug}: HTTP {code}, reintento {attempt + 1}", file=sys.stderr)
         time.sleep(3 * (attempt + 1))  # ponytail: backoff lineal; Glovo corta tras ~100 peticiones seguidas desde IPs de GitHub
     return "error", None
@@ -87,31 +92,43 @@ def get_page(url):
     return subprocess.run(["curl", "-sL", "-A", UA, "-H", "Accept-Language: es-ES", url], capture_output=True, text=True).stdout
 
 
-def fetch_promos():
-    """Etiqueta de promo de cada tienda ("2x1 en algunos productos"), sacada de las tarjetas de los listados por cocina.
+def fetch_listings():
+    """Tiendas de Donostia y su etiqueta de promo ("2x1 en algunos productos"), sacadas de los listados por cocina.
 
-    Son páginas de glovoapp.com, no de la API; una página que falle simplemente no aporta etiquetas.
+    Son páginas de glovoapp.com, no de la API; una página que falle simplemente no aporta tiendas ni etiquetas.
     """
-    types = sorted(set(re.findall(r"categories/comida_1\?type=([a-z0-9-]+_\d+)", get_page(f"{CITY_URL}/restaurantes_1/"))))
-    promos = {}
+    main = get_page(f"{CITY_URL}/restaurantes_1/")
+    types = sorted(set(re.findall(r"categories/comida_1\?type=([a-z0-9-]+_\d+)", main)))
+    promos, slugs = {}, set()
     for t in types:
         page = get_page(f"{CITY_URL}/categories/comida_1?type={t}")
         for m in re.finditer(r'href="/es/es/donostia-san-sebastian/stores/([a-z0-9-]+)"', page):
+            slugs.add(m.group(1))
             text = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "|", page[m.end():m.end() + 6000])))
             first = next((p.strip() for p in text.split("|") if p.strip() and not p.strip().startswith(("<", ">"))), "")
             if re.search(r"2x1|3x2|%|gratis|€", first, re.I) and not re.fullmatch(r"\d+%", first):
                 promos.setdefault(m.group(1), first)
         time.sleep(0.3)
-    print(f"{len(types)} listados leídos, {len(promos)} tiendas con promo")
-    return promos
+    slugs = {s for s in slugs if not re.fullmatch(r"[0-9a-f]{64}", s)}  # tarjetas sin dirección pública
+    print(f"{len(types)} listados leídos, {len(slugs)} tiendas, {len(promos)} con promo")
+    return promos, slugs
 
 
 OUT_FILE = ROOT / "data/stores.json"
 previous = json.loads(OUT_FILE.read_text()) if OUT_FILE.exists() else {"rows": [], "excluded": []}
 prev_rows = {r["slug"]: r for r in previous["rows"]}
-ok, excluded, unknown, left_out = [], [], [], []
-for slug in (ROOT / "data/slugs.txt").read_text().split():
+promos, listed = fetch_listings()
+SLUGS_FILE = ROOT / "data/slugs.txt"
+known = set(SLUGS_FILE.read_text().split())
+new = sorted(listed - known)
+if new:
+    print(f"{len(new)} tiendas nuevas en Glovo: {' '.join(new)}")
+ok, excluded, unknown, left_out, gone = [], [], [], [], []
+for slug in sorted(known | listed):
     result, d = fetch(slug)
+    if result == "gone":
+        gone.append(slug)
+        continue
     if result == "out":
         excluded.append(slug)
         continue
@@ -141,7 +158,9 @@ if unknown:
     print(f"{len(unknown)} tiendas sin respuesta fiable, se conserva su dato anterior: {' '.join(unknown)}", file=sys.stderr)
 if len(unknown) > 20:
     sys.exit("Demasiados errores; no se escribe nada")
-promos = fetch_promos()
+if gone:
+    print(f"{len(gone)} tiendas dadas de baja, se quitan de la lista: {' '.join(gone)}")
+SLUGS_FILE.write_text("\n".join(sorted((known | listed) - set(gone))) + "\n")
 for r in ok:
     r["promo"] = promos.get(r["slug"])
 ok.sort(key=lambda r: -int(r["rating"][:-1]) if r["rating"] else 1)

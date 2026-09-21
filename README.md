@@ -4,7 +4,7 @@ Bombo de bingo para decidir dónde pedimos la comida en la oficina de Zuatzu (Ju
 
 - `index.html`: la página. Abrir en el navegador, sin build.
 - `data/stores.json`: restaurantes de Glovo que sí llegan a la oficina, y los que no.
-- `data/slugs.txt`: tiendas a comprobar (slugs de Glovo Donostia).
+- `data/slugs.txt`: tiendas a comprobar (slugs de Glovo Donostia). El barrido añade las que aparecen nuevas en los listados de Glovo y quita las que Glovo da por inexistentes.
 - `scripts/sweep.py`: regenera `stores.json` consultando Glovo con las coordenadas de la oficina y lo inyecta en `index.html`.
 - `.github/workflows/sweep.yml`: lanza el barrido cada media hora (y a mano desde Actions) y commitea el resultado.
 - `scripts/remind.py` + `.github/workflows/remind.yml`: aviso a Google Chat el miércoles anterior al segundo jueves de mes (08:00 Madrid), con última ganadora, cuarentena y cocinas penalizadas. La URL del webhook va en el secreto `CHAT_WEBHOOK`.
