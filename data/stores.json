@@ -1,5 +1,5 @@
 {
- "sweptAt": 1789997228795,
+ "sweptAt": 1789997461308,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
@@ -270,9 +270,9 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790010000000,
    "slug": "nikkei-bar-donostia",
    "promo": null,
    "n": 14
@@ -290,9 +290,9 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790010000000,
    "slug": "oilo-toki-donostia-san-sebastian",
    "promo": null,
    "n": 15
@@ -796,27 +796,6 @@
    "n": 40
   },
   {
-   "name": "Ñam Restaurante",
-   "rating": "98%",
-   "rv": 0.981,
-   "rc": 50,
-   "fee": 1.99,
-   "dist": "1.4km",
-   "tags": [
-    "Americana",
-    "Hamburguesas",
-    "Pizza"
-   ],
-   "group": "Hamburguesas",
-   "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
-   "slug": "nam-san-sebastian-11",
-   "promo": null,
-   "n": 41
-  },
-  {
    "name": "Padthaiwok",
    "rating": "98%",
    "rv": 0.982,
@@ -835,7 +814,7 @@
    "next": null,
    "slug": "padthaiwok-san-sebastian",
    "promo": "-20% en algunos productos",
-   "n": 42
+   "n": 41
   },
   {
    "name": "TEIKIT Sushi & Pokes",
@@ -855,7 +834,7 @@
    "next": null,
    "slug": "teikit-sushi-and-pokes-donostia-san-sebastian",
    "promo": "-10% en algunos productos",
-   "n": 43
+   "n": 42
   },
   {
    "name": "Turkish Kebab Factory",
@@ -874,7 +853,7 @@
    "next": null,
    "slug": "turkish-kebab-factory-donostia",
    "promo": null,
-   "n": 44
+   "n": 43
   },
   {
    "name": "El Paso",
@@ -894,7 +873,7 @@
    "next": null,
    "slug": "el-paso-donostia-san-sebastian",
    "promo": null,
-   "n": 45
+   "n": 44
   },
   {
    "name": "Kenji Sushi Bar",
@@ -915,7 +894,7 @@
    "next": null,
    "slug": "kenji-san-sebastian",
    "promo": null,
-   "n": 46
+   "n": 45
   },
   {
    "name": "Lío (DELÍOVERY)",
@@ -935,6 +914,27 @@
    "when": "",
    "next": null,
    "slug": "lio-delivery-donostia-san-sebastian",
+   "promo": null,
+   "n": 46
+  },
+  {
+   "name": "Ñam Restaurante",
+   "rating": "97%",
+   "rv": 0.971,
+   "rc": 59,
+   "fee": 4.99,
+   "dist": "4.1km",
+   "tags": [
+    "Americana",
+    "Hamburguesas",
+    "Pizza"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "nam-san-sebastian-11",
    "promo": null,
    "n": 47
   },
@@ -969,9 +969,9 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 20:00",
+   "next": 1790013600000,
    "slug": "pizzeria-la-mina-san-sebastian",
    "promo": null,
    "n": 49
@@ -1183,9 +1183,9 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790010000000,
    "slug": "sushi-fuji-san-sebastian",
    "promo": null,
    "n": 60
