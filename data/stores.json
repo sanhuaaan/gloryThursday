@@ -1,12 +1,12 @@
 {
- "sweptAt": 1790086153236,
+ "sweptAt": 1790090471884,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
    "rating": "100%",
    "rv": 1.0,
    "rc": 48,
-   "fee": 3.43,
+   "fee": 2.99,
    "dist": "2km",
    "tags": [
     "Mediterránea"
@@ -25,7 +25,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 16,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Americana",
@@ -45,7 +45,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 17,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Internacional"
@@ -64,7 +64,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 14,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Mediterránea"
@@ -83,7 +83,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 16,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Grill"
@@ -102,7 +102,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 51,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.3km",
    "tags": [
     "Pollo"
@@ -121,7 +121,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 25,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Desayuno",
@@ -142,7 +142,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 163,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Hamburguesas",
@@ -162,7 +162,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 74,
-   "fee": 2.86,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Mexicana"
@@ -181,7 +181,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 10,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.6km",
    "tags": [
     "Hamburguesas",
@@ -202,7 +202,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 13,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.4km",
    "tags": [
     "Española"
@@ -261,7 +261,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 16,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.8km",
    "tags": [
     "Asiática",
@@ -321,7 +321,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 53,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Italiana",
@@ -361,7 +361,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 21,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Árabe",
@@ -382,7 +382,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 10,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Latina",
@@ -402,7 +402,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 16,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.6km",
    "tags": [
     "Hamburguesas",
@@ -422,7 +422,7 @@
    "rating": "100%",
    "rv": 1.0,
    "rc": 75,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.8km",
    "tags": [
     "Asiática",
@@ -442,7 +442,7 @@
    "rating": "99%",
    "rv": 0.999,
    "rc": 164,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Asiática",
@@ -462,7 +462,7 @@
    "rating": "99%",
    "rv": 0.997,
    "rc": 165,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.7km",
    "tags": [
     "Mediterránea",
@@ -470,9 +470,9 @@
    ],
    "group": "Alta cocina / grill",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 18:30",
+   "next": 1790094600000,
    "slug": "bodega-donostiarra-sansebastian",
    "promo": null,
    "n": 24
@@ -482,7 +482,7 @@
    "rating": "99%",
    "rv": 0.994,
    "rc": 85,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.3km",
    "tags": [
     "Gourmet",
@@ -502,7 +502,7 @@
    "rating": "99%",
    "rv": 0.991,
    "rc": 120,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.9km",
    "tags": [
     "Saludable",
@@ -523,7 +523,7 @@
    "rating": "99%",
    "rv": 0.99,
    "rc": 29,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Pizza"
@@ -542,7 +542,7 @@
    "rating": "99%",
    "rv": 0.999,
    "rc": 142,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Hamburguesas",
@@ -563,7 +563,7 @@
    "rating": "99%",
    "rv": 0.991,
    "rc": 76,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Latina"
@@ -582,7 +582,7 @@
    "rating": "99%",
    "rv": 0.996,
    "rc": 58,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.9km",
    "tags": [
     "Asiática",
@@ -621,7 +621,7 @@
    "rating": "98%",
    "rv": 0.987,
    "rc": 39,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Asiática",
@@ -641,7 +641,7 @@
    "rating": "98%",
    "rv": 0.983,
    "rc": 40,
-   "fee": 3.43,
+   "fee": 2.99,
    "dist": "2.1km",
    "tags": [
     "Española"
@@ -660,7 +660,7 @@
    "rating": "98%",
    "rv": 0.984,
    "rc": 220,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3.2km",
    "tags": [
     "Asiática",
@@ -681,7 +681,7 @@
    "rating": "98%",
    "rv": 0.981,
    "rc": 125,
-   "fee": 5.58,
+   "fee": 4.99,
    "dist": "4km",
    "tags": [
     "Asiática"
@@ -700,7 +700,7 @@
    "rating": "98%",
    "rv": 0.985,
    "rc": 21,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Árabe",
@@ -720,7 +720,7 @@
    "rating": "98%",
    "rv": 0.987,
    "rc": 66,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Mediterránea"
@@ -739,7 +739,7 @@
    "rating": "98%",
    "rv": 0.98,
    "rc": 116,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.7km",
    "tags": [
     "Mediterránea"
@@ -779,7 +779,7 @@
    "rating": "98%",
    "rv": 0.981,
    "rc": 50,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.4km",
    "tags": [
     "Americana",
@@ -800,7 +800,7 @@
    "rating": "98%",
    "rv": 0.983,
    "rc": 541,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.7km",
    "tags": [
     "Asiática",
@@ -821,16 +821,16 @@
    "rating": "98%",
    "rv": 0.98,
    "rc": 54,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.8km",
    "tags": [
     "Pizza"
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: 19:00",
-   "next": 1790096400000,
+   "status": "CLOSED",
+   "when": "Cerrado",
+   "next": null,
    "slug": "pizzeria-don-lukas-san-sebastian",
    "promo": null,
    "n": 42
@@ -840,7 +840,7 @@
    "rating": "98%",
    "rv": 0.984,
    "rc": 502,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.9km",
    "tags": [
     "Japonesa",
@@ -860,7 +860,7 @@
    "rating": "98%",
    "rv": 0.987,
    "rc": 34,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Árabe"
@@ -879,7 +879,7 @@
    "rating": "97%",
    "rv": 0.973,
    "rc": 309,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Árabe",
@@ -899,7 +899,7 @@
    "rating": "97%",
    "rv": 0.97,
    "rc": 236,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Poke"
@@ -939,7 +939,7 @@
    "rating": "97%",
    "rv": 0.971,
    "rc": 220,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Pizza"
@@ -958,7 +958,7 @@
    "rating": "97%",
    "rv": 0.973,
    "rc": 99,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Pollo"
@@ -977,7 +977,7 @@
    "rating": "97%",
    "rv": 0.976,
    "rc": 214,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3.3km",
    "tags": [
     "Asiática",
@@ -998,7 +998,7 @@
    "rating": "97%",
    "rv": 0.97,
    "rc": 27,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.5km",
    "tags": [
     "Japonesa",
@@ -1018,16 +1018,16 @@
    "rating": "97%",
    "rv": 0.973,
    "rc": 52,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3.1km",
    "tags": [
     "Mediterránea"
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta mañana",
+   "next": 1790150400000,
    "slug": "sutan-dator-menu-donostia-san-sebastian",
    "promo": null,
    "n": 52
@@ -1037,7 +1037,7 @@
    "rating": "96%",
    "rv": 0.961,
    "rc": 56,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.4km",
    "tags": [
     "Árabe"
@@ -1056,7 +1056,7 @@
    "rating": "96%",
    "rv": 0.968,
    "rc": 213,
-   "fee": 5.58,
+   "fee": 4.99,
    "dist": "6.6km",
    "tags": [
     "Mediterránea"
@@ -1075,7 +1075,7 @@
    "rating": "96%",
    "rv": 0.962,
    "rc": 42,
-   "fee": 3.43,
+   "fee": 2.99,
    "dist": "2.2km",
    "tags": [
     "Internacional",
@@ -1095,7 +1095,7 @@
    "rating": "96%",
    "rv": 0.96,
    "rc": 53,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.6km",
    "tags": [
     "Internacional",
@@ -1115,7 +1115,7 @@
    "rating": "96%",
    "rv": 0.968,
    "rc": 67,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.5km",
    "tags": [
     "Pizza"
@@ -1153,7 +1153,7 @@
    "rating": "96%",
    "rv": 0.968,
    "rc": 72,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Hamburguesas",
@@ -1173,7 +1173,7 @@
    "rating": "96%",
    "rv": 0.968,
    "rc": 131,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Italiana",
@@ -1193,7 +1193,7 @@
    "rating": "96%",
    "rv": 0.966,
    "rc": 259,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Asiática",
@@ -1214,7 +1214,7 @@
    "rating": "96%",
    "rv": 0.963,
    "rc": 17,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.5km",
    "tags": [
     "Hamburguesas",
@@ -1235,7 +1235,7 @@
    "rating": "96%",
    "rv": 0.96,
    "rc": 155,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.6km",
    "tags": [
     "Japonesa"
@@ -1254,7 +1254,7 @@
    "rating": "95%",
    "rv": 0.954,
    "rc": 70,
-   "fee": 2.86,
+   "fee": 2.49,
    "dist": "1.7km",
    "tags": [
     "Americana",
@@ -1275,7 +1275,7 @@
    "rating": "95%",
    "rv": 0.952,
    "rc": 46,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.6km",
    "tags": [
     "Comida local",
@@ -1296,7 +1296,7 @@
    "rating": "95%",
    "rv": 0.952,
    "rc": 150,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Japonesa",
@@ -1317,7 +1317,7 @@
    "rating": "95%",
    "rv": 0.951,
    "rc": 134,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.6km",
    "tags": [
     "Asiática",
@@ -1337,7 +1337,7 @@
    "rating": "95%",
    "rv": 0.95,
    "rc": 114,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Hamburguesas",
@@ -1357,16 +1357,16 @@
    "rating": "95%",
    "rv": 0.956,
    "rc": 103,
-   "fee": 2.86,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Asiática"
    ],
    "group": "Tailandés / chino",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 19:30",
+   "next": 1790098200000,
    "slug": "weitao-matia-donostia-san-sebastian",
    "promo": null,
    "n": 69
@@ -1376,7 +1376,7 @@
    "rating": "94%",
    "rv": 0.941,
    "rc": 11,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.4km",
    "tags": [
     "Pollo"
@@ -1395,7 +1395,7 @@
    "rating": "94%",
    "rv": 0.948,
    "rc": 81,
-   "fee": 3.43,
+   "fee": 2.99,
    "dist": "2.2km",
    "tags": [
     "Internacional",
@@ -1404,9 +1404,9 @@
    ],
    "group": "Mexicano",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790096400000,
    "slug": "bar-ivan-san-sebastian",
    "promo": null,
    "n": 71
@@ -1436,7 +1436,7 @@
    "rating": "94%",
    "rv": 0.941,
    "rc": 162,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Americana",
@@ -1456,16 +1456,16 @@
    "rating": "94%",
    "rv": 0.941,
    "rc": 64,
-   "fee": 2.86,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Asiática"
    ],
    "group": "Tailandés / chino",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 19:30",
+   "next": 1790098200000,
    "slug": "izakaya-ramen-donostia-san-sebastian",
    "promo": null,
    "n": 74
@@ -1475,7 +1475,7 @@
    "rating": "94%",
    "rv": 0.943,
    "rc": 201,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.3km",
    "tags": [
     "Mediterránea",
@@ -1495,7 +1495,7 @@
    "rating": "94%",
    "rv": 0.948,
    "rc": 145,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Árabe"
@@ -1514,7 +1514,7 @@
    "rating": "94%",
    "rv": 0.94,
    "rc": 206,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Hamburguesas",
@@ -1534,7 +1534,7 @@
    "rating": "93%",
    "rv": 0.935,
    "rc": 44,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Pizza"
@@ -1553,7 +1553,7 @@
    "rating": "93%",
    "rv": 0.933,
    "rc": 188,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Venezolana"
@@ -1572,7 +1572,7 @@
    "rating": "93%",
    "rv": 0.931,
    "rc": 86,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.3km",
    "tags": [
     "Árabe"
@@ -1591,7 +1591,7 @@
    "rating": "93%",
    "rv": 0.933,
    "rc": 123,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Americana",
@@ -1611,7 +1611,7 @@
    "rating": "92%",
    "rv": 0.923,
    "rc": 305,
-   "fee": 5.58,
+   "fee": 4.99,
    "dist": "5.1km",
    "tags": [
     "Saludable",
@@ -1631,7 +1631,7 @@
    "rating": "92%",
    "rv": 0.923,
    "rc": 65,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Mexicana"
@@ -1650,7 +1650,7 @@
    "rating": "91%",
    "rv": 0.91,
    "rc": 34,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.8km",
    "tags": [
     "Hamburguesas",
@@ -1671,7 +1671,7 @@
    "rating": "91%",
    "rv": 0.912,
    "rc": 22,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Árabe",
@@ -1692,7 +1692,7 @@
    "rating": "91%",
    "rv": 0.915,
    "rc": 145,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3.1km",
    "tags": [
     "Saludable",
@@ -1771,7 +1771,7 @@
    "rating": "88%",
    "rv": 0.883,
    "rc": 10,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.6km",
    "tags": [
     "Sushi"
@@ -1790,7 +1790,7 @@
    "rating": "87%",
    "rv": 0.877,
    "rc": 17,
-   "fee": 5.58,
+   "fee": 4.99,
    "dist": "4km",
    "tags": [
     "Hamburguesas",
@@ -1811,7 +1811,7 @@
    "rating": "85%",
    "rv": 0.852,
    "rc": 23,
-   "fee": 5.58,
+   "fee": 4.99,
    "dist": "6.1km",
    "tags": [
     "Hamburguesas",
@@ -1831,7 +1831,7 @@
    "rating": "85%",
    "rv": 0.855,
    "rc": 16,
-   "fee": 2.86,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Pollo"
@@ -1850,7 +1850,7 @@
    "rating": "83%",
    "rv": 0.836,
    "rc": 10,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Asiática"
@@ -1869,7 +1869,7 @@
    "rating": "80%",
    "rv": 0.809,
    "rc": 10,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Americana",
@@ -1890,7 +1890,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Pollo",
@@ -1910,7 +1910,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.58,
+   "fee": 4.99,
    "dist": "4.9km",
    "tags": [
     "Árabe",
@@ -1930,7 +1930,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Árabe"
@@ -1949,7 +1949,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.43,
+   "fee": 2.99,
    "dist": "2.2km",
    "tags": [
     "Bocadillos",
@@ -1969,7 +1969,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Mediterránea",
@@ -2010,7 +2010,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Hamburguesas"
@@ -2029,7 +2029,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.4km",
    "tags": [
     "Hamburguesas",
@@ -2050,7 +2050,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.4km",
    "tags": [
     "Árabe",
@@ -2070,7 +2070,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "India"
@@ -2089,7 +2089,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.8km",
    "tags": [
     "Árabe"
@@ -2108,7 +2108,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.58,
+   "fee": 4.99,
    "dist": "4km",
    "tags": [
     "Hamburguesas"
@@ -2127,7 +2127,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.58,
+   "fee": 3.99,
    "dist": "3.2km",
    "tags": [
     "Asiática",
@@ -2148,7 +2148,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 2.86,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Asiática"
@@ -2167,7 +2167,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 2.31,
+   "fee": 1.99,
    "dist": "1.4km",
    "tags": [
     "Española"
@@ -2186,7 +2186,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.08,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Panadería",
@@ -2207,7 +2207,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 2.86,
+   "fee": 2.49,
    "dist": "1.9km",
    "tags": [
     "Árabe"
@@ -2226,7 +2226,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Pizza"
@@ -2245,7 +2245,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.08,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Pizza"
@@ -2264,7 +2264,7 @@
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.93,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Pollo"
