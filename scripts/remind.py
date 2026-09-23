@@ -25,8 +25,7 @@ if "--force" not in sys.argv and not (today.weekday() == 2 and 7 <= today.day <=
 
 data = json.loads((ROOT / "data/stores.json").read_text())
 rows = {r["slug"]: r for r in data["rows"]}
-with urllib.request.urlopen(f"https://api.github.com/repos/{REPO}/issues?state=open&per_page=100") as r:
-    issues = json.load(r)
+issues = json.loads((ROOT / "data/winners.json").read_text())  # copia que mantiene scripts/winners.py
 winners = []
 for i in issues:
     m = re.search(r"^\s*tienda:\s*(\S+)", i.get("body") or "", re.M)

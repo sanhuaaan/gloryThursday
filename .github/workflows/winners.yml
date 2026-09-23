@@ -1,7 +1,7 @@
-name: sweep
+name: winners
 on:
-  schedule:
-    - cron: "*/30 6-21 * * *"   # UTC; ~08:00-23:30 en Madrid
+  issues:
+    types: [opened, edited, closed, reopened, deleted]
   workflow_dispatch:
 permissions:
   contents: write
@@ -10,16 +10,15 @@ concurrency:
   group: sweep
   cancel-in-progress: false
 jobs:
-  sweep:
+  winners:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python3 scripts/sweep.py
       - run: python3 scripts/winners.py
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - run: |
           git config user.name "sweep-bot"
           git config user.email "sweep-bot@users.noreply.github.com"
-          git add data/stores.json data/slugs.txt data/winners.json index.html
-          git diff --cached --quiet || { git commit -m "chore: refresh Glovo availability" && git pull --rebase -X theirs origin main && git push; }  # en conflicto, manda el dato recién barrido
+          git add data/winners.json
+          git diff --cached --quiet || { git commit -m "chore: refresh winners" && git pull --rebase -X theirs origin main && git push; }

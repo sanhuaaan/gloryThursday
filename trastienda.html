@@ -287,7 +287,10 @@ async function login(){
 async function status(){
   const [data,issues,file]=await Promise.all([
     fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('datos del bombo: HTTP '+r.status);return r.json();}),
-    fetch(API+'/issues?state=open&per_page=100',{headers:{Accept:'application/vnd.github+json'}}).then(r=>{if(!r.ok)throw new Error('ganadores de GitHub: HTTP '+r.status);return r.json();}),
+    // ganadores: con el token (5000/h); si no tiene permiso de Issues, anónimo (60/h por IP); si no, la copia del barrido
+    gh('/issues?state=open&per_page=100').then(r=>r.ok?r.json():Promise.reject())
+      .catch(()=>fetch(API+'/issues?state=open&per_page=100',{headers:{Accept:'application/vnd.github+json'},cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()))
+      .catch(()=>fetch('data/winners.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('ganadores: HTTP '+r.status);return r.json();})),
     gh('/contents/data/balls.json?ref=main').then(async r=>{if(r.status===401)throw new Error('token');if(r.status===404)return {sha:null,obj:{}};if(!r.ok)throw new Error('bolas extra: HTTP '+r.status);
       const j=await r.json();return {sha:j.sha,obj:JSON.parse(dec.decode(unb64(j.content.replace(/\n/g,''))))};})
   ]);

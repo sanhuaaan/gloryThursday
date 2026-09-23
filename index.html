@@ -260,8 +260,9 @@ const drawWeight=g=>weightOf(g)*(modActive()?1+(modCounts[g]||0):1);
 const extraOf=g=>modActive()?modCounts[g]||0:0,extraStore=r=>modActive()?storeCounts[r.slug]||0:0;
 const ballsLabel=n=>`+${n} bola${n>1?'s':''}`;
 function loadWinners(){
+  // la API anónima tiene 60 lecturas/h por IP; si corta, se usa la copia que el barrido deja en data/winners.json
   fetch(`https://api.github.com/repos/${REPO}/issues?state=open&per_page=100&sort=created&direction=desc`,{headers:{Accept:'application/vnd.github+json'}})
-  .then(r=>r.ok?r.json():[]).then(list=>{
+  .then(r=>r.ok?r.json():Promise.reject()).catch(()=>fetch('data/winners.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():[])).then(list=>{
     latestRaffle=list.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
     winners=list.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).map(i=>{
       const slug=(i.body.match(/^\s*tienda:\s*(\S+)/m)||[])[1];
