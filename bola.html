@@ -97,6 +97,22 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 .courier.done .seal{animation:none;box-shadow:0 0 1rem var(--neon-warm)}
 @keyframes glow{50%{box-shadow:0 0 1rem var(--neon)}}
 
+.row .sites{position:absolute;top:-.55rem;right:.55rem;padding:0 .5rem;border-radius:999rem;font:inherit;font-size:.68rem;line-height:1.1rem;font-variation-settings:"wght" 800;cursor:pointer;color:var(--brass-light);background:#2a0910;border:.1rem solid var(--brass)}
+.row .sites:hover,.row .sites.open{background:var(--brass);color:#2a0910}
+.drawer{width:100%;display:grid;gap:.7rem;padding:.8rem 1rem 1rem;border-radius:.6rem;background:linear-gradient(180deg,#34101a,#240710);border:.15rem solid var(--brass-dark);box-shadow:0 0 1rem rgba(201,163,74,.18),inset 0 .3rem .8rem rgba(0,0,0,.5)}
+.dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem 1rem}
+.dhead b{font-family:'Rye',serif;font-weight:400;font-size:1.15rem;color:var(--brass-light)}
+.dhead span{color:var(--chalk-dim);font-size:.82rem}
+.dhead .dclose{margin-left:auto}
+.dlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(17rem,100%),1fr));gap:.4rem .8rem}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.25rem .6rem;padding:.35rem .5rem;border-radius:.35rem;background:rgba(255,255,255,.025)}
+.srow.changed{box-shadow:inset 0 0 0 .1rem var(--neon-warm)}
+.srow .sname{font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow .ctl button{width:1.7rem;height:1.7rem;border-radius:50%;border:.12rem solid var(--brass);background:#2a0910;color:var(--brass-light);font:inherit;font-size:1rem;line-height:1;cursor:pointer}
+.srow .ctl button:hover:not([disabled]){background:var(--brass);color:#2a0910}
+.srow .ctl button[disabled]{opacity:.3;cursor:not-allowed}
+.srow .ctl{display:flex;gap:.3rem}
+.holes.mini{max-width:9.5rem;gap:.18rem}
 .note{color:var(--chalk-dim);font-size:.82rem;text-align:center;max-width:30rem;margin:0}
 .err{color:#ffb3bd;font-variation-settings:"wght" 700;text-align:center;margin:0}
 [hidden]{display:none!important}
@@ -137,6 +153,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 
   <section id="panel" hidden>
     <div class="tray" id="list"></div>
+    <div class="drawer" id="drawer" hidden></div>
     <div class="foot">
       <div style="display:grid;gap:.6rem;align-self:center">
         <p class="note">Cada bola extra suma el peso normal de su cocina: con una pesa el doble, con dos el triple. Todas se retiran solas al registrar el próximo ganador. En el bombo y en el aviso del chat no se ven.</p>
@@ -164,7 +181,7 @@ const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set
 const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
-let token=ss.get('gt'),keyFile=null,current={},draft={},groups=[],gcolor={},mId=null,pollTimer=null,lastDrop=null;
+let token=ss.get('gt'),keyFile=null,current={balls:{},stores:{}},draft={balls:{},stores:{}},groups=[],gcolor={},mId=null,pollTimer=null,lastDrop=null;
 const gh=(path,opt={})=>fetch(API+path,{...opt,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token,...(opt.headers||{})}});
 function showError(m){$('error').textContent=m||'';$('error').hidden=!m;}
 function view(id){['setup','login','panel'].forEach(x=>$(x).hidden=x!==id);}
@@ -212,32 +229,66 @@ async function status(){
   const latest=issues.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
   const order=[...new Set(data.rows.map(r=>r.group))];
   const colors=Object.fromEntries(order.map((g,i)=>[g,COLORS[i%COLORS.length]]));
-  const counts={};
-  if(data.m&&typeof data.m==='object'&&data.mTo===latest)for(const g of order){const c=data.m[await sha256(g)];if(c)counts[g]=c;}
-  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,counts,mId:data.mId||null};
+  const byGroup={};data.rows.forEach(r=>(byGroup[r.group]=byGroup[r.group]||[]).push({slug:r.slug,name:r.name}));
+  Object.values(byGroup).forEach(l=>l.sort((a,b)=>a.name.localeCompare(b.name,'es')));
+  const cur={balls:{},stores:{}},active=data.mTo===latest;
+  if(active&&data.m&&typeof data.m==='object')for(const g of order){const c=data.m[await sha256(g)];if(c)cur.balls[g]=c;}
+  if(active&&data.s&&typeof data.s==='object')for(const r of data.rows){const c=data.s[await sha256(r.slug)];if(c)cur.stores[r.slug]=c;}
+  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,mId:data.mId||null};
 }
 const same=(a,b)=>{const k=new Set([...Object.keys(a),...Object.keys(b)]);return [...k].every(x=>(a[x]||0)===(b[x]||0));};
+const sameDraft=(a,b)=>same(a.balls,b.balls)&&same(a.stores,b.stores);
 const total=c=>Object.values(c).reduce((a,n)=>a+n,0);
+const clone=d=>({balls:{...d.balls},stores:{...d.stores}});
+let byGroup={},openGroup=null;
+
+function holesHtml(n,color,dropping){return Array.from({length:9},(_,i)=>`<span class="hole">${i<n?`<span class="ball${dropping&&i===n-1?' drop':''}" style="--c:${color}"></span>`:''}</span>`).join('');}
+async function popLast(el){const b=el.querySelectorAll('.ball');const last=b[b.length-1];if(last){last.classList.add('pop');await wait(220);}}
+function storesDiffer(g){return (byGroup[g]||[]).some(r=>(draft.stores[r.slug]||0)!==(current.stores[r.slug]||0));}
+function storeBalls(g,d){return (byGroup[g]||[]).reduce((a,r)=>a+(d.stores[r.slug]||0),0);}
 
 function render(pending){
   const list=$('list');list.innerHTML='';
   groups.forEach(g=>{
-    const n=draft[g]||0,diff=n-(current[g]||0),row=document.createElement('div');row.className='row';
-    const holes=Array.from({length:9},(_,i)=>`<span class="hole">${i<n?`<span class="ball${lastDrop===g&&i===n-1?' drop':''}" style="--c:${gcolor[g]}"></span>`:''}</span>`).join('');
-    row.innerHTML=`${diff?`<span class="tag">${diff>0?'+'+diff:diff} sin sellar</span>`:''}<span class="name" title="${g}">${g}</span>
+    const n=draft.balls[g]||0,diff=n-(current.balls[g]||0),k=storeBalls(g,draft),row=document.createElement('div');row.className='row';
+    const tag=diff?`${diff>0?'+'+diff:diff} sin sellar`:storesDiffer(g)?'sitios sin sellar':'';
+    row.innerHTML=`${tag?`<span class="tag">${tag}</span>`:''}${n?`<button type="button" class="sites${openGroup===g?' open':''}" aria-expanded="${openGroup===g}">Sitios${k?` · ${k}`:''}</button>`:''}<span class="name" title="${g}">${g}</span>
       <span class="ctl"><button type="button" aria-label="Sacar una bola de ${g}" ${n&&!pending?'':'disabled'}>−</button><button type="button" aria-label="Meter una bola en ${g}" ${n<9&&!pending?'':'disabled'}>+</button></span>
-      <span class="holes" role="img" aria-label="${n} bolas extra">${holes}</span>`;
+      <span class="holes" role="img" aria-label="${n} bolas extra">${holesHtml(n,gcolor[g],lastDrop===g)}</span>`;
     const [minus,plus]=row.querySelectorAll('.ctl button');
-    minus.onclick=async()=>{const b=row.querySelectorAll('.ball');const last=b[b.length-1];if(last){last.classList.add('pop');await wait(220);}draft[g]=n-1;if(!draft[g])delete draft[g];render(pending);};
-    plus.onclick=()=>{draft[g]=n+1;lastDrop=g;render(pending);};
+    minus.onclick=async()=>{await popLast(row.querySelector('.holes'));draft.balls[g]=n-1;
+      if(!draft.balls[g]){delete draft.balls[g];(byGroup[g]||[]).forEach(r=>delete draft.stores[r.slug]);if(openGroup===g)openGroup=null;}
+      render(pending);};
+    plus.onclick=()=>{draft.balls[g]=n+1;lastDrop=g;render(pending);};
+    const sites=row.querySelector('.sites');if(sites)sites.onclick=()=>{openGroup=openGroup===g?null:g;render(pending);};
     list.appendChild(row);
   });
+  renderDrawer(pending);
   lastDrop=null;
-  const env=$('save');env.hidden=!!pending;env.disabled=same(draft,current);
-  const t=total(current);
+  const env=$('save');env.hidden=!!pending;env.disabled=sameDraft(draft,current);
+  const tb=total(current.balls),ts=total(current.stores);
   if(pending)sign('Sobre en camino','busy','El barrido de GitHub lo recoge en unos minutos.');
-  else if(t)sign('Bolas en juego','warm',`${t} bola${t>1?'s':''} extra para el próximo sorteo. Se retiran solas al registrar el ganador.`);
+  else if(tb)sign('Bolas en juego','warm',`${tb} bola${tb>1?'s':''} extra en cocinas${ts?` y ${ts} en restaurantes`:''} para el próximo sorteo. Se retiran solas al registrar el ganador.`);
   else sign('Trastienda cerrada','','No hay bolas extra. Puedes meter las que quieras para el próximo sorteo.');
+}
+
+function renderDrawer(pending){
+  const d=$('drawer');
+  if(!openGroup||!(draft.balls[openGroup]>0)){d.hidden=true;d.innerHTML='';return;}
+  const g=openGroup;d.hidden=false;
+  d.innerHTML=`<div class="dhead"><b>Restaurantes de ${g}</b><span>Cada bola extra suma su peso normal dentro de la cocina.</span><button type="button" class="link dclose">Cerrar</button></div><div class="dlist"></div>`;
+  d.querySelector('.dclose').onclick=()=>{openGroup=null;render(pending);};
+  const dl=d.querySelector('.dlist');
+  (byGroup[g]||[]).forEach(r=>{
+    const n=draft.stores[r.slug]||0,diff=n!==(current.stores[r.slug]||0),el=document.createElement('div');el.className='srow'+(diff?' changed':'');
+    el.innerHTML=`<span class="sname" title="${r.name}">${r.name}</span>
+      <span class="ctl"><button type="button" aria-label="Sacar una bola de ${r.name}" ${n&&!pending?'':'disabled'}>−</button><button type="button" aria-label="Meter una bola en ${r.name}" ${n<9&&!pending?'':'disabled'}>+</button></span>
+      <span class="holes mini" role="img" aria-label="${n} bolas extra">${holesHtml(n,gcolor[g],lastDrop===r.slug)}</span>`;
+    const [minus,plus]=el.querySelectorAll('.ctl button');
+    minus.onclick=async()=>{await popLast(el.querySelector('.holes'));draft.stores[r.slug]=n-1;if(!draft.stores[r.slug])delete draft.stores[r.slug];render(pending);};
+    plus.onclick=()=>{draft.stores[r.slug]=n+1;lastDrop=r.slug;render(pending);};
+    dl.appendChild(el);
+  });
 }
 
 async function refresh(){
@@ -246,14 +297,16 @@ async function refresh(){
     if(e.message==='token'){ss.set('gt',null);token=null;view('login');showError('GitHub ya no acepta el token. Habrá que estrenar la caja con uno nuevo.');return;}
     showError('No se pudo comprobar el estado ('+e.message+'). Reintentando…');clearTimeout(pollTimer);pollTimer=setTimeout(refresh,15000);return;
   }
-  groups=s.groups;gcolor=s.colors;current=s.counts;mId=s.mId;
+  groups=s.groups;gcolor=s.colors;byGroup=s.byGroup;current=s.cur;mId=s.mId;
   const p=JSON.parse(ls.get('pending')||'null');
   const pending=!!(p&&p.mIdPrev===s.mId&&Date.now()-p.at<15*60000);
   const courier=$('courier');
   if(pending){courier.hidden=false;courier.classList.remove('done');$('courierText').textContent='Sobre sellado. Aplicándose…';}
   else if(p&&p.mIdPrev!==s.mId){courier.hidden=false;courier.classList.add('done');$('courierText').textContent='Sobre entregado: cambios aplicados.';ls.set('pending',null);}
   else{courier.hidden=true;ls.set('pending',null);}
-  draft=pending?{...p.draft}:{...current};
+  const pd=pending?(p.draft.balls?p.draft:{balls:p.draft,stores:{}}):null;
+  draft=pd?clone(pd):clone(current);
+  if(openGroup&&!(draft.balls[openGroup]>0))openGroup=null;
   $('save').classList.remove('sealed','gone');
   render(pending);
   clearTimeout(pollTimer);if(pending)pollTimer=setTimeout(refresh,20000);
@@ -265,7 +318,7 @@ async function save(){
     env.classList.add('sealed');await wait(800);
     await sodium.ready;
     const key=await gh('/actions/secrets/public-key').then(r=>{if(!r.ok)throw new Error('No se pudo leer la clave del repositorio ('+r.status+').');return r.json();});
-    const value=JSON.stringify({balls:draft,nonce:Date.now()});
+    const value=JSON.stringify({balls:draft.balls,stores:draft.stores,nonce:Date.now()});
     const sealed=sodium.crypto_box_seal(sodium.from_string(value),sodium.from_base64(key.key,sodium.base64_variants.ORIGINAL));
     const put=await gh('/actions/secrets/DRAW_MOD',{method:'PUT',body:JSON.stringify({encrypted_value:sodium.to_base64(sealed,sodium.base64_variants.ORIGINAL),key_id:key.key_id})});
     if(!put.ok)throw new Error('GitHub no guardó los cambios ('+put.status+').');

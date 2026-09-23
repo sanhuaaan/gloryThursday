@@ -227,7 +227,7 @@ function ratingPrior(){const v=rows.filter(r=>r.rc>0&&r.rv!=null);return v.lengt
 const smoothed=r=>{const p=ratingPrior(),c=r.rv!=null?r.rc:0;return ((r.rv||0)*c+p*PRIOR_VOTES)/(c+PRIOR_VOTES);};
 // solo penaliza: 95 % o más pesa entero, de 90 a 95 tres cuartos, por debajo de 90 la mitad
 const ratingWeight=r=>{const s=smoothed(r);return s>=0.95?1:s>=0.90?0.75:0.5;};
-const siteWeight=r=>promoWeight(r)*ratingWeight(r);
+const siteWeight=r=>promoWeight(r)*ratingWeight(r)*(modActive()?1+(storeCounts[r.slug]||0):1);
 function weightedPick(list){let x=Math.random()*list.reduce((a,r)=>a+siteWeight(r),0);for(const r of list){x-=siteWeight(r);if(x<0)return r;}return list[list.length-1];}
 const frac=w=>w===0.5?'½':w===0.75?'¾':w===0.25?'¼':String(w);
 function issueUrl(r,date){
@@ -236,10 +236,12 @@ function issueUrl(r,date){
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
 // modificador de un solo sorteo: huella de una cocina en los datos; solo vale mientras el último sorteo registrado sea DATA.mTo
-let modCounts={},latestRaffle=null;
+let modCounts={},storeCounts={},latestRaffle=null;
 const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
-async function resolveMod(){modCounts={};const m=DATA.m;if(!m||typeof m!=='object'||!window.crypto||!crypto.subtle)return;for(const g of groupsOrder){const c=m[await sha256(g)];if(c)modCounts[g]=c;}}
-const drawWeight=g=>weightOf(g)*(latestRaffle!==null&&latestRaffle===DATA.mTo?1+(modCounts[g]||0):1);
+async function resolveMod(){modCounts={};storeCounts={};const m=DATA.m,st=DATA.s;if(!m||typeof m!=='object'||!window.crypto||!crypto.subtle)return;for(const g of groupsOrder){const c=m[await sha256(g)];if(c)modCounts[g]=c;}
+  if(st&&typeof st==='object')for(const r of rows){const c=st[await sha256(r.slug)];if(c)storeCounts[r.slug]=c;}}
+const modActive=()=>latestRaffle!==null&&latestRaffle===DATA.mTo;
+const drawWeight=g=>weightOf(g)*(modActive()?1+(modCounts[g]||0):1);
 function loadWinners(){
   fetch(`https://api.github.com/repos/${REPO}/issues?state=open&per_page=100&sort=created&direction=desc`,{headers:{Accept:'application/vnd.github+json'}})
   .then(r=>r.ok?r.json():[]).then(list=>{
@@ -343,7 +345,7 @@ exoticBox.onchange=()=>{persist();render();};
 render();renderUpdated();loadWinners();resolveMod();
 setInterval(()=>{render();renderUpdated();},60000);
 fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
-  if(!d||!d.rows)return;['m','mTo','mId'].forEach(k=>delete DATA[k]);Object.assign(DATA,d);rows=DATA.rows;resolveMod();document.getElementById('tot').textContent=rows.length;render();renderUpdated();
+  if(!d||!d.rows)return;['m','s','mTo','mId'].forEach(k=>delete DATA[k]);Object.assign(DATA,d);rows=DATA.rows;resolveMod();document.getElementById('tot').textContent=rows.length;render();renderUpdated();
 }).catch(()=>{});
 const vl=document.getElementById('void');DATA.excluded.forEach(n=>{const li=document.createElement('li');li.textContent=n;vl.appendChild(li);});
 const fl2=document.getElementById('franchises');(DATA.leftOut||[]).forEach(n=>{const li=document.createElement('li');li.textContent=n;fl2.appendChild(li);});
