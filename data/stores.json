@@ -1,5 +1,5 @@
 {
- "sweptAt": 1790169240345,
+ "sweptAt": 1790170029801,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
@@ -746,9 +746,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: Mañana",
+   "next": 1790229600000,
    "slug": "la-zurri-jatetxea-san-sebastian",
    "promo": null,
    "n": 38
@@ -1819,9 +1819,9 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 19:30",
+   "next": 1790184600000,
    "slug": "bar-dcine-donostia-san-sebastian",
    "promo": null,
    "n": 92
@@ -2373,9 +2373,9 @@
  "m": {
   "a00817e9c82584bf87ca300ba5261d7b1c008fc3288e9529948b02af99b275ea": 1
  },
- "mTo": 2,
- "mId": "6e4fce211ea4ef08",
  "s": {
   "5d3ce145656f66a111509d0e209cacb751031b4bc74f8c905f56bad4a42c92ae": 1
- }
+ },
+ "mTo": 2,
+ "mId": "6e4fce211ea4ef08"
 }
