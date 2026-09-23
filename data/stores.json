@@ -1,5 +1,5 @@
 {
- "sweptAt": 1790170312780,
+ "sweptAt": 1790170677890,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
@@ -52,9 +52,9 @@
    ],
    "group": "Internacional",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790182800000,
    "slug": "bar-y-restaurante-esmeralda-san-sebastian",
    "promo": null,
    "n": 3
@@ -450,9 +450,9 @@
    ],
    "group": "Tailandés / chino",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790182800000,
    "slug": "baan-thai-streetfood-espana",
    "promo": null,
    "n": 23
@@ -648,9 +648,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 20:00",
+   "next": 1790186400000,
    "slug": "bar-la-fabrica-de-gas-donostia-san-sebastian",
    "promo": null,
    "n": 33
@@ -669,9 +669,9 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 20:00",
+   "next": 1790186400000,
    "slug": "buga-ramen-san-sebastian",
    "promo": null,
    "n": 34
@@ -688,9 +688,9 @@
    ],
    "group": "Tailandés / chino",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790182800000,
    "slug": "chino-mandarin-san-sebastian",
    "promo": null,
    "n": 35
@@ -1423,9 +1423,9 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 19:00",
+   "next": 1790182800000,
    "slug": "bottega-di-filippo-donostia-san-sebastian",
    "promo": null,
    "n": 72
@@ -1957,9 +1957,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: Mañana",
+   "next": 1790236800000,
    "slug": "aunamendi-taberna-donostia-san-sebastian",
    "promo": null,
    "n": 99
@@ -2368,13 +2368,5 @@
   "Txipa Panadería Cafetería",
   "VIPS",
   "VIPS Desayunos"
- ],
- "m": {
-  "Pizza / italiano": 1
- },
- "mTo": 2,
- "mId": "cc73d9c524862335",
- "s": {
-  "amara-pizzaria-y-pollo-frito-donostia-san-sebastian": 1
- }
+ ]
 }
