@@ -19,7 +19,9 @@
 body{margin:0;min-height:100vh;color:var(--chalk);font-family:'Archivo',"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.45;
   background:radial-gradient(ellipse 60% 45% at 50% 18%,rgba(255,215,106,.16),transparent 70%),radial-gradient(ellipse at 50% 30%,#56141f 0%,var(--velvet) 45%,var(--velvet-deep) 100%);background-color:var(--velvet-deep)}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 .12rem,transparent .12rem .9rem)}
-main{position:relative;max-width:80rem;margin:0 auto;padding:1rem 1.25rem 2rem;display:grid;gap:.8rem;justify-items:center}
+main{position:relative;max-width:96rem;min-height:100vh;min-height:100dvh;margin:0 auto;padding:clamp(1rem,3vh,2.5rem) 1.25rem clamp(1.5rem,4vh,3rem);display:grid;grid-template-rows:auto 1fr auto;gap:clamp(.8rem,2.5vh,2rem);justify-items:center}
+.top{display:grid;gap:.6rem;justify-items:center}
+.stage{width:100%;display:grid;align-content:center;justify-items:center}
 
 /* rótulo de neón */
 .sign{font-family:'Rye',"Copperplate",serif;font-size:clamp(1.5rem,4.5vw,2rem);line-height:1.1;text-align:center;padding:.35rem 1rem;border:.18rem solid rgba(255,90,110,.55);border-radius:.6rem;color:#ffe3e7;
@@ -30,7 +32,7 @@ main{position:relative;max-width:80rem;margin:0 auto;padding:1rem 1.25rem 2rem;d
 .sign.flicker{animation:flicker 1.1s linear both}
 .sign.flicker.busy{animation:flicker 1.1s linear both,buzz 1.6s ease-in-out 1.1s infinite}
 @keyframes flicker{0%,18%,22%,62%,64%{opacity:.25}20%,24%,60%,66%,100%{opacity:1}}
-.sub{margin:-.4rem 0 0;color:var(--chalk-dim);font-size:.88rem;text-align:center;max-width:44rem}
+.sub{margin:0;color:var(--chalk-dim);font-size:.88rem;text-align:center;max-width:44rem}
 
 /* caja fuerte */
 .safe{width:min(22rem,100%);display:grid;gap:1rem;justify-items:center;padding:1.6rem 1.4rem 1.4rem;border-radius:1rem;
@@ -58,16 +60,16 @@ input{font:inherit;font-size:1rem;letter-spacing:.05em;text-transform:none;paddi
 button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);outline-offset:.15rem}
 
 /* bandeja de cocinas */
-#panel{width:100%;display:grid;gap:1rem;justify-items:center}
-.tray{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:.5rem;padding:.6rem;border-radius:.6rem;background:linear-gradient(180deg,#2a0910,#1e060b);border:.15rem solid var(--velvet-line);box-shadow:inset 0 .4rem 1rem rgba(0,0,0,.6)}
-.row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.3rem .6rem;padding:.45rem .6rem .5rem;border-radius:.45rem;background:rgba(255,255,255,.025);border:.1rem solid rgba(184,154,160,.14)}
-.row .name{font-variation-settings:"wght" 700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#panel{width:100%;display:grid;gap:clamp(1rem,3vh,2.2rem);justify-items:center}
+.tray{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(17.5rem,100%),1fr));gap:clamp(.5rem,1.4vh,1rem);padding:clamp(.6rem,1.6vh,1.1rem);border-radius:.6rem;background:linear-gradient(180deg,#2a0910,#1e060b);border:.15rem solid var(--velvet-line);box-shadow:inset 0 .4rem 1rem rgba(0,0,0,.6)}
+.row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(.3rem,1vh,.7rem) .6rem;padding:clamp(.45rem,1.5vh,1rem) .7rem;border-radius:.45rem;background:rgba(255,255,255,.025);border:.1rem solid rgba(184,154,160,.14)}
+.row .name{font-variation-settings:"wght" 700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .tag{position:absolute;top:-.55rem;left:.55rem;padding:0 .4rem;border-radius:999rem;font-size:.68rem;line-height:1.1rem;font-variation-settings:"wght" 700;white-space:nowrap;color:#2a1d05;background:var(--neon-warm);box-shadow:0 0 .5rem rgba(255,215,106,.6)}
 .row .ctl{display:flex;align-items:center;gap:.35rem}
-.row .ctl button{width:1.75rem;height:1.75rem;border-radius:50%;border:.12rem solid var(--brass);background:#2a0910;color:var(--brass-light);font:inherit;font-size:1.15rem;line-height:1;cursor:pointer}
+.row .ctl button{width:2rem;height:2rem;border-radius:50%;border:.12rem solid var(--brass);background:#2a0910;color:var(--brass-light);font:inherit;font-size:1.15rem;line-height:1;cursor:pointer}
 .row .ctl button:hover:not([disabled]){background:var(--brass);color:#2a0910}
 .row .ctl button[disabled]{opacity:.3;cursor:not-allowed}
-.holes{grid-column:1/-1;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.28rem;max-width:13.5rem}
+.holes{grid-column:1/-1;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.28rem;max-width:clamp(13.5rem,30vh,19rem)}
 .hole{aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 60%,#0b0204 0 55%,#2d0a12 70%);box-shadow:inset 0 .15rem .3rem rgba(0,0,0,.9),0 .05rem 0 rgba(255,255,255,.06);position:relative}
 .ball{position:absolute;inset:6%;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.8),rgba(255,255,255,0) 45%),var(--c);box-shadow:inset -.12rem -.18rem .3rem rgba(0,0,0,.35),0 .12rem .2rem rgba(0,0,0,.6)}
 .ball.drop{animation:drop .5s cubic-bezier(.3,1.5,.5,1) both}
@@ -120,8 +122,11 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 </head>
 <body>
 <main>
-  <div class="sign" id="sign">Trastienda</div>
-  <p class="sub" id="signSub"></p>
+  <header class="top">
+    <div class="sign" id="sign">Trastienda</div>
+    <p class="sub" id="signSub"></p>
+  </header>
+  <div class="stage">
 
   <section class="safe" id="setup" hidden>
     <div class="door">
@@ -161,6 +166,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
     </div>
   </section>
 
+  </div>
   <p class="err" id="error" hidden></p>
   <div class="curtain" id="curtain" aria-hidden="true"><div class="half left"></div><div class="half right"></div><div class="valance"></div><button class="cue" id="raise" type="button" tabindex="-1"><b>Función en pausa</b><span>Pulsa para subir el telón</span></button></div>
 </main>
