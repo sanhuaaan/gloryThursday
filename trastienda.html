@@ -141,6 +141,8 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 .booth.open .shutter{transform:translateY(-102%)}
 .booth.leave{opacity:0;transform:scale(1.06);transition:opacity .38s ease,transform .38s ease}
 .appear{animation:appear .5s ease both}
+.tray.enter .row{animation:tileIn .45s cubic-bezier(.2,.8,.3,1) both;animation-delay:calc(.15s + var(--i) * 45ms)}
+@keyframes tileIn{from{opacity:0;transform:translateY(.7rem) scale(.97)}}
 @keyframes appear{from{opacity:0;transform:translateY(.8rem)}}
 .counter{width:100%;display:grid;justify-items:center;gap:.9rem;padding-top:.2rem;background:linear-gradient(180deg,#3a2408,#2a1a05 .5rem,transparent .5rem)}
 .slot{width:70%;height:.45rem;border-radius:0 0 .4rem .4rem;background:#0b0305;box-shadow:inset 0 .2rem .3rem rgba(0,0,0,.9)}
@@ -312,8 +314,8 @@ function storeBalls(g,d){return (byGroup[g]||[]).reduce((a,r)=>a+(d.stores[r.slu
 
 function render(pending){
   const list=$('list');list.innerHTML='';
-  groups.forEach(g=>{
-    const n=draft.balls[g]||0,diff=n-(current.balls[g]||0),k=storeBalls(g,draft),row=document.createElement('div');row.className='row';
+  groups.forEach((g,i)=>{
+    const n=draft.balls[g]||0,diff=n-(current.balls[g]||0),k=storeBalls(g,draft),row=document.createElement('div');row.className='row';row.style.setProperty('--i',i);
     const tag=diff?`${diff>0?'+'+diff:diff} sin sellar`:storesDiffer(g)?'restaurantes sin sellar':'';
     row.innerHTML=`${tag?`<span class="tag${shownTags.has(g)?'':' appear'}">${tag}</span>`:''}${n?`<button type="button" class="sites${openGroup===g?' open':''}${shownPills.has(g)?'':' appear'}" aria-expanded="${openGroup===g}">Restaurantes${k?` · ${k}`:''}</button>`:''}<span class="name" title="${g}">${g}</span>
       <span class="ctl"><button type="button" aria-label="Sacar una bola de ${g}" ${n&&!pending?'':'disabled'}>−</button><button type="button" aria-label="Meter una bola en ${g}" ${n<9&&!pending?'':'disabled'}>+</button></span>
@@ -406,12 +408,13 @@ $('sGo').onclick=setup;$('enter').onclick=login;$('save').onclick=save;
 $('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 $('pw').addEventListener('input',()=>{$('login').classList.remove('reject');showError('');});
 function closeSafe(){ss.set('gt',null);token=null;clearTimeout(pollTimer);$('courier').hidden=true;sign('Trastienda','','');view('login');replay($('login'),'appear');}
-function showPanel(){view('panel');replay($('panel'),'appear');}
+// al entrar, las cocinas llegan una tras otra; la clase se retira después para que los re-render no repitan la entrada
+function showPanel(){view('panel');replay($('panel'),'appear');const t=$('list');replay(t,'enter');clearTimeout(t._enter);t._enter=setTimeout(()=>t.classList.remove('enter'),reduce?0:1400);}
 function replay(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);}
 $('logout').onclick=closeSafe;
 fetch('data/key.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(k=>{
   keyFile=k;if(!k){sign('Trastienda','','');return view('setup');}
-  if(token){view('panel');refresh();}else{sign('Trastienda','','');view('login');}
+  if(token){refresh().then(()=>{if(token)showPanel();});}else{sign('Trastienda','','');view('login');}
 }).catch(()=>view('setup'));
 </script>
 </body>
