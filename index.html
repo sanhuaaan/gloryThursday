@@ -145,8 +145,9 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 .void{display:flex;flex-wrap:wrap;gap:.4rem;list-style:none;padding:0;margin:0}
 .void li{padding:.3rem .7rem;border-radius:.25rem;background:rgba(0,0,0,.25);color:var(--chalk-dim);font-size:.85rem;text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:.12rem}
 .method{font-size:.85rem;color:var(--chalk-dim);border-top:.125rem dashed var(--felt-line);padding-top:1rem;margin-top:3rem;max-width:44rem}
-.method .backroom{display:inline-block;margin-right:.6rem;padding:.1rem .6rem;border-radius:999rem;border:.1rem solid var(--felt-line);color:var(--chalk);text-decoration:none;font-variation-settings:"wght" 700}
-.method .backroom:hover{border-color:var(--yellow);color:var(--yellow)}
+.backroom{display:inline-block;margin-right:.6rem;padding:.1rem .6rem;border-radius:999rem;border:.1rem solid var(--felt-line);color:var(--chalk);text-decoration:none;font-variation-settings:"wght" 700}
+.backroom:hover{border-color:var(--yellow);color:var(--yellow)}
+.eyebrow .backroom{margin:0 0 0 .8rem;text-transform:none;letter-spacing:.02em;font-size:.8rem;vertical-align:.1rem}
 .method code{font-family:ui-monospace,Menlo,monospace;color:var(--chalk);font-size:.8rem}
 @media (prefers-reduced-motion:reduce){#c.shake{animation:none}body.spinning .dimmable{filter:none;opacity:1}#flash.go{animation:none}.result.show{animation:none}.card{transition:none}#confetti{display:none}.display.lock .num{animation:none}}
 </style>
@@ -155,7 +156,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 <div class="wrap">
 <header>
   <div class="dimmable">
-    <p class="eyebrow">Juan Fermín Gilisagasti · Zuatzu · 20018</p>
+    <p class="eyebrow">Juan Fermín Gilisagasti · Zuatzu · 20018 <a class="backroom" href="trastienda.html">🎟️ Trastienda</a></p>
     <h1>Jueves de Gloria</h1>
     <p class="lede">Los <b id="tot"></b> restaurantes de Glovo que sí llegan a la oficina, comprobados bola a bola contra nuestras coordenadas. Filtra la cocina, dale al bombo y a comer lo que salga. El bombo elige primero una cocina y luego un sitio dentro de ella; las reglas están más abajo.</p>
     <p class="updated" id="updated"></p>
