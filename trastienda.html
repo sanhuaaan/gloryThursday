@@ -225,6 +225,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   <p class="err" id="error" hidden></p>
 </main>
 <script type="module">
+import {latestRaffle,activeBalls} from './rules.js';
 const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO,ITER=600000;
 const COLORS=['#d3283a','#f0bf3d','#2a6fb0','#3f9a5a','#f6f2e8'];// mismos colores y orden que el bombo
 const $=id=>document.getElementById(id);
@@ -294,13 +295,12 @@ async function status(){
     gh('/contents/data/balls.json?ref=main').then(async r=>{if(r.status===401)throw new Error('token');if(r.status===404)return {sha:null,obj:{}};if(!r.ok)throw new Error('bolas extra: HTTP '+r.status);
       const j=await r.json();return {sha:j.sha,obj:JSON.parse(dec.decode(unb64(j.content.replace(/\n/g,''))))};})
   ]);
-  const latest=issues.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
+  const latest=latestRaffle(issues);
   const order=[...new Set(data.rows.map(r=>r.group))];
   const colors=Object.fromEntries(order.map((g,i)=>[g,COLORS[i%COLORS.length]]));
   const byGroup={};data.rows.forEach(r=>(byGroup[r.group]=byGroup[r.group]||[]).push({slug:r.slug,name:r.name}));
   Object.values(byGroup).forEach(l=>l.sort((a,b)=>a.name.localeCompare(b.name,'es')));
-  const cur={balls:{},stores:{}},o=file.obj;
-  if(o.mTo===latest){order.forEach(g=>{if(o.balls&&o.balls[g])cur.balls[g]=o.balls[g];});data.rows.forEach(r=>{if(o.stores&&o.stores[r.slug]&&cur.balls[r.group])cur.stores[r.slug]=o.stores[r.slug];});}
+  const cur=activeBalls(file.obj,latest,data.rows);
   return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,latest,sha:file.sha};
 }
 const same=(a,b)=>{const k=new Set([...Object.keys(a),...Object.keys(b)]);return [...k].every(x=>(a[x]||0)===(b[x]||0));};

@@ -210,6 +210,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 <p class="method dimmable"><a class="backroom" href="trastienda.html">🎟️ Trastienda</a> Método: consulta a <code>api.glovoapp.com/v3/stores/{slug}</code> con las coordenadas 43.2970, -2.0051 el 9 de septiembre de 2026. Las tiendas fuera de zona responden "No available store address found"; se validó con coordenadas de Bilbao, Hernani y Zarautz. Los horarios son los de ese día y se repiten entre semana. Envío según Glovo sin Prime.</p>
 </div>
 <script type="module">
+import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls} from './rules.js';
 // todo sale de ficheros publicados en Pages (sin API de GitHub: no hay límite de consultas); el barrido mantiene stores.json
 const DATA=await fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
   .catch(e=>{document.getElementById('count').textContent=`No se pudieron cargar los restaurantes (${e.message}). Recarga la página.`;throw e;});
@@ -221,15 +222,10 @@ document.getElementById('tot').textContent=rows.length;
 const store={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const offGroups=new Set(store.get('offGroups',[])),offSlugs=new Set(store.get('offSlugs',[]));
 const exoticBox=document.getElementById('exotic');exoticBox.checked=store.get('exotic',false);
-const REPO='sanhuaaan/gloryThursday',COOLDOWN=6;
-let winners=[];// [{slug,name,date,user,avatar,url}] más reciente primero
-const quarantine={};// slug -> sorteos que faltan para volver
-const lastWin={};// group -> fecha (AAAA-MM-DD) del último sorteo que ganó esa cocina
-const lastIdx={};// group -> cuántos sorteos registrados han pasado desde que ganó (0 = el último)
-// ponytail: tabla [meses, peso]; el primer tramo cuyo límite supere la antigüedad manda. Cambiar aquí si se ajusta la regla
-const PENALTY=[[2,0.25],[4,0.5],[6,0.75]];
-// tramos por sorteos: [límite, peso]; con índice 0 y 1 pesa ¼, con 2 y 3 ½, con 4 y 5 ¾, desde 6 entera
-function weightOf(group){const i=lastIdx[group];if(i==null)return 1;const t=PENALTY.find(([lim])=>i<lim);return t?t[1]:1;}
+const REPO='sanhuaaan/gloryThursday';
+// estado del sorteo, calculado con rules.js a partir de los ganadores y las bolas extra
+let winners=[],quarantine={},lastWin={},lastIdx={},latestRaffle=null,BALLS={},modCounts={},storeCounts={};
+const weightOf=group=>penaltyWeight(lastIdx[group]);
 // promo de Glovo: el 2x1 lleva dos bolas, un descuento en porcentaje bola y media, el resto una
 const promoWeight=r=>!r.promo?1:/\b(2x1|3x2)\b/i.test(r.promo)?2:/%/.test(r.promo)?1.5:1;
 // nota suavizada: 20 votos imaginarios a la media del bombo + los votos reales; sin votos = media, neutro
@@ -238,7 +234,7 @@ function ratingPrior(){const v=rows.filter(r=>r.rc>0&&r.rv!=null);return v.lengt
 const smoothed=r=>{const p=ratingPrior(),c=r.rv!=null?r.rc:0;return ((r.rv||0)*c+p*PRIOR_VOTES)/(c+PRIOR_VOTES);};
 // solo penaliza: 95 % o más pesa entero, de 90 a 95 tres cuartos, por debajo de 90 la mitad
 const ratingWeight=r=>{const s=smoothed(r);return s>=0.95?1:s>=0.90?0.75:0.5;};
-const siteWeight=r=>promoWeight(r)*ratingWeight(r)*(modActive()?1+(storeCounts[r.slug]||0):1);
+const siteWeight=r=>promoWeight(r)*ratingWeight(r)*(1+(storeCounts[r.slug]||0));
 function weightedPick(list){let x=Math.random()*list.reduce((a,r)=>a+siteWeight(r),0);for(const r of list){x-=siteWeight(r);if(x<0)return r;}return list[list.length-1];}
 const frac=w=>w===0.5?'½':w===0.75?'¾':w===0.25?'¼':String(w);
 function issueUrl(r,date){
@@ -246,33 +242,21 @@ function issueUrl(r,date){
   const body=`tienda: ${r.slug}\nfecha: ${d}\n\n${r.name} · ${r.tags.join(' · ')}\nhttps://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}`;
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
-let modCounts={},storeCounts={},latestRaffle=null;
-// bolas extra de un solo sorteo, en data/balls.json: {balls:{cocina:n}, stores:{slug:n}, mTo}; solo valen mientras el último sorteo registrado sea mTo
-let BALLS={};
-function resolveMod(){const ok=o=>o&&typeof o==='object'?o:{};modCounts={...ok(BALLS.balls)};storeCounts={};
-  Object.entries(ok(BALLS.stores)).forEach(([slug,n])=>{const r=rows.find(x=>x.slug===slug);if(r&&modCounts[r.group])storeCounts[slug]=n;});}
-const modActive=()=>latestRaffle!==null&&latestRaffle===BALLS.mTo;
+// bolas extra de data/balls.json; activeBalls descarta las caducadas y las de restaurante sin bolas en su cocina
+function resolveMod(){({balls:modCounts,stores:storeCounts}=activeBalls(BALLS,latestRaffle,rows));}
 function loadBalls(){
   fetch('data/balls.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
 }
-const drawWeight=g=>weightOf(g)*(modActive()?1+(modCounts[g]||0):1);
-const extraOf=g=>modActive()?modCounts[g]||0:0,extraStore=r=>modActive()?storeCounts[r.slug]||0:0;
+const drawWeight=g=>weightOf(g)*(1+(modCounts[g]||0));
+const extraOf=g=>modCounts[g]||0,extraStore=r=>storeCounts[r.slug]||0;
 const ballsLabel=n=>`+${n} bola${n>1?'s':''}`;
 function loadWinners(){
   // copia de los issues ganadores que mantiene scripts/winners.py (barrido y cada cambio en issues)
   fetch('data/winners.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():[]).catch(()=>[]).then(list=>{
-    latestRaffle=list.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
-    winners=list.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).map(i=>{
-      const slug=(i.body.match(/^\s*tienda:\s*(\S+)/m)||[])[1];
-      const date=(i.body.match(/^\s*fecha:\s*(\d{4}-\d{2}-\d{2})/m)||[])[1]||i.created_at.slice(0,10);
-      const row=rows.find(r=>r.slug===slug);
-      return {slug,name:row?row.name:slug,date,user:i.user.login,avatar:i.user.avatar_url,url:i.html_url};
-    }).sort((a,b)=>b.date.localeCompare(a.date));
-    Object.keys(quarantine).forEach(k=>delete quarantine[k]);
-    winners.forEach((w,i)=>{if(i<COOLDOWN&&quarantine[w.slug]==null)quarantine[w.slug]=COOLDOWN-i;});
-    [lastWin,lastIdx].forEach(o=>Object.keys(o).forEach(k=>delete o[k]));
-    winners.forEach((w,i)=>{const row=rows.find(r=>r.slug===w.slug);if(row&&lastIdx[row.group]==null){lastIdx[row.group]=i;lastWin[row.group]=w.date;}});
-    renderRoll();render();
+    latestRaffle=latestOf(list);
+    winners=parseWinners(list).map(w=>{const row=rows.find(r=>r.slug===w.slug);return {...w,name:row?row.name:w.slug};});
+    ({quarantine,lastIdx,lastWin}=raffleState(winners,rows));
+    resolveMod();renderRoll();render();
   }).catch(()=>{document.getElementById('roll').innerHTML='<li class="empty">No se pudo leer el palmarés de GitHub.</li>';});
 }
 const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});

@@ -13,6 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python3 scripts/remind.py ${{ inputs.force && '--force' || '' }}
+      - run: node scripts/remind.js ${{ inputs.force && '--force' || '' }}
         env:
           CHAT_WEBHOOK: ${{ secrets.CHAT_WEBHOOK }}
