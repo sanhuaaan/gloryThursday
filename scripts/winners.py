@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copia de los ganadores (issues abiertos con línea "tienda:") en data/winners.json.
+"""Copia de los ganadores (issues abiertos con línea "tienda:" y etiqueta "ganador") en data/winners.json.
 
 Sirve de reserva al bombo y a la trastienda cuando la API de GitHub corta las lecturas anónimas (60/h por IP),
 y de fuente para el recordatorio. En Actions usa GITHUB_TOKEN, que no tiene ese límite.
@@ -18,9 +18,11 @@ try:
 except Exception as e:
     print(f"No se pudo leer GitHub ({e}); winners.json sin cambios")
     sys.exit(0)
-winners = [{"number": i["number"], "body": i["body"], "created_at": i["created_at"], "html_url": i["html_url"],
+labels = lambda i: [l["name"] for l in i.get("labels") or []]
+winners = [{"number": i["number"], "body": i["body"], "created_at": i["created_at"], "html_url": i["html_url"], "labels": labels(i),
             "user": {"login": i["user"]["login"], "avatar_url": i["user"]["avatar_url"]}}
-           for i in issues if "pull_request" not in i and re.search(r"^\s*tienda:", i.get("body") or "", re.M)]
+           for i in issues if "pull_request" not in i and re.search(r"^\s*tienda:", i.get("body") or "", re.M)
+           and "ganador" in labels(i)]  # misma regla que rules.js
 winners.sort(key=lambda w: -w["number"])
 (ROOT / "data/winners.json").write_text(json.dumps(winners, ensure_ascii=False, indent=1) + "\n")
 print(f"{len(winners)} ganadores")

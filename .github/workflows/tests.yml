@@ -1,0 +1,11 @@
+name: tests
+on:
+  push:
+    paths: ["rules.js", "scripts/rules.test.js"]
+  workflow_dispatch:
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node --test scripts/rules.test.js

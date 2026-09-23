@@ -4,7 +4,10 @@
 export const COOLDOWN = 6;                                  // sorteos de cuarentena para el sitio ganador
 export const PENALTY = [[2, 0.25], [4, 0.5], [6, 0.75]];    // [sorteos desde que ganó la cocina < límite, peso]
 
-const isWinner = i => !i.pull_request && /^\s*tienda:/m.test(i.body || '');
+// Un sorteo cuenta solo si el issue lleva la etiqueta "ganador", que solo puede poner quien tiene permisos en el repo:
+// así un issue de cualquiera con una línea "tienda:" no altera el bombo. Las etiquetas llegan como objetos (API) o nombres.
+export const LABEL = 'ganador';
+const isWinner = i => !i.pull_request && /^\s*tienda:/m.test(i.body || '') && (i.labels || []).some(l => (l.name || l) === LABEL);
 
 // Número del último issue de ganador (0 si no hay): marca el sorteo para el que valen las bolas extra.
 export const latestRaffle = issues => issues.filter(isWinner).reduce((a, i) => Math.max(a, i.number), 0);
