@@ -6,7 +6,7 @@ Lee data/slugs.txt más las tiendas que aparezcan en los listados de Glovo, actu
 escribe data/stores.json y lo inyecta en index.html (entre DATA-START y DATA-END).
 Las tiendas fuera de zona devuelven 404 "No available store address found".
 """
-import html, json, re, subprocess, sys, time, uuid
+import hashlib, html, json, os, re, subprocess, sys, time, urllib.request, uuid
 from pathlib import Path
 
 LAT, LON = (sys.argv[1], sys.argv[2]) if len(sys.argv) > 2 else ("43.2970256", "-2.0050771")
@@ -166,7 +166,44 @@ for r in ok:
 ok.sort(key=lambda r: -int(r["rating"][:-1]) if r["rating"] else 1)
 for i, r in enumerate(ok, 1):
     r["n"] = i
-out = {"sweptAt": int(time.time() * 1000), "rows": ok, "excluded": excluded, "leftOut": sorted(left_out)}
+def latest_raffle():
+    """Número del último issue de ganador abierto (0 si no hay)."""
+    token = os.environ.get("GITHUB_TOKEN")
+    req = urllib.request.Request("https://api.github.com/repos/sanhuaaan/gloryThursday/issues?state=open&per_page=100",
+                                 headers={"Accept": "application/vnd.github+json", **({"Authorization": f"Bearer {token}"} if token else {})})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        issues = json.load(r)
+    return max((i["number"] for i in issues if "pull_request" not in i and re.search(r"^\s*tienda:", i.get("body") or "", re.M)), default=0)
+
+
+def draw_modifier():
+    """Modificador de un solo sorteo, leído del secreto DRAW_MOD: "<cocina>" o "<cocina>#<etiqueta>"; "none" lo quita.
+
+    Solo se publica la huella de la cocina y el último sorteo registrado al activarse; la página lo ignora en cuanto
+    se registra otro. Un mismo valor del secreto solo se activa una vez. Nunca se escribe la cocina en claro ni en el log.
+    """
+    prev = {k: previous[k] for k in ("m", "mTo", "mId") if k in previous}
+    secret = os.environ.get("DRAW_MOD", "").strip()
+    if not secret:
+        return prev
+    if secret == "none":
+        return {}
+    sid = hashlib.sha256(secret.encode()).hexdigest()[:16]
+    if sid == prev.get("mId"):
+        return prev
+    group = secret.split("#")[0].strip()
+    if group not in {name for name, _ in GROUPS}:
+        print("DRAW_MOD no coincide con ninguna cocina; se ignora")
+        return prev
+    try:
+        n = latest_raffle()
+    except Exception as e:  # sin el último sorteo no se puede fijar la caducidad: mejor no activar
+        print(f"DRAW_MOD sin activar: no se pudo leer GitHub ({e.__class__.__name__})")
+        return prev
+    return {"m": hashlib.sha256(group.encode()).hexdigest(), "mTo": n, "mId": sid}
+
+
+out = {"sweptAt": int(time.time() * 1000), "rows": ok, "excluded": excluded, "leftOut": sorted(left_out), **draw_modifier()}
 (ROOT / "data/stores.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
 html = (ROOT / "index.html").read_text()
 a, b = html.index("/*DATA-START*/"), html.index("/*DATA-END*/")

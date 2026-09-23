@@ -235,9 +235,15 @@ function issueUrl(r,date){
   const body=`tienda: ${r.slug}\nfecha: ${d}\n\n${r.name} · ${r.tags.join(' · ')}\nhttps://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}`;
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
+// modificador de un solo sorteo: huella de una cocina en los datos; solo vale mientras el último sorteo registrado sea DATA.mTo
+let modGroup=null,latestRaffle=null;
+const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+async function resolveMod(){modGroup=null;if(!DATA.m||!window.crypto||!crypto.subtle)return;for(const g of groupsOrder){if(await sha256(g)===DATA.m){modGroup=g;return;}}}
+const drawWeight=g=>weightOf(g)*(modGroup===g&&latestRaffle!==null&&latestRaffle===DATA.mTo?2:1);
 function loadWinners(){
   fetch(`https://api.github.com/repos/${REPO}/issues?state=open&per_page=100&sort=created&direction=desc`,{headers:{Accept:'application/vnd.github+json'}})
   .then(r=>r.ok?r.json():[]).then(list=>{
+    latestRaffle=list.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
     winners=list.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).map(i=>{
       const slug=(i.body.match(/^\s*tienda:\s*(\S+)/m)||[])[1];
       const date=(i.body.match(/^\s*fecha:\s*(\d{4}-\d{2}-\d{2})/m)||[])[1]||i.created_at.slice(0,10);
@@ -334,10 +340,10 @@ function render(){
   });
 }
 exoticBox.onchange=()=>{persist();render();};
-render();renderUpdated();loadWinners();
+render();renderUpdated();loadWinners();resolveMod();
 setInterval(()=>{render();renderUpdated();},60000);
 fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
-  if(!d||!d.rows)return;Object.assign(DATA,d);rows=DATA.rows;document.getElementById('tot').textContent=rows.length;render();renderUpdated();
+  if(!d||!d.rows)return;['m','mTo','mId'].forEach(k=>delete DATA[k]);Object.assign(DATA,d);rows=DATA.rows;resolveMod();document.getElementById('tot').textContent=rows.length;render();renderUpdated();
 }).catch(()=>{});
 const vl=document.getElementById('void');DATA.excluded.forEach(n=>{const li=document.createElement('li');li.textContent=n;vl.appendChild(li);});
 const fl2=document.getElementById('franchises');(DATA.leftOut||[]).forEach(n=>{const li=document.createElement('li');li.textContent=n;fl2.appendChild(li);});
@@ -440,8 +446,8 @@ drumroll.addEventListener('error',()=>{stopping=true;});
 btn.onclick=()=>{
   const v=visible();if(!v.length)return;
   const pick=a=>a[Math.floor(Math.random()*a.length)];
-  const gs=[...new Set(v.map(r=>r.group))];let x=Math.random()*gs.reduce((a,g)=>a+weightOf(g),0),cuisine=gs[gs.length-1];
-  for(const g of gs){x-=weightOf(g);if(x<0){cuisine=g;break;}}
+  const gs=[...new Set(v.map(r=>r.group))];let x=Math.random()*gs.reduce((a,g)=>a+drawWeight(g),0),cuisine=gs[gs.length-1];
+  for(const g of gs){x-=drawWeight(g);if(x<0){cuisine=g;break;}}
   pending=weightedPick(v.filter(r=>r.group===cuisine));subs=[];
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('winner'));
   res.classList.remove('show','pre');res.innerHTML='';display.classList.remove('lock');dnum.textContent='--';exit=null;lights='off';

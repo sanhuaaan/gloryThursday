@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 scripts/sweep.py
+        env:
+          DRAW_MOD: ${{ secrets.DRAW_MOD }}
+          GITHUB_TOKEN: ${{ github.token }}
       - run: |
           git config user.name "sweep-bot"
           git config user.email "sweep-bot@users.noreply.github.com"
