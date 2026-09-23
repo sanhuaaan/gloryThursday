@@ -139,6 +139,9 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%),repeating-linear-gradient(180deg,#9aa0a6 0 .55rem,#6d7277 .55rem .7rem,#c3c8cc .7rem .8rem)}
 .shutter span{font-family:'Rye',serif;font-size:1rem;padding:.25rem .8rem;border-radius:.3rem;background:#f3e6c8;color:var(--red);border:.12rem solid var(--red);transform:rotate(-3deg);box-shadow:0 .2rem .3rem rgba(0,0,0,.4)}
 .booth.open .shutter{transform:translateY(-102%)}
+.booth.leave{opacity:0;transform:scale(1.06);transition:opacity .38s ease,transform .38s ease}
+.appear{animation:appear .5s ease both}
+@keyframes appear{from{opacity:0;transform:translateY(.8rem)}}
 .counter{width:100%;display:grid;justify-items:center;gap:.9rem;padding-top:.2rem;background:linear-gradient(180deg,#3a2408,#2a1a05 .5rem,transparent .5rem)}
 .slot{width:70%;height:.45rem;border-radius:0 0 .4rem .4rem;background:#0b0305;box-shadow:inset 0 .2rem .3rem rgba(0,0,0,.9)}
 .ticket{position:relative;width:88%;display:grid;gap:.3rem;padding:.8rem 1.2rem .7rem;margin-top:-.2rem;color:#4a1a05;cursor:text;
@@ -264,11 +267,15 @@ async function setup(){
 // taquilla: si la combinación vale, sube la persiana y se entra; si no, el boleto queda sellado hasta que se vuelva a escribir
 async function login(){
   const b=$('login'),pw=$('pw').value;if(!pw)return $('pw').focus();
-  showError('');$('enter').disabled=true;b.classList.remove('reject');
+  showError('');$('enter').disabled=true;$('enter').textContent='Comprobando…';b.classList.remove('reject');
   let tok=null;try{tok=await unlock(keyFile,pw);}catch(e){}
+  $('enter').textContent='Entregar boleto';
   if(tok){
-    token=tok;ss.set('gt',tok);b.classList.add('open');await wait(500);
-    view('panel');refresh();b.classList.remove('open');$('pw').value='';
+    token=tok;ss.set('gt',tok);b.classList.add('open');
+    const loading=refresh();                       // se carga mientras sube la persiana
+    await wait(550);b.classList.add('leave');
+    await Promise.all([wait(380),Promise.race([loading,wait(4000)])]);
+    showPanel();b.classList.remove('open','leave');$('pw').value='';
   }else{
     b.classList.add('reject');showError('Boleto no válido: la combinación no es correcta.');$('pw').select();
   }
@@ -398,7 +405,9 @@ async function save(){
 $('sGo').onclick=setup;$('enter').onclick=login;$('save').onclick=save;
 $('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 $('pw').addEventListener('input',()=>{$('login').classList.remove('reject');showError('');});
-function closeSafe(){ss.set('gt',null);token=null;clearTimeout(pollTimer);$('courier').hidden=true;sign('Trastienda','','');view('login');}
+function closeSafe(){ss.set('gt',null);token=null;clearTimeout(pollTimer);$('courier').hidden=true;sign('Trastienda','','');view('login');replay($('login'),'appear');}
+function showPanel(){view('panel');replay($('panel'),'appear');}
+function replay(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);}
 $('logout').onclick=closeSafe;
 fetch('data/key.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(k=>{
   keyFile=k;if(!k){sign('Trastienda','','');return view('setup');}
