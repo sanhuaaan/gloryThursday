@@ -95,6 +95,23 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 .courier.done .seal{animation:none;box-shadow:0 0 1rem var(--neon-warm)}
 @keyframes glow{50%{box-shadow:0 0 1rem var(--neon)}}
 
+.curtain{position:fixed;inset:0;z-index:20;overflow:hidden;pointer-events:none}
+.curtain .half{position:absolute;top:0;bottom:0;width:51%;transition:transform .95s cubic-bezier(.65,0,.3,1);
+  background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 18%,transparent 80%,rgba(0,0,0,.35)),repeating-linear-gradient(90deg,#4a0812 0,#7a1020 .9rem,#a3182c 1.7rem,#7a1020 2.5rem,#4a0812 3.4rem);
+  box-shadow:inset 0 0 3rem rgba(0,0,0,.55)}
+.curtain .left{left:0;transform:translateX(-102%)}
+.curtain .right{right:0;transform:translateX(102%)}
+.curtain .half::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.4rem;background:radial-gradient(circle at 50% 0,var(--brass-light) 0 .3rem,var(--brass) .31rem .5rem,transparent .52rem) repeat-x;background-size:1.1rem 1.4rem}
+.curtain .valance{position:absolute;left:0;right:0;top:0;height:3.6rem;transform:translateY(-110%);transition:transform .6s ease .1s;
+  background:radial-gradient(ellipse 3.2rem 2.4rem at 50% 0,#a3182c 0 70%,transparent 71%) repeat-x,linear-gradient(180deg,#5c0b17,#7a1020);background-size:6.4rem 3.6rem,100% 1.4rem;background-repeat:repeat-x,no-repeat;border-top:.35rem solid var(--brass);filter:drop-shadow(0 .4rem .5rem rgba(0,0,0,.5))}
+.curtain .cue{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max-content;max-width:90vw;display:grid;gap:.4rem;justify-items:center;opacity:0;transition:opacity .3s;
+  padding:1rem 1.8rem;border-radius:50%/40%;background:radial-gradient(ellipse at 50% 35%,#f7e3a8,var(--brass) 55%,var(--brass-dark));color:#3a1a05;border:.25rem solid #5b4410;box-shadow:0 .6rem 1.2rem rgba(0,0,0,.6);text-align:center;cursor:pointer;font:inherit}
+.curtain .cue b{font-family:'Rye',serif;font-weight:400;font-size:1.35rem;line-height:1.1}
+.curtain .cue span{font-size:.78rem;font-variation-settings:"wght" 700}
+.curtain.closed{pointer-events:auto;cursor:pointer}
+.curtain.closed .left,.curtain.closed .right{transform:none}
+.curtain.closed .valance{transform:none}
+.curtain.closed .cue{opacity:1;transition:opacity .3s .8s}
 .note{color:var(--chalk-dim);font-size:.82rem;text-align:center;max-width:30rem;margin:0}
 .err{color:#ffb3bd;font-variation-settings:"wght" 700;text-align:center;margin:0}
 [hidden]{display:none!important}
@@ -145,6 +162,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   </section>
 
   <p class="err" id="error" hidden></p>
+  <div class="curtain" id="curtain" aria-hidden="true"><div class="half left"></div><div class="half right"></div><div class="valance"></div><button class="cue" id="raise" type="button" tabindex="-1"><b>Función en pausa</b><span>Pulsa para subir el telón</span></button></div>
 </main>
 <script type="module">
 import sodium from 'https://cdn.jsdelivr.net/npm/libsodium-wrappers@0.7.13/+esm';
@@ -170,7 +188,24 @@ async function aesKey(pw,salt,iter){const base=await crypto.subtle.importKey('ra
 async function lock(tok,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await aesKey(pw,salt,ITER),enc.encode(tok)));return {v:1,iter:ITER,salt:b64(salt),iv:b64(iv),ct:b64(ct)};}
 async function unlock(k,pw){return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(k.iv)},await aesKey(pw,unb64(k.salt),k.iter),unb64(k.ct)));}
 
-async function openSafe(id){const s=$(id);s.classList.add('spin');await wait(900);s.classList.add('open');await wait(700);s.classList.remove('spin','open');view('panel');refresh();}
+async function openSafe(id){const s=$(id);s.classList.add('spin');await wait(900);s.classList.add('open');await wait(700);s.classList.remove('spin','open');view('panel');armIdle();refresh();}
+
+// telón: cae con Escape, al cambiar de ventana o tras 3 min sin tocar nada; si sigue bajado 15 min, se cierra la caja
+const IDLE_MS=3*60000,LOCK_MS=15*60000;
+let idleTimer=null,lockTimer=null;
+const curtain=$('curtain'),isDown=()=>curtain.classList.contains('closed');
+function lowerCurtain(){
+  if($('panel').hidden||isDown())return;
+  curtain.classList.add('closed');curtain.setAttribute('aria-hidden','false');$('raise').tabIndex=0;$('raise').focus({preventScroll:true});
+  clearTimeout(idleTimer);clearTimeout(lockTimer);lockTimer=setTimeout(()=>{closeSafe();raiseCurtain();},LOCK_MS);
+}
+function raiseCurtain(){curtain.classList.remove('closed');curtain.setAttribute('aria-hidden','true');$('raise').tabIndex=-1;clearTimeout(lockTimer);armIdle();}
+function armIdle(){clearTimeout(idleTimer);if(!$('panel').hidden)idleTimer=setTimeout(lowerCurtain,IDLE_MS);}
+['pointermove','pointerdown','keydown','scroll','touchstart'].forEach(ev=>addEventListener(ev,()=>{if(!isDown())armIdle();},{passive:true}));
+addEventListener('blur',lowerCurtain);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)lowerCurtain();});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!isDown()){e.preventDefault();lowerCurtain();}});
+curtain.addEventListener('click',()=>{if(isDown())raiseCurtain();});
 function refuse(id){const s=$(id);s.classList.remove('nope');void s.offsetWidth;s.classList.add('nope');}
 
 async function setup(){
@@ -272,10 +307,11 @@ async function save(){
 
 $('sGo').onclick=setup;$('enter').onclick=login;$('save').onclick=save;
 $('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
-$('logout').onclick=()=>{ss.set('gt',null);token=null;clearTimeout(pollTimer);$('courier').hidden=true;sign('Trastienda','','');view('login');};
+function closeSafe(){ss.set('gt',null);token=null;clearTimeout(pollTimer);clearTimeout(idleTimer);$('courier').hidden=true;sign('Trastienda','','');view('login');}
+$('logout').onclick=closeSafe;
 fetch('data/key.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(k=>{
   keyFile=k;if(!k){sign('Trastienda','','');return view('setup');}
-  if(token){view('panel');refresh();}else{sign('Trastienda','','');view('login');}
+  if(token){view('panel');armIdle();refresh();}else{sign('Trastienda','','');view('login');}
 }).catch(()=>view('setup'));
 </script>
 </body>
