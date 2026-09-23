@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  issues: read
+  issues: write
 concurrency:
   group: sweep
   cancel-in-progress: false
@@ -14,6 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # etiqueta "ganador" automática para todo issue con línea "tienda:", lo abra quien lo abra
+      - if: github.event_name == 'issues' && (github.event.action == 'opened' || github.event.action == 'edited') && github.event.issue.state == 'open'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: ${{ github.event.issue.body }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          if printf '%s\n' "$BODY" | grep -qE '^[[:space:]]*tienda:'; then gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --add-label ganador; fi
       - run: python3 scripts/winners.py
         env:
           GITHUB_TOKEN: ${{ github.token }}
