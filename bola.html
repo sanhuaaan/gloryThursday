@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bola extra</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Archivo:wdth,wght@75..125,400..900&display=swap">
+<style>
+:root{--felt:#0d3b2a;--felt-deep:#082518;--felt-line:#1c5a41;--paper:#f3e6c8;--paper-ink:#2a1f14;--paper-dim:#7a6a4f;--red:#d3283a;--yellow:#f0bf3d;--green:#3f9a5a;--chalk:#e9e2d0;--chalk-dim:#a9b8a8}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--felt) radial-gradient(ellipse at 50% 0%,#145238 0%,var(--felt) 55%,var(--felt-deep) 100%);color:var(--chalk);font-family:'Archivo',"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.45}
+main{max-width:34rem;margin:0 auto;padding:2.5rem 1.25rem 4rem;display:grid;gap:1.25rem}
+h1{font-family:'Rye',"Copperplate",serif;font-weight:400;font-size:2.4rem;line-height:1;margin:0;color:var(--paper);text-shadow:.12rem .12rem 0 var(--red)}
+.card{background:var(--paper);color:var(--paper-ink);border-radius:.5rem;padding:1.25rem 1.4rem;box-shadow:0 .3rem 0 rgba(0,0,0,.3);display:grid;gap:.8rem}
+.card h2{margin:0;font-size:1.05rem;font-variation-settings:"wght" 800}
+.card p{margin:0}
+.state{display:flex;align-items:center;gap:.7rem;font-variation-settings:"wght" 700}
+.dot{width:1rem;height:1rem;border-radius:50%;flex:none;background:var(--paper-dim)}
+.dot.on{background:var(--red);box-shadow:0 0 .6rem var(--red)}
+.dot.wait{background:var(--yellow);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+label{display:grid;gap:.3rem;font-size:.85rem;font-variation-settings:"wght" 700}
+input,select{font:inherit;padding:.5rem .6rem;border-radius:.3rem;border:.125rem solid var(--paper-dim);background:#fffaf0;color:var(--paper-ink)}
+button{font:inherit;font-variation-settings:"wght" 800;padding:.6rem 1rem;border-radius:.3rem;border:0;background:var(--red);color:var(--paper);cursor:pointer}
+button.alt{background:transparent;color:var(--paper-dim);border:.125rem solid var(--paper-dim)}
+button[disabled]{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:.2rem solid var(--yellow);outline-offset:.15rem}
+.small{font-size:.82rem;color:var(--paper-dim)}
+.small a{color:var(--red)}
+.err{color:var(--red);font-variation-settings:"wght" 700}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.dot.wait{animation:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Bola extra</h1>
+
+  <section class="card" id="login">
+    <h2>Acceso</h2>
+    <p class="small">Hace falta un token de GitHub con permiso sobre este repositorio. Se guarda solo en este navegador.</p>
+    <p class="small">Créalo en <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub, tokens de grano fino</a>: acceso solo a <b>sanhuaaan/gloryThursday</b>, con <b>Secrets</b> y <b>Actions</b> en lectura y escritura.</p>
+    <label>Token<input id="token" type="password" autocomplete="off" spellcheck="false"></label>
+    <button id="saveToken" type="button">Guardar token</button>
+  </section>
+
+  <section class="card" id="panel" hidden>
+    <div class="state"><span class="dot" id="dot"></span><span id="stateText">Comprobando…</span></div>
+    <p class="small" id="stateDetail"></p>
+    <div id="form" hidden>
+      <label>Cocina<select id="group"></select></label>
+      <p class="small">Pesará el doble solo en el próximo sorteo registrado. No se ve en el bombo ni en el aviso del chat.</p>
+      <button id="submit" type="button">Meter bola extra</button>
+    </div>
+    <p class="err" id="error" hidden></p>
+    <button class="alt" id="forget" type="button">Olvidar el token en este navegador</button>
+  </section>
+</main>
+<script type="module">
+import sodium from 'https://cdn.jsdelivr.net/npm/libsodium-wrappers@0.7.13/+esm';
+const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO;
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+const gh=(path,opt={})=>fetch(API+path,{...opt,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+store.get('gt'),...(opt.headers||{})}});
+let pollTimer=null;
+
+function showError(msg){$('error').textContent=msg;$('error').hidden=!msg;}
+function setState(kind,text,detail){$('dot').className='dot'+(kind==='on'?' on':kind==='wait'?' wait':'');$('stateText').textContent=text;$('stateDetail').textContent=detail||'';$('form').hidden=kind!=='off';}
+
+async function status(){
+  const [data,issues]=await Promise.all([
+    fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()),
+    gh('/issues?state=open&per_page=100').then(r=>{if(r.status===401)throw new Error('token');return r.json();})
+  ]);
+  const latest=issues.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
+  const groups=[...new Set(data.rows.map(r=>r.group))].sort((a,b)=>a.localeCompare(b,'es'));
+  let modGroup=null;if(data.m)for(const g of groups)if(await sha256(g)===data.m){modGroup=g;break;}
+  return {groups,latest,active:!!data.m&&data.mTo===latest,modGroup,mId:data.mId||null};
+}
+
+async function refresh(){
+  showError('');
+  let s;
+  try{s=await status();}catch(e){
+    if(e.message==='token'){store.set('gt',null);showLogin();showError('GitHub no acepta el token. Revisa que no haya caducado.');return;}
+    setState('wait','No se pudo comprobar el estado','Reintentando en unos segundos.');setTimeout(refresh,15000);return;
+  }
+  const pending=JSON.parse(store.get('pending')||'null');
+  if(s.active){
+    store.set('pending',null);
+    setState('on','Hay una bola extra para el próximo sorteo',`Cocina: ${s.modGroup||'desconocida'}. Se retira sola al registrar el próximo ganador.`);
+  }else if(pending&&pending.mIdPrev===s.mId&&Date.now()-pending.at<15*60000){
+    setState('wait','Bola extra enviada, activándose',`${pending.group}. El barrido de GitHub tarda unos minutos en recogerla.`);
+    clearTimeout(pollTimer);pollTimer=setTimeout(refresh,20000);
+  }else{
+    if(pending&&pending.mIdPrev!==s.mId)store.set('pending',null);
+    setState('off','No hay bola extra','Puedes meter una para el próximo sorteo.');
+    $('group').innerHTML=s.groups.map(g=>`<option>${g}</option>`).join('');
+  }
+  $('submit').disabled=false;
+}
+
+async function submit(){
+  const group=$('group').value;if(!group)return;
+  $('submit').disabled=true;showError('');
+  try{
+    const s=await status();
+    if(s.active){await refresh();showError('Ya hay una bola extra vigente.');return;}
+    await sodium.ready;
+    const key=await gh('/actions/secrets/public-key').then(r=>{if(!r.ok)throw new Error('No se pudo leer la clave del repositorio ('+r.status+'). ¿El token tiene permiso de Secrets?');return r.json();});
+    const sealed=sodium.crypto_box_seal(sodium.from_string(`${group}#${Date.now()}`),sodium.from_base64(key.key,sodium.base64_variants.ORIGINAL));
+    const put=await gh('/actions/secrets/DRAW_MOD',{method:'PUT',body:JSON.stringify({encrypted_value:sodium.to_base64(sealed,sodium.base64_variants.ORIGINAL),key_id:key.key_id})});
+    if(!put.ok)throw new Error('GitHub no guardó la bola extra ('+put.status+'). ¿El token tiene permiso de escritura en Secrets?');
+    const run=await gh('/actions/workflows/sweep.yml/dispatches',{method:'POST',body:JSON.stringify({ref:'main'})});
+    store.set('pending',JSON.stringify({group,at:Date.now(),mIdPrev:s.mId}));
+    await refresh();
+    if(!run.ok)showError('Guardada, pero no se pudo lanzar el barrido ('+run.status+'). Se activará en el siguiente barrido automático, como mucho en media hora.');
+  }catch(e){showError(e.message);$('submit').disabled=false;}
+}
+
+function showLogin(){$('login').hidden=false;$('panel').hidden=true;}
+function showPanel(){$('login').hidden=true;$('panel').hidden=false;refresh();}
+$('saveToken').onclick=()=>{const t=$('token').value.trim();if(!t)return;store.set('gt',t);$('token').value='';showPanel();};
+$('forget').onclick=()=>{store.set('gt',null);store.set('pending',null);showLogin();};
+$('submit').onclick=submit;
+store.get('gt')?showPanel():showLogin();
+</script>
+</body>
+</html>

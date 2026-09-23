@@ -200,6 +200,9 @@ def draw_modifier():
     except Exception as e:  # sin el último sorteo no se puede fijar la caducidad: mejor no activar
         print(f"DRAW_MOD sin activar: no se pudo leer GitHub ({e.__class__.__name__})")
         return prev
+    if prev.get("m") and prev.get("mTo") == n:  # solo una bola extra a la vez; la rechazada no queda en cola
+        print("Ya hay una bola extra vigente; la nueva se descarta")
+        return {**prev, "mId": sid}
     return {"m": hashlib.sha256(group.encode()).hexdigest(), "mTo": n, "mId": sid}
 
 
