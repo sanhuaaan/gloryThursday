@@ -1,5 +1,5 @@
 {
- "sweptAt": 1790173755654,
+ "sweptAt": 1790175318849,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
@@ -470,9 +470,9 @@
    ],
    "group": "Alta cocina / grill",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 18:30",
+   "next": 1790181000000,
    "slug": "bodega-donostiarra-sansebastian",
    "promo": null,
    "n": 24
@@ -1064,9 +1064,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta mañana",
+   "next": 1790236800000,
    "slug": "sutan-dator-menu-donostia-san-sebastian",
    "promo": null,
    "n": 54
@@ -1619,9 +1619,9 @@
    ],
    "group": "Indio",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790182800000,
    "slug": "tandoori-mashala-indian-restaurant-donostia-san-sebastian",
    "promo": null,
    "n": 82
