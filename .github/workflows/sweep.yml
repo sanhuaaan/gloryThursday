@@ -21,5 +21,5 @@ jobs:
       - run: |
           git config user.name "sweep-bot"
           git config user.email "sweep-bot@users.noreply.github.com"
-          git add data/stores.json data/slugs.txt data/winners.json index.html
+          git add data/stores.json data/slugs.txt data/winners.json
           git diff --cached --quiet || { git commit -m "chore: refresh Glovo availability" && git pull --rebase -X theirs origin main && git push; }  # en conflicto, manda el dato recién barrido

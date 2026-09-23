@@ -3,7 +3,7 @@
 
 Uso: python3 scripts/sweep.py [lat] [lon]  (por defecto, la oficina de Zuatzu)
 Lee data/slugs.txt más las tiendas que aparezcan en los listados de Glovo, actualiza data/slugs.txt,
-escribe data/stores.json y lo inyecta en index.html (entre DATA-START y DATA-END).
+escribe data/stores.json (la página lo lee al abrirse).
 Las tiendas fuera de zona devuelven 404 "No available store address found".
 """
 import html, json, re, subprocess, sys, time, uuid
@@ -168,7 +168,4 @@ for i, r in enumerate(ok, 1):
     r["n"] = i
 out = {"sweptAt": int(time.time() * 1000), "rows": ok, "excluded": excluded, "leftOut": sorted(left_out)}
 (ROOT / "data/stores.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
-html = (ROOT / "index.html").read_text()
-a, b = html.index("/*DATA-START*/"), html.index("/*DATA-END*/")
-(ROOT / "index.html").write_text(html[:a] + "/*DATA-START*/const DATA=" + json.dumps(out, ensure_ascii=False) + ";" + html[b:])
 print(f"{len(ok)} llegan, {len(excluded)} no, {len(left_out)} fuera del bombo")

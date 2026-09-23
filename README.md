@@ -5,7 +5,7 @@ Bombo de bingo para decidir dónde pedimos la comida en la oficina de Zuatzu (Ju
 - `index.html`: la página. Abrir en el navegador, sin build.
 - `data/stores.json`: restaurantes de Glovo que sí llegan a la oficina, y los que no.
 - `data/slugs.txt`: tiendas a comprobar (slugs de Glovo Donostia). El barrido añade las que aparecen nuevas en los listados de Glovo y quita las que Glovo da por inexistentes.
-- `scripts/sweep.py`: regenera `stores.json` consultando Glovo con las coordenadas de la oficina y lo inyecta en `index.html`.
+- `scripts/sweep.py`: regenera `stores.json` consultando Glovo con las coordenadas de la oficina.
 - `.github/workflows/sweep.yml`: lanza el barrido cada media hora (y a mano desde Actions) y commitea el resultado.
 - `scripts/remind.py` + `.github/workflows/remind.yml`: aviso a Google Chat el miércoles anterior al segundo jueves de mes (08:00 Madrid), con última ganadora, cuarentena y cocinas penalizadas. La URL del webhook va en el secreto `CHAT_WEBHOOK`.
 
@@ -15,7 +15,7 @@ Para actualizar los datos:
 python3 scripts/sweep.py
 ```
 
-La página lee `data/stores.json` al abrirse y proyecta el estado de cada tienda sobre la hora real del visitante (Glovo no expone horario semanal ni permite CORS desde otros dominios). Si el fichero no carga, usa los datos embebidos en `index.html`.
+La página lee `data/stores.json`, `data/winners.json` (copia de los issues ganadores, `scripts/winners.py`) y `data/balls.json` (bolas extra, escritas desde `trastienda.html`) al abrirse, todo desde Pages y sin consultar la API de GitHub, y proyecta el estado de cada tienda sobre la hora real del visitante (Glovo no expone horario semanal ni permite CORS desde otros dominios). Si `stores.json` no carga, la página lo dice y pide recargar.
 
 ## Reglas del sorteo
 
