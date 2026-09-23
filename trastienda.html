@@ -234,7 +234,8 @@ const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
 let token=ss.get('gt'),keyFile=null,current={balls:{},stores:{}},draft={balls:{},stores:{}},groups=[],gcolor={},mId=null,pollTimer=null,lastDrop=null;
-const gh=(path,opt={})=>fetch(API+path,{...opt,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token,...(opt.headers||{})}});
+// cache:'no-store': GitHub deja cachear sus respuestas 60 s y una lectura vieja haría fallar el guardado
+const gh=(path,opt={})=>fetch(API+path,{cache:'no-store',...opt,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token,...(opt.headers||{})}});
 function showError(m){$('error').textContent=m||'';$('error').hidden=!m;}
 function view(id){['setup','login','panel'].forEach(x=>$(x).hidden=x!==id);}
 // el rótulo solo parpadea al cambiar de texto
@@ -382,11 +383,14 @@ async function save(){
     const balls={},stores={};
     Object.entries(draft.balls).forEach(([g,n])=>{if(n>0&&n<=9)balls[g]=n;});
     Object.entries(draft.stores).forEach(([slug,n])=>{const g=groups.find(x=>(byGroup[x]||[]).some(r=>r.slug===slug));if(g&&balls[g]&&n>0&&n<=9)stores[slug]=n;});
-    const body={message:'chore: update extra balls',content:b64(enc.encode(JSON.stringify({balls,stores,mTo:latest,updatedAt:new Date().toISOString()},null,1)+'\n'))};
-    if(sha)body.sha=sha;
-    const [put]=await Promise.all([gh('/contents/data/balls.json',{method:'PUT',body:JSON.stringify(body)}),wait(700)]);
-    if(put.status===409||put.status===422){env.classList.remove('sealed');await refresh();throw new Error('Las bolas han cambiado desde otro sitio. He cargado lo último: revísalo y vuelve a sellar.');}
-    if(!put.ok)throw new Error('GitHub no guardó los cambios ('+put.status+'). ¿El token tiene escritura en Contents?');
+    const content=b64(enc.encode(JSON.stringify({balls,stores,mTo:latest,updatedAt:new Date().toISOString()},null,1)+'\n'));
+    const write=s=>gh('/contents/data/balls.json',{method:'PUT',body:JSON.stringify({message:'chore: update extra balls',content,...(s?{sha:s}:{})})});
+    let [put]=await Promise.all([write(sha),wait(700)]);
+    if(put.status===409||put.status===422){   // la versión que teníamos no era la última: se relee y se reintenta una vez
+      const r=await gh('/contents/data/balls.json?ref=main');sha=r.ok?(await r.json()).sha:null;put=await write(sha);
+    }
+    if(!put.ok){let why='';try{why=(await put.json()).message||'';}catch(e){}
+      throw new Error(`GitHub no guardó los cambios (HTTP ${put.status}${why?': '+why:''}).`+(put.status===403||put.status===404?' ¿El token tiene escritura en Contents?':''));}
     sha=(await put.json()).content.sha;current=clone({balls,stores});draft=clone(current);
     env.classList.add('gone');await wait(600);env.classList.remove('sealed','gone');
     $('courier').hidden=false;$('courier').classList.add('done');$('courierText').textContent='Sobre entregado: ya se ve en el bombo.';
