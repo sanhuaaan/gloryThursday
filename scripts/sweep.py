@@ -181,9 +181,9 @@ def draw_modifier():
     JSON {"balls": {"<cocina>": n}, "stores": {"<slug>": n}, "nonce": ...}.
 
     Cada bola extra suma el peso normal de su cocina o de su restaurante (1 bola = doble, 2 = triple). Las de restaurante
-    solo valen en cocinas que también llevan bolas. Solo se publican huellas, cuántas bolas lleva cada una y el último
-    sorteo registrado al guardarlas; la página las ignora en cuanto se registra otro. Un mismo valor del secreto solo se
-    procesa una vez. Nunca se escribe una cocina ni un restaurante en claro ni en el log.
+    solo valen en cocinas que también llevan bolas. Se publican con el último sorteo registrado al guardarlas y la página
+    las ignora en cuanto se registra otro. Un mismo valor del secreto solo se procesa una vez. El secreto solo sirve para
+    que únicamente la trastienda pueda cambiarlas.
     """
     prev = {k: previous[k] for k in ("m", "s", "mTo", "mId") if k in previous}
     secret = os.environ.get("DRAW_MOD", "").strip()
@@ -210,10 +210,9 @@ def draw_modifier():
     except Exception as e:  # sin el último sorteo no se puede fijar la caducidad: mejor no activar
         print(f"DRAW_MOD sin activar: no se pudo leer GitHub ({e.__class__.__name__})")
         return prev
-    sha = lambda t: hashlib.sha256(t.encode()).hexdigest()
-    out = {"m": {sha(g): c for g, c in balls.items()}, "mTo": n, "mId": sid}
+    out = {"m": balls, "mTo": n, "mId": sid}
     if stores:
-        out["s"] = {sha(s): c for s, c in stores.items()}
+        out["s"] = stores
     return out
 
 

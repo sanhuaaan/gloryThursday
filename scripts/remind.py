@@ -12,7 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REPO = "sanhuaaan/gloryThursday"
 PAGE = "https://sanhuaaan.github.io/gloryThursday/"
-COOLDOWN, PENALTY = 6, [(2, "¼"), (4, "½"), (6, "¾")]  # mismas reglas que index.html
+COOLDOWN, PENALTY = 6, [(2, 0.25), (4, 0.5), (6, 0.75)]  # mismas reglas que index.html
+FRAC = {0.25: "¼", 0.5: "½", 0.75: "¾"}
 MONTHS = "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split()
 
 os.environ["TZ"] = "Europe/Madrid"
@@ -22,7 +23,8 @@ if "--force" not in sys.argv and not (today.weekday() == 2 and 7 <= today.day <=
     print(f"{today}: no es el miércoles anterior al segundo jueves; nada que enviar")
     sys.exit(0)
 
-rows = {r["slug"]: r for r in json.loads((ROOT / "data/stores.json").read_text())["rows"]}
+data = json.loads((ROOT / "data/stores.json").read_text())
+rows = {r["slug"]: r for r in data["rows"]}
 with urllib.request.urlopen(f"https://api.github.com/repos/{REPO}/issues?state=open&per_page=100") as r:
     issues = json.load(r)
 winners = []
@@ -31,8 +33,9 @@ for i in issues:
     if not m or "pull_request" in i:
         continue
     d = re.search(r"^\s*fecha:\s*(\d{4}-\d{2}-\d{2})", i["body"], re.M)
-    winners.append((d.group(1) if d else i["created_at"][:10], m.group(1)))
+    winners.append((d.group(1) if d else i["created_at"][:10], m.group(1), i["number"]))
 winners.sort(reverse=True)
+latest = max((n for _, _, n in winners), default=0)
 
 
 def fmt(iso):
@@ -44,24 +47,48 @@ def name(slug):
     return rows[slug]["name"] if slug in rows else slug
 
 
+last_by_group = {}
+for i, (_, s, _) in enumerate(winners):
+    if s in rows:
+        last_by_group.setdefault(rows[s]["group"], i)  # sorteos registrados desde que ganó
+
+
+def penalty(g):
+    i = last_by_group.get(g)
+    return 1 if i is None else next((w for lim, w in PENALTY if i < lim), 1)
+
+
+def extra_balls_line():
+    """Bolas extra vigentes y probabilidad real de cada cocina con bolas (penalización y cuarentena incluidas)."""
+    balls, stores = data.get("m") or {}, data.get("s") or {}
+    if not balls or data.get("mTo") != latest:
+        return []
+    quarantined = {s for _, s, _ in winners[:COOLDOWN]}
+    groups = {r["group"] for s, r in rows.items() if s not in quarantined}
+    weight = {g: penalty(g) * (1 + balls.get(g, 0)) for g in groups}
+    total = sum(weight.values())
+    parts = [f"{g} +{n} (sale el {round(100 * weight[g] / total)} %)" for g, n in sorted(balls.items(), key=lambda x: -x[1]) if g in weight]
+    out = ["Bolas extra para este sorteo: " + ", ".join(parts) + "."] if parts else []
+    for g in sorted(balls):
+        inside = [f"{rows[s]['name']} +{n}" for s, n in stores.items() if s in rows and rows[s]["group"] == g]
+        if inside:
+            out.append(f"Dentro de {g}: " + ", ".join(inside) + ".")
+    return out
+
+
 lines = ["*Mañana es Jueves de Gloria* 🍽️", ""]
 if winners:
     lines.append(f"Última vez salió *{name(winners[0][1])}* ({fmt(winners[0][0])}).")
-    quarantine = [name(s) for _, s in winners[:COOLDOWN]]
+    quarantine = [name(s) for _, s, _ in winners[:COOLDOWN]]
     lines.append("En cuarentena: " + ", ".join(quarantine) + ".")
-    last_by_group = {}
-    for i, (_, s) in enumerate(winners):
-        if s in rows:
-            last_by_group.setdefault(rows[s]["group"], i)  # sorteos registrados desde que ganó
-    penalised = []
-    for g, i in last_by_group.items():
-        w = next((w for lim, w in PENALTY if i < lim), None)
-        if w:
-            penalised.append(f"{g} ×{w}")
+    penalised = [f"{g} ×{FRAC[penalty(g)]}" for g in sorted(last_by_group) if penalty(g) < 1]
     if penalised:
         lines.append("Cocinas penalizadas: " + ", ".join(penalised) + ".")
 else:
     lines.append("Todavía no hay ganadores registrados: bombo limpio.")
+extra = extra_balls_line()
+if extra:
+    lines += [""] + extra
 lines += ["", f"Bombo: {PAGE}"]
 text = "\n".join(lines)
 
