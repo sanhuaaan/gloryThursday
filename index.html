@@ -236,10 +236,10 @@ function issueUrl(r,date){
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
 // modificador de un solo sorteo: huella de una cocina en los datos; solo vale mientras el último sorteo registrado sea DATA.mTo
-let modGroup=null,latestRaffle=null;
+let modCounts={},latestRaffle=null;
 const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
-async function resolveMod(){modGroup=null;if(!DATA.m||!window.crypto||!crypto.subtle)return;for(const g of groupsOrder){if(await sha256(g)===DATA.m){modGroup=g;return;}}}
-const drawWeight=g=>weightOf(g)*(modGroup===g&&latestRaffle!==null&&latestRaffle===DATA.mTo?2:1);
+async function resolveMod(){modCounts={};const m=DATA.m;if(!m||typeof m!=='object'||!window.crypto||!crypto.subtle)return;for(const g of groupsOrder){const c=m[await sha256(g)];if(c)modCounts[g]=c;}}
+const drawWeight=g=>weightOf(g)*(latestRaffle!==null&&latestRaffle===DATA.mTo?1+(modCounts[g]||0):1);
 function loadWinners(){
   fetch(`https://api.github.com/repos/${REPO}/issues?state=open&per_page=100&sort=created&direction=desc`,{headers:{Accept:'application/vnd.github+json'}})
   .then(r=>r.ok?r.json():[]).then(list=>{

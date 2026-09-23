@@ -30,6 +30,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:.2rem soli
 .small{font-size:.82rem;color:var(--paper-dim)}
 .small a{color:var(--red)}
 .err{color:var(--red);font-variation-settings:"wght" 700}
+.ok{color:var(--green);font-variation-settings:"wght" 700}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:.35rem}
+.list li{display:grid;grid-template-columns:1fr auto auto auto;gap:.5rem;align-items:center;padding:.3rem 0;border-bottom:.1rem dashed rgba(122,106,79,.35)}
+.list .n{font-variant-numeric:tabular-nums;font-variation-settings:"wght" 800;min-width:4.5rem;text-align:center}
+.list .n.has{color:var(--red)}
+.list button{padding:.2rem .7rem;font-size:1.1rem;line-height:1}
+.list li.changed .name::after{content:" · sin guardar";color:var(--paper-dim);font-size:.75rem}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){.dot.wait{animation:none}}
 </style>
@@ -38,37 +45,72 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:.2rem soli
 <main>
   <h1>Bola extra</h1>
 
-  <section class="card" id="login">
-    <h2>Acceso</h2>
-    <p class="small">Hace falta un token de GitHub con permiso sobre este repositorio. Se guarda solo en este navegador.</p>
-    <p class="small">Créalo en <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub, tokens de grano fino</a>: acceso solo a <b>sanhuaaan/gloryThursday</b>, con <b>Secrets</b> y <b>Actions</b> en lectura y escritura.</p>
-    <label>Token<input id="token" type="password" autocomplete="off" spellcheck="false"></label>
-    <button id="saveToken" type="button">Guardar token</button>
+  <section class="card" id="setup" hidden>
+    <h2>Configuración inicial</h2>
+    <p class="small">Solo se hace una vez. Crea un token en <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub, tokens de grano fino</a> con acceso solo a <b>sanhuaaan/gloryThursday</b> y permisos de lectura y escritura en <b>Secrets</b>, <b>Actions</b> y <b>Contents</b>. Elige una contraseña larga: el token se guarda cifrado con ella en el repositorio, que es público.</p>
+    <label>Token<input id="sToken" type="password" autocomplete="off" spellcheck="false"></label>
+    <label>Contraseña<input id="sPw" type="password" autocomplete="new-password"></label>
+    <label>Repite la contraseña<input id="sPw2" type="password" autocomplete="new-password"></label>
+    <button id="sGo" type="button">Guardar</button>
+  </section>
+
+  <section class="card" id="login" hidden>
+    <h2>Contraseña</h2>
+    <label>Contraseña<input id="pw" type="password" autocomplete="current-password"></label>
+    <button id="enter" type="button">Entrar</button>
   </section>
 
   <section class="card" id="panel" hidden>
     <div class="state"><span class="dot" id="dot"></span><span id="stateText">Comprobando…</span></div>
     <p class="small" id="stateDetail"></p>
-    <div id="form" hidden>
-      <label>Cocina<select id="group"></select></label>
-      <p class="small">Pesará el doble solo en el próximo sorteo registrado. No se ve en el bombo ni en el aviso del chat.</p>
-      <button id="submit" type="button">Meter bola extra</button>
-    </div>
-    <p class="err" id="error" hidden></p>
-    <button class="alt" id="forget" type="button">Olvidar el token en este navegador</button>
+    <ul class="list" id="list"></ul>
+    <p class="small">Cada bola extra suma el peso normal de su cocina: con una pesa el doble, con dos el triple. Todas se retiran solas al registrar el próximo ganador. No se ven en el bombo ni en el aviso del chat.</p>
+    <button id="save" type="button" disabled>Guardar cambios</button>
+    <button class="alt" id="logout" type="button">Salir</button>
   </section>
+
+  <p class="err" id="error" hidden></p>
 </main>
 <script type="module">
 import sodium from 'https://cdn.jsdelivr.net/npm/libsodium-wrappers@0.7.13/+esm';
-const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO;
+const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO,ITER=600000;
 const $=id=>document.getElementById(id);
-const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
-const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
-const gh=(path,opt={})=>fetch(API+path,{...opt,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+store.get('gt'),...(opt.headers||{})}});
-let pollTimer=null;
+const enc=new TextEncoder(),dec=new TextDecoder();
+const b64=u=>btoa(String.fromCharCode(...u)),unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){}}};
+const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+let token=ss.get('gt'),keyFile=null,current={},draft={},groups=[],mId=null,pollTimer=null;
+const gh=(path,opt={})=>fetch(API+path,{...opt,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token,...(opt.headers||{})}});
+function showError(m){$('error').textContent=m||'';$('error').hidden=!m;}
+function view(id){['setup','login','panel'].forEach(x=>$(x).hidden=x!==id);}
 
-function showError(msg){$('error').textContent=msg;$('error').hidden=!msg;}
-function setState(kind,text,detail){$('dot').className='dot'+(kind==='on'?' on':kind==='wait'?' wait':'');$('stateText').textContent=text;$('stateDetail').textContent=detail||'';$('form').hidden=kind!=='off';}
+// token cifrado con la contraseña (PBKDF2 + AES-GCM); el fichero es público, la contraseña no
+async function aesKey(pw,salt,iter){const base=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+async function lock(tok,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await aesKey(pw,salt,ITER),enc.encode(tok)));return {v:1,iter:ITER,salt:b64(salt),iv:b64(iv),ct:b64(ct)};}
+async function unlock(k,pw){return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(k.iv)},await aesKey(pw,unb64(k.salt),k.iter),unb64(k.ct)));}
+
+async function setup(){
+  showError('');const tok=$('sToken').value.trim(),pw=$('sPw').value;
+  if(!tok||!pw)return showError('Rellena el token y la contraseña.');
+  if(pw!==$('sPw2').value)return showError('Las contraseñas no coinciden.');
+  if(pw.length<12)return showError('Usa una contraseña de al menos 12 caracteres.');
+  $('sGo').disabled=true;token=tok;
+  try{
+    const r=await gh('/actions/secrets/public-key');if(!r.ok)throw new Error('El token no puede leer los secretos del repositorio ('+r.status+').');
+    const k=await lock(tok,pw);
+    const put=await gh('/contents/data/key.json',{method:'PUT',body:JSON.stringify({message:'chore: add access key',content:b64(enc.encode(JSON.stringify(k,null,1)))})});
+    if(!put.ok)throw new Error('No se pudo guardar la clave en el repositorio ('+put.status+'). ¿El token tiene escritura en Contents?');
+    keyFile=k;ss.set('gt',tok);['sToken','sPw','sPw2'].forEach(x=>$(x).value='');view('panel');refresh();
+  }catch(e){token=null;showError(e.message);}
+  $('sGo').disabled=false;
+}
+async function login(){
+  showError('');$('enter').disabled=true;
+  try{token=await unlock(keyFile,$('pw').value);ss.set('gt',token);$('pw').value='';view('panel');refresh();}
+  catch(e){showError('Contraseña incorrecta.');}
+  $('enter').disabled=false;
+}
 
 async function status(){
   const [data,issues]=await Promise.all([
@@ -76,57 +118,68 @@ async function status(){
     gh('/issues?state=open&per_page=100').then(r=>{if(r.status===401)throw new Error('token');return r.json();})
   ]);
   const latest=issues.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
-  const groups=[...new Set(data.rows.map(r=>r.group))].sort((a,b)=>a.localeCompare(b,'es'));
-  let modGroup=null;if(data.m)for(const g of groups)if(await sha256(g)===data.m){modGroup=g;break;}
-  return {groups,latest,active:!!data.m&&data.mTo===latest,modGroup,mId:data.mId||null};
+  const gs=[...new Set(data.rows.map(r=>r.group))].sort((a,b)=>a.localeCompare(b,'es'));
+  const counts={};
+  if(data.m&&typeof data.m==='object'&&data.mTo===latest)for(const g of gs){const c=data.m[await sha256(g)];if(c)counts[g]=c;}
+  return {groups:gs,counts,mId:data.mId||null};
+}
+const same=(a,b)=>{const k=new Set([...Object.keys(a),...Object.keys(b)]);return [...k].every(x=>(a[x]||0)===(b[x]||0));};
+const total=c=>Object.values(c).reduce((a,n)=>a+n,0);
+
+function render(pending){
+  $('list').innerHTML='';
+  groups.forEach(g=>{
+    const n=draft[g]||0,li=document.createElement('li');if(n!==(current[g]||0))li.className='changed';
+    li.innerHTML=`<span class="name">${g}</span><button type="button" class="alt" aria-label="Sacar una bola de ${g}" ${n?'':'disabled'}>−</button><span class="n ${n?'has':''}">${n?`${n} bola${n>1?'s':''}`:'—'}</span><button type="button" aria-label="Meter una bola en ${g}" ${n>=9?'disabled':''}>+</button>`;
+    const [minus,plus]=li.querySelectorAll('button');
+    minus.onclick=()=>{draft[g]=n-1;if(!draft[g])delete draft[g];render(pending);};
+    plus.onclick=()=>{draft[g]=n+1;render(pending);};
+    $('list').appendChild(li);
+  });
+  $('save').disabled=!!pending||same(draft,current);
+  const t=total(current);
+  if(pending){$('dot').className='dot wait';$('stateText').textContent='Cambios enviados, aplicándose';$('stateDetail').textContent='El barrido de GitHub tarda unos minutos en recogerlos.';}
+  else{$('dot').className='dot'+(t?' on':'');$('stateText').textContent=t?`${t} bola${t>1?'s':''} extra para el próximo sorteo`:'No hay bolas extra';$('stateDetail').textContent=t?'Se retiran solas al registrar el próximo ganador.':'Puedes meter las que quieras para el próximo sorteo.';}
 }
 
 async function refresh(){
-  showError('');
-  let s;
+  showError('');let s;
   try{s=await status();}catch(e){
-    if(e.message==='token'){store.set('gt',null);showLogin();showError('GitHub no acepta el token. Revisa que no haya caducado.');return;}
-    setState('wait','No se pudo comprobar el estado','Reintentando en unos segundos.');setTimeout(refresh,15000);return;
+    if(e.message==='token'){ss.set('gt',null);token=null;view('login');showError('GitHub ya no acepta el token. Habrá que repetir la configuración con uno nuevo.');return;}
+    showError('No se pudo comprobar el estado. Reintentando…');clearTimeout(pollTimer);pollTimer=setTimeout(refresh,15000);return;
   }
-  const pending=JSON.parse(store.get('pending')||'null');
-  if(s.active){
-    store.set('pending',null);
-    setState('on','Hay una bola extra para el próximo sorteo',`Cocina: ${s.modGroup||'desconocida'}. Se retira sola al registrar el próximo ganador.`);
-  }else if(pending&&pending.mIdPrev===s.mId&&Date.now()-pending.at<15*60000){
-    setState('wait','Bola extra enviada, activándose',`${pending.group}. El barrido de GitHub tarda unos minutos en recogerla.`);
-    clearTimeout(pollTimer);pollTimer=setTimeout(refresh,20000);
-  }else{
-    if(pending&&pending.mIdPrev!==s.mId)store.set('pending',null);
-    setState('off','No hay bola extra','Puedes meter una para el próximo sorteo.');
-    $('group').innerHTML=s.groups.map(g=>`<option>${g}</option>`).join('');
-  }
-  $('submit').disabled=false;
+  groups=s.groups;current=s.counts;mId=s.mId;
+  const p=JSON.parse(ls.get('pending')||'null');
+  const pending=p&&p.mIdPrev===s.mId&&Date.now()-p.at<15*60000;
+  if(!pending)ls.set('pending',null);
+  draft=pending?{...p.draft}:{...current};
+  render(pending);
+  clearTimeout(pollTimer);if(pending)pollTimer=setTimeout(refresh,20000);
 }
 
-async function submit(){
-  const group=$('group').value;if(!group)return;
-  $('submit').disabled=true;showError('');
+async function save(){
+  $('save').disabled=true;showError('');
   try{
-    const s=await status();
-    if(s.active){await refresh();showError('Ya hay una bola extra vigente.');return;}
     await sodium.ready;
-    const key=await gh('/actions/secrets/public-key').then(r=>{if(!r.ok)throw new Error('No se pudo leer la clave del repositorio ('+r.status+'). ¿El token tiene permiso de Secrets?');return r.json();});
-    const sealed=sodium.crypto_box_seal(sodium.from_string(`${group}#${Date.now()}`),sodium.from_base64(key.key,sodium.base64_variants.ORIGINAL));
+    const key=await gh('/actions/secrets/public-key').then(r=>{if(!r.ok)throw new Error('No se pudo leer la clave del repositorio ('+r.status+').');return r.json();});
+    const value=JSON.stringify({balls:draft,nonce:Date.now()});
+    const sealed=sodium.crypto_box_seal(sodium.from_string(value),sodium.from_base64(key.key,sodium.base64_variants.ORIGINAL));
     const put=await gh('/actions/secrets/DRAW_MOD',{method:'PUT',body:JSON.stringify({encrypted_value:sodium.to_base64(sealed,sodium.base64_variants.ORIGINAL),key_id:key.key_id})});
-    if(!put.ok)throw new Error('GitHub no guardó la bola extra ('+put.status+'). ¿El token tiene permiso de escritura en Secrets?');
+    if(!put.ok)throw new Error('GitHub no guardó los cambios ('+put.status+').');
     const run=await gh('/actions/workflows/sweep.yml/dispatches',{method:'POST',body:JSON.stringify({ref:'main'})});
-    store.set('pending',JSON.stringify({group,at:Date.now(),mIdPrev:s.mId}));
+    ls.set('pending',JSON.stringify({draft,at:Date.now(),mIdPrev:mId}));
     await refresh();
-    if(!run.ok)showError('Guardada, pero no se pudo lanzar el barrido ('+run.status+'). Se activará en el siguiente barrido automático, como mucho en media hora.');
-  }catch(e){showError(e.message);$('submit').disabled=false;}
+    if(!run.ok)showError('Guardado, pero no se pudo lanzar el barrido ('+run.status+'). Se aplicará en el siguiente automático, como mucho en media hora.');
+  }catch(e){showError(e.message);$('save').disabled=false;}
 }
 
-function showLogin(){$('login').hidden=false;$('panel').hidden=true;}
-function showPanel(){$('login').hidden=true;$('panel').hidden=false;refresh();}
-$('saveToken').onclick=()=>{const t=$('token').value.trim();if(!t)return;store.set('gt',t);$('token').value='';showPanel();};
-$('forget').onclick=()=>{store.set('gt',null);store.set('pending',null);showLogin();};
-$('submit').onclick=submit;
-store.get('gt')?showPanel():showLogin();
+$('sGo').onclick=setup;$('enter').onclick=login;$('save').onclick=save;
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+$('logout').onclick=()=>{ss.set('gt',null);token=null;view('login');};
+fetch('data/key.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(k=>{
+  keyFile=k;if(!k)return view('setup');
+  if(token){view('panel');refresh();}else view('login');
+}).catch(()=>view('setup'));
 </script>
 </body>
 </html>

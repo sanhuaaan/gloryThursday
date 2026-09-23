@@ -177,33 +177,34 @@ def latest_raffle():
 
 
 def draw_modifier():
-    """Modificador de un solo sorteo, leído del secreto DRAW_MOD: "<cocina>" o "<cocina>#<etiqueta>"; "none" lo quita.
+    """Bolas extra de un solo sorteo, leídas del secreto DRAW_MOD: JSON {"balls": {"<cocina>": n, ...}, "nonce": ...}.
 
-    Solo se publica la huella de la cocina y el último sorteo registrado al activarse; la página lo ignora en cuanto
-    se registra otro. Un mismo valor del secreto solo se activa una vez. Nunca se escribe la cocina en claro ni en el log.
+    Cada bola extra suma el peso normal de su cocina (1 bola = doble, 2 = triple). Solo se publica la huella de cada
+    cocina, cuántas bolas lleva y el último sorteo registrado al guardarlas; la página las ignora en cuanto se registra
+    otro. Un mismo valor del secreto solo se procesa una vez. Nunca se escribe la cocina en claro ni en el log.
     """
     prev = {k: previous[k] for k in ("m", "mTo", "mId") if k in previous}
     secret = os.environ.get("DRAW_MOD", "").strip()
     if not secret:
         return prev
-    if secret == "none":
-        return {}
     sid = hashlib.sha256(secret.encode()).hexdigest()[:16]
     if sid == prev.get("mId"):
         return prev
-    group = secret.split("#")[0].strip()
-    if group not in {name for name, _ in GROUPS}:
-        print("DRAW_MOD no coincide con ninguna cocina; se ignora")
-        return prev
+    try:
+        wanted = json.loads(secret)["balls"]
+    except (ValueError, KeyError, TypeError):
+        print("DRAW_MOD con formato no válido; se ignora")
+        return {**prev, "mId": sid}
+    names = {name for name, _ in GROUPS}
+    balls = {g: int(n) for g, n in wanted.items() if g in names and isinstance(n, int) and 0 < n <= 9}
+    if not balls:
+        return {"mId": sid}
     try:
         n = latest_raffle()
     except Exception as e:  # sin el último sorteo no se puede fijar la caducidad: mejor no activar
         print(f"DRAW_MOD sin activar: no se pudo leer GitHub ({e.__class__.__name__})")
         return prev
-    if prev.get("m") and prev.get("mTo") == n:  # solo una bola extra a la vez; la rechazada no queda en cola
-        print("Ya hay una bola extra vigente; la nueva se descarta")
-        return {**prev, "mId": sid}
-    return {"m": hashlib.sha256(group.encode()).hexdigest(), "mTo": n, "mId": sid}
+    return {"m": {hashlib.sha256(g.encode()).hexdigest(): c for g, c in balls.items()}, "mTo": n, "mId": sid}
 
 
 out = {"sweptAt": int(time.time() * 1000), "rows": ok, "excluded": excluded, "leftOut": sorted(left_out), **draw_modifier()}
