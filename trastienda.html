@@ -99,7 +99,17 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 
 .row .sites{position:absolute;top:-.55rem;right:.55rem;padding:0 .5rem;border-radius:999rem;font:inherit;font-size:.68rem;line-height:1.1rem;font-variation-settings:"wght" 800;cursor:pointer;color:var(--brass-light);background:#2a0910;border:.1rem solid var(--brass)}
 .row .sites:hover,.row .sites.open{background:var(--brass);color:#2a0910}
-.drawer{width:100%;display:grid;gap:.7rem;padding:.8rem 1rem 1rem;border-radius:.6rem;background:linear-gradient(180deg,#34101a,#240710);border:.15rem solid var(--brass-dark);box-shadow:0 0 1rem rgba(201,163,74,.18),inset 0 .3rem .8rem rgba(0,0,0,.5)}
+.drawer{width:100%;display:grid;grid-template-rows:0fr;opacity:0;transform:translateY(-.6rem);margin-top:calc(-1 * clamp(1rem,3vh,2.2rem));
+  transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1),opacity .35s ease,transform .45s cubic-bezier(.4,0,.2,1),margin-top .45s cubic-bezier(.4,0,.2,1)}
+.drawer.open{grid-template-rows:1fr;opacity:1;transform:none;margin-top:0}
+.dclip{min-height:0;overflow:hidden}
+.dbox{display:grid;gap:.7rem;padding:.8rem 1rem 1rem;border-radius:.6rem;background:linear-gradient(180deg,#34101a,#240710);border:.15rem solid var(--brass-dark);box-shadow:inset 0 .3rem .8rem rgba(0,0,0,.5)}
+.dbox.swap{animation:swap .3s ease both}
+@keyframes swap{from{opacity:0;transform:translateY(.3rem)}}
+.row .sites.appear,.row .tag.appear{animation:pillIn .35s cubic-bezier(.3,1.5,.5,1) both}
+.row .sites.leave{animation:pillOut .2s ease-in forwards}
+@keyframes pillIn{from{opacity:0;transform:scale(.5) translateY(.35rem)}}
+@keyframes pillOut{to{opacity:0;transform:scale(.5) translateY(.35rem)}}
 .dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem 1rem}
 .dhead b{font-family:'Rye',serif;font-weight:400;font-size:1.15rem;color:var(--brass-light)}
 .dhead span{color:var(--chalk-dim);font-size:.82rem}
@@ -153,7 +163,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 
   <section id="panel" hidden>
     <div class="tray" id="list"></div>
-    <div class="drawer" id="drawer" hidden></div>
+    <div class="drawer" id="drawer" aria-hidden="true" inert><div class="dclip"><div class="dbox" id="drawerBox"></div></div></div>
     <div class="foot">
       <div style="display:grid;gap:.6rem;align-self:center">
         <p class="note">Cada bola extra suma el peso normal de su cocina: con una pesa el doble, con dos el triple. Todas se retiran solas al registrar el próximo ganador. En el bombo y en el aviso del chat no se ven.</p>
@@ -240,7 +250,7 @@ const same=(a,b)=>{const k=new Set([...Object.keys(a),...Object.keys(b)]);return
 const sameDraft=(a,b)=>same(a.balls,b.balls)&&same(a.stores,b.stores);
 const total=c=>Object.values(c).reduce((a,n)=>a+n,0);
 const clone=d=>({balls:{...d.balls},stores:{...d.stores}});
-let byGroup={},openGroup=null;
+let byGroup={},openGroup=null,drawerGroup=null,shownPills=new Set(),shownTags=new Set();
 
 function holesHtml(n,color,dropping){return Array.from({length:9},(_,i)=>`<span class="hole">${i<n?`<span class="ball${dropping&&i===n-1?' drop':''}" style="--c:${color}"></span>`:''}</span>`).join('');}
 async function popLast(el){const b=el.querySelectorAll('.ball');const last=b[b.length-1];if(last){last.classList.add('pop');await wait(220);}}
@@ -251,18 +261,22 @@ function render(pending){
   const list=$('list');list.innerHTML='';
   groups.forEach(g=>{
     const n=draft.balls[g]||0,diff=n-(current.balls[g]||0),k=storeBalls(g,draft),row=document.createElement('div');row.className='row';
-    const tag=diff?`${diff>0?'+'+diff:diff} sin sellar`:storesDiffer(g)?'sitios sin sellar':'';
-    row.innerHTML=`${tag?`<span class="tag">${tag}</span>`:''}${n?`<button type="button" class="sites${openGroup===g?' open':''}" aria-expanded="${openGroup===g}">Sitios${k?` · ${k}`:''}</button>`:''}<span class="name" title="${g}">${g}</span>
+    const tag=diff?`${diff>0?'+'+diff:diff} sin sellar`:storesDiffer(g)?'restaurantes sin sellar':'';
+    row.innerHTML=`${tag?`<span class="tag${shownTags.has(g)?'':' appear'}">${tag}</span>`:''}${n?`<button type="button" class="sites${openGroup===g?' open':''}${shownPills.has(g)?'':' appear'}" aria-expanded="${openGroup===g}">Restaurantes${k?` · ${k}`:''}</button>`:''}<span class="name" title="${g}">${g}</span>
       <span class="ctl"><button type="button" aria-label="Sacar una bola de ${g}" ${n&&!pending?'':'disabled'}>−</button><button type="button" aria-label="Meter una bola en ${g}" ${n<9&&!pending?'':'disabled'}>+</button></span>
       <span class="holes" role="img" aria-label="${n} bolas extra">${holesHtml(n,gcolor[g],lastDrop===g)}</span>`;
     const [minus,plus]=row.querySelectorAll('.ctl button');
-    minus.onclick=async()=>{await popLast(row.querySelector('.holes'));draft.balls[g]=n-1;
-      if(!draft.balls[g]){delete draft.balls[g];(byGroup[g]||[]).forEach(r=>delete draft.stores[r.slug]);if(openGroup===g)openGroup=null;}
+    minus.onclick=async()=>{
+      if(n===1){const pill=row.querySelector('.sites');if(pill)pill.classList.add('leave');if(openGroup===g){openGroup=null;renderDrawer(pending);}}
+      await popLast(row.querySelector('.holes'));draft.balls[g]=n-1;
+      if(!draft.balls[g]){delete draft.balls[g];(byGroup[g]||[]).forEach(r=>delete draft.stores[r.slug]);}
       render(pending);};
     plus.onclick=()=>{draft.balls[g]=n+1;lastDrop=g;render(pending);};
     const sites=row.querySelector('.sites');if(sites)sites.onclick=()=>{openGroup=openGroup===g?null:g;render(pending);};
     list.appendChild(row);
   });
+  shownPills=new Set(groups.filter(g=>draft.balls[g]>0));
+  shownTags=new Set([...list.querySelectorAll('.row')].map((r,i)=>r.querySelector('.tag')?groups[i]:null).filter(Boolean));
   renderDrawer(pending);
   lastDrop=null;
   const env=$('save');env.hidden=!!pending;env.disabled=sameDraft(draft,current);
@@ -273,12 +287,15 @@ function render(pending){
 }
 
 function renderDrawer(pending){
-  const d=$('drawer');
-  if(!openGroup||!(draft.balls[openGroup]>0)){d.hidden=true;d.innerHTML='';return;}
-  const g=openGroup;d.hidden=false;
-  d.innerHTML=`<div class="dhead"><b>Restaurantes de ${g}</b><span>Cada bola extra suma su peso normal dentro de la cocina.</span><button type="button" class="link dclose">Cerrar</button></div><div class="dlist"></div>`;
-  d.querySelector('.dclose').onclick=()=>{openGroup=null;render(pending);};
-  const dl=d.querySelector('.dlist');
+  const d=$('drawer'),box=$('drawerBox');
+  const show=!!openGroup&&draft.balls[openGroup]>0;
+  d.inert=!show;d.setAttribute('aria-hidden',String(!show));
+  if(!show){d.classList.remove('open');return;}   // se pliega con el contenido aún dentro
+  const g=openGroup;
+  if(drawerGroup!==g){box.classList.remove('swap');void box.offsetWidth;box.classList.add('swap');drawerGroup=g;}
+  box.innerHTML=`<div class="dhead"><b>Restaurantes de ${g}</b><span>Cada bola extra suma su peso normal dentro de la cocina.</span><button type="button" class="link dclose">Cerrar</button></div><div class="dlist"></div>`;
+  box.querySelector('.dclose').onclick=()=>{openGroup=null;render(pending);};
+  const dl=box.querySelector('.dlist');
   (byGroup[g]||[]).forEach(r=>{
     const n=draft.stores[r.slug]||0,diff=n!==(current.stores[r.slug]||0),el=document.createElement('div');el.className='srow'+(diff?' changed':'');
     el.innerHTML=`<span class="sname" title="${r.name}">${r.name}</span>
@@ -289,6 +306,8 @@ function renderDrawer(pending){
     plus.onclick=()=>{draft.stores[r.slug]=n+1;lastDrop=r.slug;render(pending);};
     dl.appendChild(el);
   });
+  // se abre en el siguiente fotograma para que la transición arranque; si entretanto se cerró, no se reabre
+  if(!d.classList.contains('open'))requestAnimationFrame(()=>{if(openGroup===g&&draft.balls[g]>0)d.classList.add('open');});
 }
 
 async function refresh(){
