@@ -20,7 +20,10 @@ body{margin:0;min-height:100vh;color:var(--chalk);font-family:'Archivo',"Helveti
   background:radial-gradient(ellipse 60% 45% at 50% 18%,rgba(255,215,106,.16),transparent 70%),radial-gradient(ellipse at 50% 30%,#56141f 0%,var(--velvet) 45%,var(--velvet-deep) 100%);background-color:var(--velvet-deep)}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 .12rem,transparent .12rem .9rem)}
 main{position:relative;max-width:96rem;min-height:100vh;min-height:100dvh;margin:0 auto;padding:clamp(1rem,3vh,2.5rem) 1.25rem clamp(1.5rem,4vh,3rem);display:grid;grid-template-rows:auto 1fr auto;gap:clamp(.8rem,2.5vh,2rem);justify-items:center}
-.top{display:grid;gap:.6rem;justify-items:center}
+.top{position:relative;width:100%;display:grid;gap:.6rem;justify-items:center}
+.home{justify-self:start;font-size:.85rem;font-variation-settings:"wght" 700;color:var(--chalk-dim);text-decoration:none;padding:.2rem .7rem;border-radius:999rem;border:.1rem solid var(--velvet-line)}
+.home:hover{color:var(--neon-warm);border-color:var(--neon-warm)}
+@media (min-width:48rem){.home{position:absolute;left:0;top:.4rem}}
 .stage{width:100%;display:grid;align-content:center;justify-items:center}
 
 /* rótulo de neón */
@@ -164,6 +167,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 <body>
 <main>
   <header class="top">
+    <a class="home" href="./">← Volver al bombo</a>
     <div class="sign" id="sign">Trastienda</div>
     <p class="sub" id="signSub"></p>
   </header>
