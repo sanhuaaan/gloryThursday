@@ -1,5 +1,5 @@
 {
- "sweptAt": 1790170677890,
+ "sweptAt": 1790171187722,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
@@ -430,9 +430,9 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 19:30",
+   "next": 1790184600000,
    "slug": "zen-fusion-san-sebastian",
    "promo": null,
    "n": 22
@@ -1025,9 +1025,9 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 20:00",
+   "next": 1790186400000,
    "slug": "sibuya-san-sebastian",
    "promo": "-20% en algunos productos",
    "n": 52
@@ -2356,6 +2356,7 @@
   "Loco Polo",
   "Luque Pastelería",
   "Manolo Bakes",
+  "Mary Berry Candy",
   "McDonald's®",
   "Papa Johns",
   "Pastelería Paries",
