@@ -19,10 +19,10 @@
 body{margin:0;min-height:100vh;color:var(--chalk);font-family:'Archivo',"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.45;
   background:radial-gradient(ellipse 60% 45% at 50% 18%,rgba(255,215,106,.16),transparent 70%),radial-gradient(ellipse at 50% 30%,#56141f 0%,var(--velvet) 45%,var(--velvet-deep) 100%);background-color:var(--velvet-deep)}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 .12rem,transparent .12rem .9rem)}
-main{position:relative;max-width:36rem;margin:0 auto;padding:2rem 1.25rem 4rem;display:grid;gap:1.5rem;justify-items:center}
+main{position:relative;max-width:80rem;margin:0 auto;padding:1rem 1.25rem 2rem;display:grid;gap:.8rem;justify-items:center}
 
 /* rótulo de neón */
-.sign{font-family:'Rye',"Copperplate",serif;font-size:clamp(1.7rem,6vw,2.4rem);line-height:1.1;text-align:center;padding:.5rem 1.2rem;border:.18rem solid rgba(255,90,110,.55);border-radius:.6rem;color:#ffe3e7;
+.sign{font-family:'Rye',"Copperplate",serif;font-size:clamp(1.5rem,4.5vw,2rem);line-height:1.1;text-align:center;padding:.35rem 1rem;border:.18rem solid rgba(255,90,110,.55);border-radius:.6rem;color:#ffe3e7;
   text-shadow:0 0 .25rem #fff,0 0 .6rem var(--neon),0 0 1.4rem var(--neon),0 0 2.6rem var(--neon);box-shadow:0 0 1rem rgba(255,90,110,.35),inset 0 0 1rem rgba(255,90,110,.25)}
 .sign.busy{animation:buzz 1.6s ease-in-out infinite}
 @keyframes buzz{50%{opacity:.55}}
@@ -30,7 +30,7 @@ main{position:relative;max-width:36rem;margin:0 auto;padding:2rem 1.25rem 4rem;d
 .sign.flicker{animation:flicker 1.1s linear both}
 .sign.flicker.busy{animation:flicker 1.1s linear both,buzz 1.6s ease-in-out 1.1s infinite}
 @keyframes flicker{0%,18%,22%,62%,64%{opacity:.25}20%,24%,60%,66%,100%{opacity:1}}
-.sub{margin:-.8rem 0 0;color:var(--chalk-dim);font-size:.9rem;text-align:center;max-width:28rem}
+.sub{margin:-.4rem 0 0;color:var(--chalk-dim);font-size:.88rem;text-align:center;max-width:44rem}
 
 /* caja fuerte */
 .safe{width:min(22rem,100%);display:grid;gap:1rem;justify-items:center;padding:1.6rem 1.4rem 1.4rem;border-radius:1rem;
@@ -58,17 +58,16 @@ input{font:inherit;font-size:1rem;letter-spacing:.05em;text-transform:none;paddi
 button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);outline-offset:.15rem}
 
 /* bandeja de cocinas */
-#panel{width:100%;display:grid;gap:1.4rem;justify-items:center}
-.tray{width:100%;display:grid;gap:.15rem;padding:1rem;border-radius:.6rem;background:linear-gradient(180deg,#2a0910,#1e060b);border:.15rem solid var(--velvet-line);box-shadow:inset 0 .4rem 1rem rgba(0,0,0,.6)}
-.row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.4rem .8rem;padding:.55rem .2rem;border-bottom:.1rem dashed rgba(184,154,160,.18)}
-.row:last-child{border-bottom:0}
-.row .name{font-variation-settings:"wght" 700;font-size:.95rem}
-.row .name small{margin-left:.5rem;font-size:.72rem;color:var(--neon-warm);font-variation-settings:"wght" 600;white-space:nowrap}
+#panel{width:100%;display:grid;gap:1rem;justify-items:center}
+.tray{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:.5rem;padding:.6rem;border-radius:.6rem;background:linear-gradient(180deg,#2a0910,#1e060b);border:.15rem solid var(--velvet-line);box-shadow:inset 0 .4rem 1rem rgba(0,0,0,.6)}
+.row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.3rem .6rem;padding:.45rem .6rem .5rem;border-radius:.45rem;background:rgba(255,255,255,.025);border:.1rem solid rgba(184,154,160,.14)}
+.row .name{font-variation-settings:"wght" 700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tag{position:absolute;top:-.55rem;left:.55rem;padding:0 .4rem;border-radius:999rem;font-size:.68rem;line-height:1.1rem;font-variation-settings:"wght" 700;white-space:nowrap;color:#2a1d05;background:var(--neon-warm);box-shadow:0 0 .5rem rgba(255,215,106,.6)}
 .row .ctl{display:flex;align-items:center;gap:.35rem}
-.row .ctl button{width:2rem;height:2rem;border-radius:50%;border:.12rem solid var(--brass);background:#2a0910;color:var(--brass-light);font:inherit;font-size:1.15rem;line-height:1;cursor:pointer}
+.row .ctl button{width:1.75rem;height:1.75rem;border-radius:50%;border:.12rem solid var(--brass);background:#2a0910;color:var(--brass-light);font:inherit;font-size:1.15rem;line-height:1;cursor:pointer}
 .row .ctl button:hover:not([disabled]){background:var(--brass);color:#2a0910}
 .row .ctl button[disabled]{opacity:.3;cursor:not-allowed}
-.holes{grid-column:1/-1;display:grid;grid-template-columns:repeat(9,minmax(0,1.6rem));gap:.3rem}
+.holes{grid-column:1/-1;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.28rem;max-width:13.5rem}
 .hole{aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 60%,#0b0204 0 55%,#2d0a12 70%);box-shadow:inset 0 .15rem .3rem rgba(0,0,0,.9),0 .05rem 0 rgba(255,255,255,.06);position:relative}
 .ball{position:absolute;inset:6%;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.8),rgba(255,255,255,0) 45%),var(--c);box-shadow:inset -.12rem -.18rem .3rem rgba(0,0,0,.35),0 .12rem .2rem rgba(0,0,0,.6)}
 .ball.drop{animation:drop .5s cubic-bezier(.3,1.5,.5,1) both}
@@ -77,13 +76,15 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 @keyframes pop{to{transform:translateY(-1.2rem) scale(.6);opacity:0}}
 
 /* sobre lacrado */
-.envelope{position:relative;width:14rem;height:8.5rem;margin-top:4.2rem;border:0;padding:0;cursor:pointer;background:none;perspective:40rem;transition:transform .7s ease-in,opacity .7s}
+.foot{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:1rem 2.5rem;width:100%}
+.foot .note{max-width:26rem;text-align:left;align-self:center}
+.envelope{position:relative;width:10rem;height:6rem;margin-top:3.1rem;border:0;padding:0;cursor:pointer;background:none;perspective:40rem;transition:transform .7s ease-in,opacity .7s}
 .envelope[disabled]{cursor:not-allowed;opacity:.45}
 .envelope .body{position:absolute;inset:0;border-radius:.3rem;background:linear-gradient(160deg,#f6ecd4,#e3d2ad);box-shadow:0 .5rem 1rem rgba(0,0,0,.45)}
 .envelope .body::before{content:"";position:absolute;inset:0;border-radius:.3rem;background:linear-gradient(to top right,transparent 49.5%,rgba(122,106,79,.35) 50%,transparent 50.5%),linear-gradient(to top left,transparent 49.5%,rgba(122,106,79,.35) 50%,transparent 50.5%)}
 .envelope .flap{position:absolute;left:0;right:0;top:0;height:55%;transform-origin:top;transform:rotateX(180deg);transition:transform .45s ease;clip-path:polygon(0 0,100% 0,50% 100%);background:linear-gradient(180deg,#ead9b3,#d6c091)}
-.envelope .label{position:absolute;left:0;right:0;bottom:.8rem;text-align:center;color:var(--paper-ink);font-family:'Rye',serif;font-size:1rem;transition:opacity .2s}
-.envelope .seal{position:absolute;left:50%;top:48%;width:3.2rem;height:3.2rem;margin:-1.6rem 0 0 -1.6rem;font-size:1.4rem;opacity:0;transform:scale(2.2);box-shadow:0 .2rem .4rem rgba(0,0,0,.5),inset 0 0 0 .25rem rgba(0,0,0,.15);transition:transform .35s cubic-bezier(.5,1.6,.5,1) .35s,opacity .2s .35s}
+.envelope .label{position:absolute;left:0;right:0;bottom:.55rem;text-align:center;color:var(--paper-ink);font-family:'Rye',serif;font-size:1rem;transition:opacity .2s}
+.envelope .seal{position:absolute;left:50%;top:48%;width:2.7rem;height:2.7rem;margin:-1.35rem 0 0 -1.35rem;font-size:1.2rem;opacity:0;transform:scale(2.2);box-shadow:0 .2rem .4rem rgba(0,0,0,.5),inset 0 0 0 .25rem rgba(0,0,0,.15);transition:transform .35s cubic-bezier(.5,1.6,.5,1) .35s,opacity .2s .35s}
 .envelope.sealed .flap{transform:rotateX(0)}
 .envelope.sealed .seal{opacity:1;transform:scale(1)}
 .envelope.sealed .label{opacity:0}
@@ -131,12 +132,16 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 
   <section id="panel" hidden>
     <div class="tray" id="list"></div>
-    <p class="note">Cada bola extra suma el peso normal de su cocina: con una pesa el doble, con dos el triple. Todas se retiran solas al registrar el próximo ganador. En el bombo y en el aviso del chat no se ven.</p>
-    <button class="envelope" id="save" type="button" disabled aria-label="Sellar y enviar los cambios">
-      <span class="body"></span><span class="flap"></span><span class="label">Sellar y enviar</span><span class="seal" aria-hidden="true">🍽️</span>
-    </button>
-    <div class="courier" id="courier" hidden><span class="seal" aria-hidden="true">🍽️</span><span id="courierText"></span></div>
-    <button class="link" id="logout" type="button">Cerrar la caja</button>
+    <div class="foot">
+      <div style="display:grid;gap:.6rem;align-self:center">
+        <p class="note">Cada bola extra suma el peso normal de su cocina: con una pesa el doble, con dos el triple. Todas se retiran solas al registrar el próximo ganador. En el bombo y en el aviso del chat no se ven.</p>
+        <div class="courier" id="courier" hidden><span class="seal" aria-hidden="true">🍽️</span><span id="courierText"></span></div>
+        <button class="link" id="logout" type="button" style="justify-self:start;padding:0">Cerrar la caja</button>
+      </div>
+      <button class="envelope" id="save" type="button" disabled aria-label="Sellar y enviar los cambios">
+        <span class="body"></span><span class="flap"></span><span class="label">Sellar y enviar</span><span class="seal" aria-hidden="true">🍽️</span>
+      </button>
+    </div>
   </section>
 
   <p class="err" id="error" hidden></p>
@@ -212,7 +217,7 @@ function render(pending){
   groups.forEach(g=>{
     const n=draft[g]||0,diff=n-(current[g]||0),row=document.createElement('div');row.className='row';
     const holes=Array.from({length:9},(_,i)=>`<span class="hole">${i<n?`<span class="ball${lastDrop===g&&i===n-1?' drop':''}" style="--c:${gcolor[g]}"></span>`:''}</span>`).join('');
-    row.innerHTML=`<span class="name">${g}<small>${diff?(diff>0?`+${diff}`:diff)+' sin sellar':''}</small></span>
+    row.innerHTML=`${diff?`<span class="tag">${diff>0?'+'+diff:diff} sin sellar</span>`:''}<span class="name" title="${g}">${g}</span>
       <span class="ctl"><button type="button" aria-label="Sacar una bola de ${g}" ${n&&!pending?'':'disabled'}>−</button><button type="button" aria-label="Meter una bola en ${g}" ${n<9&&!pending?'':'disabled'}>+</button></span>
       <span class="holes" role="img" aria-label="${n} bolas extra">${holes}</span>`;
     const [minus,plus]=row.querySelectorAll('.ctl button');
