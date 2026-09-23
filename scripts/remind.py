@@ -60,8 +60,10 @@ def penalty(g):
 
 def extra_balls_line():
     """Bolas extra vigentes y probabilidad real de cada cocina con bolas (penalización y cuarentena incluidas)."""
-    balls, stores = data.get("m") or {}, data.get("s") or {}
-    if not balls or data.get("mTo") != latest:
+    path = ROOT / "data/balls.json"
+    extra = json.loads(path.read_text()) if path.exists() else {}
+    balls, stores = extra.get("balls") or {}, extra.get("stores") or {}
+    if not balls or extra.get("mTo") != latest:
         return []
     quarantined = {s for _, s, _ in winners[:COOLDOWN]}
     groups = {r["group"] for s, r in rows.items() if s not in quarantined}

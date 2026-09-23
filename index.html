@@ -243,11 +243,18 @@ function issueUrl(r,date){
   const body=`tienda: ${r.slug}\nfecha: ${d}\n\n${r.name} · ${r.tags.join(' · ')}\nhttps://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}`;
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
-// modificador de un solo sorteo: huella de una cocina en los datos; solo vale mientras el último sorteo registrado sea DATA.mTo
 let modCounts={},storeCounts={},latestRaffle=null;
-// bolas extra de un solo sorteo: DATA.m {cocina: n}, DATA.s {slug: n}; solo valen mientras el último sorteo registrado sea DATA.mTo
-function resolveMod(){const ok=o=>o&&typeof o==='object'?o:{};modCounts={...ok(DATA.m)};storeCounts={...ok(DATA.s)};}
-const modActive=()=>latestRaffle!==null&&latestRaffle===DATA.mTo;
+// bolas extra de un solo sorteo, en data/balls.json: {balls:{cocina:n}, stores:{slug:n}, mTo}; solo valen mientras el último sorteo registrado sea mTo
+let BALLS={};
+function resolveMod(){const ok=o=>o&&typeof o==='object'?o:{};modCounts={...ok(BALLS.balls)};storeCounts={};
+  Object.entries(ok(BALLS.stores)).forEach(([slug,n])=>{const r=rows.find(x=>x.slug===slug);if(r&&modCounts[r.group])storeCounts[slug]=n;});}
+const modActive=()=>latestRaffle!==null&&latestRaffle===BALLS.mTo;
+// se lee de la API de GitHub para verlo al instante; si la API no responde (límite por IP), de la copia de Pages
+function loadBalls(){
+  fetch(`https://api.github.com/repos/${REPO}/contents/data/balls.json?ref=main`,{headers:{Accept:'application/vnd.github.raw+json'},cache:'no-store'})
+  .then(r=>r.status===404?{}:r.ok?r.json():fetch('data/balls.json?t='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.json():{}))
+  .catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
+}
 const drawWeight=g=>weightOf(g)*(modActive()?1+(modCounts[g]||0):1);
 const extraOf=g=>modActive()?modCounts[g]||0:0,extraStore=r=>modActive()?storeCounts[r.slug]||0:0;
 const ballsLabel=n=>`+${n} bola${n>1?'s':''}`;
@@ -351,10 +358,10 @@ function render(){
   });
 }
 exoticBox.onchange=()=>{persist();render();};
-resolveMod();render();renderUpdated();loadWinners();
+render();renderUpdated();loadWinners();loadBalls();
 setInterval(()=>{render();renderUpdated();},60000);
 fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{
-  if(!d||!d.rows)return;['m','s','mTo','mId'].forEach(k=>delete DATA[k]);Object.assign(DATA,d);rows=DATA.rows;resolveMod();document.getElementById('tot').textContent=rows.length;render();renderUpdated();
+  if(!d||!d.rows)return;Object.assign(DATA,d);rows=DATA.rows;resolveMod();document.getElementById('tot').textContent=rows.length;render();renderUpdated();
 }).catch(()=>{});
 const vl=document.getElementById('void');DATA.excluded.forEach(n=>{const li=document.createElement('li');li.textContent=n;vl.appendChild(li);});
 const fl2=document.getElementById('franchises');(DATA.leftOut||[]).forEach(n=>{const li=document.createElement('li');li.textContent=n;fl2.appendChild(li);});
