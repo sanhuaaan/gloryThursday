@@ -1,5 +1,5 @@
 {
- "sweptAt": 1790150774106,
+ "sweptAt": 1790154639536,
  "rows": [
   {
    "name": "Bar Cervecería Pepe",
@@ -13,9 +13,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta las 11:00",
-   "next": 1790154000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "bar-cerveceria-pepe-san-sebastian",
    "promo": null,
    "n": 1
@@ -110,8 +110,8 @@
    "group": "Pollo",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta las 12:00",
-   "next": 1790157600000,
+   "when": "Cerrado hasta mañana",
+   "next": 1790244000000,
    "slug": "factory-chicken-san-sebastian",
    "promo": null,
    "n": 6
@@ -130,8 +130,8 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado",
+   "status": "OPEN",
+   "when": "",
    "next": null,
    "slug": "la-bokateria-del-buen-pas-donostia-san-sebastian",
    "promo": null,
@@ -689,8 +689,8 @@
    "group": "Tailandés / chino",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta las 11:00",
-   "next": 1790154000000,
+   "when": "Cerrado hasta las 19:00",
+   "next": 1790182800000,
    "slug": "chino-mandarin-san-sebastian",
    "promo": null,
    "n": 35
@@ -727,9 +727,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta las 18:00",
-   "next": 1790179200000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "la-perola-san-sebastian",
    "promo": null,
    "n": 37
@@ -1025,9 +1025,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1790236800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "sutan-dator-menu-donostia-san-sebastian",
    "promo": null,
    "n": 52
@@ -1103,9 +1103,9 @@
    ],
    "group": "Latino / venezolano",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta las 11:00",
-   "next": 1790154000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "gibelurdin-2-loiola-donostia-san-sebastian",
    "promo": null,
    "n": 56
@@ -1161,9 +1161,9 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta las 11:00",
-   "next": 1790154000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "mandragora-san-sebastian",
    "promo": null,
    "n": 59
@@ -1284,9 +1284,9 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: 11:00",
-   "next": 1790154000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "kafe-taberna-aspaldiko-san-sebastian",
    "promo": null,
    "n": 65
@@ -1305,9 +1305,9 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta las 11:00",
-   "next": 1790154000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "kenji-san-sebastian",
    "promo": null,
    "n": 66
@@ -1345,9 +1345,9 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: 11:00",
-   "next": 1790154000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "senorito-donostia-san-sebastian",
    "promo": null,
    "n": 68
@@ -1580,8 +1580,8 @@
    "group": "Turco / árabe",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta las 11:00",
-   "next": 1790154000000,
+   "when": "Cerrado hasta mañana",
+   "next": 1790240400000,
    "slug": "kebab-factory",
    "promo": null,
    "n": 80
@@ -1660,8 +1660,8 @@
    "group": "Internacional",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta las 11:00",
-   "next": 1790154000000,
+   "when": "Cerrado hasta mañana",
+   "next": 1790240400000,
    "slug": "caravanserai-cafe-san-sebastian",
    "promo": null,
    "n": 84
@@ -1999,8 +1999,8 @@
    "group": "Pollo",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta las 14:00",
-   "next": 1790164800000,
+   "when": "Cerrado",
+   "next": null,
    "slug": "boyer-fried-chicken-san-sebastian",
    "promo": null,
    "n": 101
@@ -2092,7 +2092,8 @@
    "fee": 3.49,
    "dist": "2.8km",
    "tags": [
-    "Árabe"
+    "Árabe",
+    "Kebab"
    ],
    "group": "Turco / árabe",
    "exotic": true,
@@ -2354,7 +2355,6 @@
   "La Tagliatella",
   "Loco Polo",
   "Luque Pastelería",
-  "Manolo Bakes",
   "Mary Berry Candy",
   "McDonald's®",
   "Papa Johns",
@@ -2369,5 +2369,9 @@
   "VIPS",
   "VIPS Desayunos"
  ],
- "mId": "8047d346427ba8a5"
+ "m": {
+  "acaff1028cc572284b6633f43813d643cefb49364202e27c20c2088bf6b66eff": 1
+ },
+ "mTo": 2,
+ "mId": "63644e9512e050e8"
 }
