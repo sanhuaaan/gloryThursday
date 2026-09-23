@@ -123,6 +123,42 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 .srow .ctl button[disabled]{opacity:.3;cursor:not-allowed}
 .srow .ctl{display:flex;gap:.3rem}
 .holes.mini{max-width:9.5rem;gap:.18rem}
+/* taquilla */
+.booth{width:min(25rem,100%);display:grid;justify-items:center;border-radius:.9rem .9rem .5rem .5rem;padding:0 1.1rem 1.2rem;
+  background:linear-gradient(180deg,#7a1020,#5c0b17 60%,#420812);border:.3rem solid var(--brass-dark);box-shadow:inset 0 0 0 .2rem var(--brass),0 1.2rem 2rem rgba(0,0,0,.55)}
+.marquee{width:calc(100% + 2.2rem);margin:0 -1.1rem;padding:.75rem 0 .65rem;text-align:center;border-radius:.6rem .6rem 0 0;
+  background:radial-gradient(circle,#fff5c9 0 .22rem,#ffd76a .23rem .3rem,transparent .32rem) top center/1.25rem .7rem repeat-x,
+    radial-gradient(circle,#fff5c9 0 .22rem,#ffd76a .23rem .3rem,transparent .32rem) bottom center/1.25rem .7rem repeat-x,linear-gradient(180deg,var(--brass-light),var(--brass) 55%,var(--brass-dark))}
+.marquee span{font-family:'Rye',serif;font-size:1.7rem;letter-spacing:.12em;color:#6b0f1a;text-shadow:0 .08rem 0 rgba(255,255,255,.5)}
+.window{position:relative;width:100%;height:9.5rem;margin-top:1rem;border-radius:4.8rem 4.8rem .3rem .3rem;overflow:hidden;border:.35rem solid var(--brass);box-shadow:inset 0 0 1.2rem rgba(0,0,0,.8)}
+.inside{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 70%,#ffd98a,#d18a2c 55%,#6b3208)}
+.welcome{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:1;display:grid;gap:.15rem;text-align:center;white-space:nowrap;padding:.35rem 1rem;border-radius:.4rem;background:rgba(255,236,190,.92);border:.12rem solid var(--brass-dark);box-shadow:0 .2rem .4rem rgba(0,0,0,.35)}
+.welcome b{font-family:'Rye',serif;font-weight:400;font-size:1.4rem;color:#4a1a05}
+.welcome span{font-size:.8rem;color:#5a2a08;font-variation-settings:"wght" 700}
+.bars{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 1.8rem,var(--brass-dark) 1.8rem 1.95rem,var(--brass-light) 1.95rem 2.05rem,var(--brass-dark) 2.05rem 2.2rem);pointer-events:none}
+.shutter{position:absolute;inset:0;z-index:2;display:grid;place-items:end center;padding-bottom:1rem;transition:transform .7s cubic-bezier(.6,0,.3,1);
+  background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%),repeating-linear-gradient(180deg,#9aa0a6 0 .55rem,#6d7277 .55rem .7rem,#c3c8cc .7rem .8rem)}
+.shutter span{font-family:'Rye',serif;font-size:1rem;padding:.25rem .8rem;border-radius:.3rem;background:#f3e6c8;color:var(--red);border:.12rem solid var(--red);transform:rotate(-3deg);box-shadow:0 .2rem .3rem rgba(0,0,0,.4)}
+.booth.open .shutter{transform:translateY(-102%)}
+.counter{width:100%;display:grid;justify-items:center;gap:.9rem;padding-top:.2rem;background:linear-gradient(180deg,#3a2408,#2a1a05 .5rem,transparent .5rem)}
+.slot{width:70%;height:.45rem;border-radius:0 0 .4rem .4rem;background:#0b0305;box-shadow:inset 0 .2rem .3rem rgba(0,0,0,.9)}
+.ticket{position:relative;width:88%;display:grid;gap:.3rem;padding:.8rem 1.2rem .7rem;margin-top:-.2rem;color:#4a1a05;cursor:text;
+  background:radial-gradient(circle at 0 50%,transparent .55rem,#f7e9c3 .58rem) left/51% 100% no-repeat,radial-gradient(circle at 100% 50%,transparent .55rem,#f7e9c3 .58rem) right/51% 100% no-repeat;
+  filter:drop-shadow(0 .25rem .3rem rgba(0,0,0,.45));transition:transform .45s cubic-bezier(.6,0,.4,1),opacity .45s,clip-path .3s}
+.ticket::before{content:"";position:absolute;inset:.35rem .9rem;border:.1rem dashed rgba(107,15,26,.45);border-radius:.2rem;pointer-events:none}
+.tk-head,.tk-foot{font-size:.66rem;text-transform:uppercase;letter-spacing:.14em;font-variation-settings:"wght" 800;text-align:center;color:#8a1a28}
+.tk-foot{letter-spacing:.06em;font-variation-settings:"wght" 600;color:#8a6a3f}
+.ticket input{width:100%;border:0;border-bottom:.12rem solid rgba(107,15,26,.35);border-radius:0;background:transparent;text-align:center;font-family:'Rye',serif;font-size:1.25rem;letter-spacing:.2em;padding:.25rem 0;color:#3a1205}
+.ticket input::placeholder{font-family:'Archivo',sans-serif;font-size:.85rem;letter-spacing:.02em;color:#a88a5f}
+.ticket input:focus-visible{outline:none;border-bottom-color:var(--red)}
+.punch{position:absolute;right:1.6rem;top:.75rem;width:.9rem;height:.9rem;border-radius:50%;background:#2a1a05;box-shadow:inset 0 .1rem .2rem #000;opacity:0;transform:scale(.2);transition:opacity .15s,transform .25s cubic-bezier(.3,1.6,.5,1)}
+.stamp{position:absolute;left:50%;top:50%;padding:.15rem .7rem;white-space:nowrap;border:.2rem solid var(--red);border-radius:.3rem;font-family:'Rye',serif;font-size:1.3rem;color:var(--red);background:rgba(247,233,195,.7);
+  opacity:0;transform:translate(-50%,-50%) rotate(-12deg) scale(1.8);transition:opacity .15s,transform .3s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
+.booth.in .ticket{transform:translateY(-1.6rem) scaleY(.15);opacity:0}
+.booth.back .ticket{transform:none;opacity:1}
+.booth.punched .punch{opacity:1;transform:none}
+.booth.reject .ticket{clip-path:polygon(0 0,100% 0,100% 55%,93% 62%,97% 70%,90% 78%,95% 86%,88% 100%,0 100%)}
+.booth.reject .stamp{opacity:1;transform:translate(-50%,-50%) rotate(-12deg)}
 .note{color:var(--chalk-dim);font-size:.82rem;text-align:center;max-width:30rem;margin:0}
 .err{color:#ffb3bd;font-variation-settings:"wght" 700;text-align:center;margin:0}
 [hidden]{display:none!important}
@@ -151,13 +187,24 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
     </div>
   </section>
 
-  <section class="safe" id="login" hidden>
-    <div class="door">
-      <div class="dial" aria-hidden="true"><span class="knob"></span></div>
-      <div class="plate">
-        <label>Combinación<input id="pw" type="password" autocomplete="current-password"></label>
-        <button class="btn" id="enter" type="button">Abrir</button>
-      </div>
+  <section class="booth" id="login" hidden>
+    <div class="marquee" aria-hidden="true"><span>Taquilla</span></div>
+    <div class="window" aria-hidden="true">
+      <div class="inside"></div>
+      <div class="bars"></div>
+      <div class="welcome"><b>Pase usted</b><span>La función está a punto de empezar</span></div>
+      <div class="shutter"><span>Taquilla cerrada</span></div>
+    </div>
+    <div class="counter">
+      <div class="slot" aria-hidden="true"></div>
+      <label class="ticket" id="ticket">
+        <span class="tk-head">Admite a uno · Trastienda</span>
+        <input id="pw" type="password" autocomplete="current-password" placeholder="Escribe la combinación" aria-label="Combinación">
+        <span class="tk-foot">Nº 0925 · Válido solo para el próximo sorteo</span>
+        <span class="punch" aria-hidden="true"></span>
+        <span class="stamp" aria-hidden="true">No válido</span>
+      </label>
+      <button class="btn" id="enter" type="button">Entregar boleto</button>
     </div>
   </section>
 
@@ -222,11 +269,21 @@ async function setup(){
   }catch(e){token=null;refuse('setup');showError(e.message);}
   $('sGo').disabled=false;
 }
+// taquilla: el boleto entra por la ranura; si vale, sube la persiana y vuelve perforado; si no, vuelve rasgado y sellado
 async function login(){
-  showError('');$('enter').disabled=true;
-  try{token=await unlock(keyFile,$('pw').value);ss.set('gt',token);$('pw').value='';await openSafe('login');}
-  catch(e){refuse('login');showError('Combinación incorrecta.');}
-  $('enter').disabled=false;
+  const b=$('login'),pw=$('pw').value;if(!pw)return $('pw').focus();
+  showError('');$('enter').disabled=true;$('pw').disabled=true;
+  b.classList.remove('back','punched','reject','open');b.classList.add('in');
+  let tok=null;const [res]=await Promise.allSettled([unlock(keyFile,pw),wait(500)]);if(res.status==='fulfilled')tok=res.value;
+  if(tok){
+    token=tok;ss.set('gt',tok);b.classList.add('open');await wait(450);
+    b.classList.add('back','punched');await wait(900);
+    view('panel');refresh();b.classList.remove('in','back','punched','open');$('pw').value='';
+  }else{
+    b.classList.add('back','reject');showError('Boleto no válido: la combinación no es correcta.');await wait(1400);
+    b.classList.remove('in','back','reject');$('pw').value='';$('pw').focus();
+  }
+  $('enter').disabled=false;$('pw').disabled=false;
 }
 
 async function status(){
