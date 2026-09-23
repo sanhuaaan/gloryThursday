@@ -114,8 +114,10 @@ async function login(){
 
 async function status(){
   const [data,issues]=await Promise.all([
-    fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()),
-    gh('/issues?state=open&per_page=100').then(r=>{if(r.status===401)throw new Error('token');return r.json();})
+    fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('datos del bombo: HTTP '+r.status);return r.json();}),
+    // los ganadores son públicos: se leen sin token, así no hace falta permiso de Issues
+    fetch(API+'/issues?state=open&per_page=100',{headers:{Accept:'application/vnd.github+json'}}).then(r=>{if(!r.ok)throw new Error('ganadores de GitHub: HTTP '+r.status);return r.json();}),
+    gh('/actions/secrets/public-key').then(r=>{if(r.status===401)throw new Error('token');if(!r.ok)throw new Error('permiso de Secrets del token: HTTP '+r.status);})
   ]);
   const latest=issues.filter(i=>!i.pull_request&&/^\s*tienda:/m.test(i.body||'')).reduce((a,i)=>Math.max(a,i.number),0);
   const gs=[...new Set(data.rows.map(r=>r.group))].sort((a,b)=>a.localeCompare(b,'es'));
@@ -146,7 +148,7 @@ async function refresh(){
   showError('');let s;
   try{s=await status();}catch(e){
     if(e.message==='token'){ss.set('gt',null);token=null;view('login');showError('GitHub ya no acepta el token. Habrá que repetir la configuración con uno nuevo.');return;}
-    showError('No se pudo comprobar el estado. Reintentando…');clearTimeout(pollTimer);pollTimer=setTimeout(refresh,15000);return;
+    showError('No se pudo comprobar el estado ('+e.message+'). Reintentando…');clearTimeout(pollTimer);pollTimer=setTimeout(refresh,15000);return;
   }
   groups=s.groups;current=s.counts;mId=s.mId;
   const p=JSON.parse(ls.get('pending')||'null');
