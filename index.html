@@ -242,10 +242,10 @@ function issueUrl(r,date){
   const body=`tienda: ${r.slug}\nfecha: ${d}\n\n${r.name} · ${r.tags.join(' · ')}\nhttps://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}`;
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
-// bolas extra de data/balls.json; activeBalls descarta las caducadas y las de restaurante sin bolas en su cocina
+// bolas extra: balls.json del repo gloryThursday-extraBalls (lo escribe la trastienda); activeBalls descarta las caducadas y las de restaurante sin bolas en su cocina
 function resolveMod(){({balls:modCounts,stores:storeCounts}=activeBalls(BALLS,latestRaffle,rows));}
 function loadBalls(){
-  fetch('data/balls.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
+  fetch('https://sanhuaaan.github.io/gloryThursday-extraBalls/balls.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
 }
 const drawWeight=g=>weightOf(g)*(1+(modCounts[g]||0));
 const extraOf=g=>modCounts[g]||0,extraStore=r=>storeCounts[r.slug]||0;

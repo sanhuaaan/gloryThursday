@@ -16,7 +16,7 @@ Para actualizar los datos:
 python3 scripts/sweep.py
 ```
 
-La página lee `data/stores.json`, `data/winners.json` (copia de los issues ganadores, `scripts/winners.py`) y `data/balls.json` (bolas extra, escritas desde `trastienda.html`) al abrirse, todo desde Pages y sin consultar la API de GitHub, y proyecta el estado de cada tienda sobre la hora real del visitante (Glovo no expone horario semanal ni permite CORS desde otros dominios). Si `stores.json` no carga, la página lo dice y pide recargar.
+La página lee `data/stores.json`, `data/winners.json` (copia de los issues ganadores, `scripts/winners.py`) y `balls.json` del repo [gloryThursday-extraBalls](https://github.com/sanhuaaan/gloryThursday-extraBalls) (bolas extra, escritas desde `trastienda.html`; va aparte para que el token de la trastienda no pueda tocar este repo) al abrirse, todo desde Pages y sin consultar la API de GitHub, y proyecta el estado de cada tienda sobre la hora real del visitante (Glovo no expone horario semanal ni permite CORS desde otros dominios). Si `stores.json` no carga, la página lo dice y pide recargar.
 
 ## Reglas del sorteo
 

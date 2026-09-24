@@ -39,7 +39,9 @@ if (winners.length) {
 }
 
 // bolas extra vigentes, con la probabilidad real de cada cocina (penalización, bolas y cuarentena incluidas)
-const { balls, stores } = activeBalls(read('data/balls.json', {}), latest, rows);
+// las bolas extra viven en otro repo (gloryThursday-extraBalls); si no se pueden leer, el aviso sale sin ellas
+const extra = await fetch('https://sanhuaaan.github.io/gloryThursday-extraBalls/balls.json?t=' + Date.now()).then(r => r.ok ? r.json() : {}).catch(() => ({}));
+const { balls, stores } = activeBalls(extra, latest, rows);
 if (Object.keys(balls).length) {
   const groups = [...new Set(rows.filter(r => quarantine[r.slug] == null).map(r => r.group))];
   const total = groups.reduce((a, g) => a + cuisineWeight(g, lastIdx, balls), 0);
