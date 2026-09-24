@@ -49,5 +49,22 @@ export function activeBalls(file, latest, rows) {
   return out;
 }
 
+// Veredicto de la mesa: lo estampa la trastienda sobre cada sorteo (verdicts.json del repo extraBalls, {nºissue: {verdict}}).
+// Pesa sobre el restaurante dentro de su cocina; si ha ganado varias veces, manda el veredicto del sorteo más reciente.
+export const VERDICTS = {
+  repetir:  { label: '¡Repetiríamos!', weight: 1.25 },
+  aprobado: { label: 'Aprobado',       weight: 1 },
+  nifu:     { label: 'Ni fu ni fa',    weight: 0.75 },
+  nuncamas: { label: 'Nunca más',      weight: 0.25 },
+};
+export function verdictsBySlug(winners, verdicts) {
+  const out = {};
+  winners.forEach(w => {   // winners va del más reciente al más antiguo
+    const v = (verdicts || {})[w.number];
+    if (v && VERDICTS[v.verdict] && !out[w.slug]) out[w.slug] = { key: v.verdict, ...VERDICTS[v.verdict], number: w.number };
+  });
+  return out;
+}
+
 // Peso de una cocina en la primera fase del sorteo: penalización × (1 + bolas extra).
 export const cuisineWeight = (group, lastIdx, balls) => penaltyWeight(lastIdx[group]) * (1 + (balls[group] || 0));

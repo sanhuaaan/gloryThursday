@@ -1,7 +1,7 @@
 // Prueba de las reglas del sorteo: node --test scripts/rules.test.js (también la lanza GitHub al cambiar rules.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight } from '../rules.js';
+import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, verdictsBySlug } from '../rules.js';
 
 const issue = (number, slug, { fecha, labels = ['ganador'], created = '2026-01-01T10:00:00Z', pr = false } = {}) => ({
   number, created_at: created, html_url: `u${number}`, user: { login: 'x', avatar_url: 'a' }, labels,
@@ -41,4 +41,11 @@ test('bolas extra: solo para el último sorteo, de 1 a 9, y las de restaurante s
   assert.deepEqual(activeBalls(file, null, rows), { balls: {}, stores: {} });   // sin ganadores cargados: nada
   assert.equal(cuisineWeight('Poke', { Poke: 0 }, { Poke: 2 }), 0.75);         // ¼ de penalización × 3 bolas
   assert.equal(cuisineWeight('Indio', {}, {}), 1);
+});
+
+test('veredicto de la mesa: pesa el del sorteo más reciente de cada sitio; los desconocidos se ignoran', () => {
+  const winners = [{ slug: 'nalu', number: 9 }, { slug: 'taj', number: 8 }, { slug: 'nalu', number: 5 }, { slug: 'sushi', number: 4 }];
+  const v = verdictsBySlug(winners, { 5: { verdict: 'nuncamas' }, 9: { verdict: 'repetir' }, 8: { verdict: 'inventado' }, 4: { verdict: 'nifu' } });
+  assert.deepEqual(Object.fromEntries(Object.entries(v).map(([s, x]) => [s, x.weight])), { nalu: 1.25, sushi: 0.75 });
+  assert.deepEqual(verdictsBySlug(winners, undefined), {});
 });

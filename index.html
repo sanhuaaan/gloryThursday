@@ -129,6 +129,10 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 .card .meta{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.85rem;font-variant-numeric:tabular-nums}
 .card .meta b{font-variation-settings:"wght" 700}
 .rw{color:var(--red);font-variation-settings:"wght" 800;cursor:help}
+.vstamp{display:inline-block;font-family:'Rye',serif;font-size:.8rem;padding:.05rem .5rem;border:.15rem double currentColor;border-radius:.25rem;transform:rotate(-3deg);background:rgba(255,255,255,.35)}
+.vstamp.small{font-size:.72rem;margin-top:.25rem}
+.v-repetir{color:#1f7a3d}.v-aprobado{color:#1f4f99}.v-nifu{color:#8a6a12}.v-nuncamas{color:#b3182c}
+.roll .vstamp{background:rgba(243,230,200,.9)}
 .xb{display:inline-block;margin-left:.35rem;padding:0 .45rem;border-radius:999rem;font-size:.72rem;font-variation-settings:"wght" 800;background:#f0bf3d;color:#1a1208;box-shadow:0 0 .4rem rgba(240,191,61,.6)}
 .ghead .meta .xb{margin-left:0}
 .chip .xb{background:#1a1208;color:#f0bf3d;box-shadow:none}
@@ -189,6 +193,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
     <li><h3>Sitios con promo</h3><p>Dentro de su cocina, un sitio con <b>2x1</b> en Glovo pesa <b>el doble</b> y uno con <b>descuento en porcentaje</b> pesa <b>una vez y media</b>. Se usan las promos del último barrido; no cambian la elección de cocina.</p></li>
     <li><h3>Valoración</h3><p>La nota de Glovo solo resta. Se suaviza con 20 votos a la media del bombo, así que un sitio <b>sin valorar</b> queda <b>neutro</b>. Con 95 % o más pesa entero, de 90 a 95 % <b>tres cuartos</b>, y por debajo de 90 % <b>la mitad</b>. Se multiplica con la promo.</p></li>
     <li><h3>Bolas extra</h3><p>Algunos sorteos llevan <b>bolas extra</b> en ciertas cocinas o restaurantes. Cada bola suma el <b>peso normal</b> de su cocina o restaurante: con una pesa el doble, con dos el triple. Las de restaurante solo valen si su cocina también lleva. Todas caducan al registrar el sorteo. Se gestionan en la <a href="trastienda.html">trastienda</a>.</p></li>
+    <li><h3>Veredicto de la mesa</h3><p>Después de comer, en la <a href="trastienda.html">trastienda</a> se estampa lo que opinó la mesa. Dentro de su cocina, <b>¡Repetiríamos!</b> pesa ×1,25, <b>Aprobado</b> ×1, <b>Ni fu ni fa</b> ×0,75 y <b>Nunca más</b> ×0,25. Si un sitio ha salido varias veces, manda el último veredicto.</p></li>
     <li><h3>Libro de actas</h3><p>Cada sorteo es un issue del repo, lo saque el bombo de la web o el físico. Quien lo registra queda a la vista. Cerrar el issue anula el sorteo.</p></li>
   </ul>
 </section>
@@ -210,7 +215,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 <p class="method dimmable"><a class="backroom" href="trastienda.html">🎟️ Trastienda</a> Método: consulta a <code>api.glovoapp.com/v3/stores/{slug}</code> con las coordenadas 43.2970, -2.0051 el 9 de septiembre de 2026. Las tiendas fuera de zona responden "No available store address found"; se validó con coordenadas de Bilbao, Hernani y Zarautz. Los horarios son los de ese día y se repiten entre semana. Envío según Glovo sin Prime.</p>
 </div>
 <script type="module">
-import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls} from './rules.js';
+import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls,VERDICTS,verdictsBySlug} from './rules.js';
 // todo sale de ficheros publicados en Pages (sin API de GitHub: no hay límite de consultas); el barrido mantiene stores.json
 const DATA=await fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
   .catch(e=>{document.getElementById('count').textContent=`No se pudieron cargar los restaurantes (${e.message}). Recarga la página.`;throw e;});
@@ -224,7 +229,7 @@ const offGroups=new Set(store.get('offGroups',[])),offSlugs=new Set(store.get('o
 const exoticBox=document.getElementById('exotic');exoticBox.checked=store.get('exotic',false);
 const REPO='sanhuaaan/gloryThursday';
 // estado del sorteo, calculado con rules.js a partir de los ganadores y las bolas extra
-let winners=[],quarantine={},lastWin={},lastIdx={},latestRaffle=null,BALLS={},modCounts={},storeCounts={};
+let winners=[],quarantine={},lastWin={},lastIdx={},latestRaffle=null,BALLS={},modCounts={},storeCounts={},VERDICT_FILE={},verdictOf={};
 const weightOf=group=>penaltyWeight(lastIdx[group]);
 // promo de Glovo: el 2x1 lleva dos bolas, un descuento en porcentaje bola y media, el resto una
 const promoWeight=r=>!r.promo?1:/\b(2x1|3x2)\b/i.test(r.promo)?2:/%/.test(r.promo)?1.5:1;
@@ -234,7 +239,8 @@ function ratingPrior(){const v=rows.filter(r=>r.rc>0&&r.rv!=null);return v.lengt
 const smoothed=r=>{const p=ratingPrior(),c=r.rv!=null?r.rc:0;return ((r.rv||0)*c+p*PRIOR_VOTES)/(c+PRIOR_VOTES);};
 // solo penaliza: 95 % o más pesa entero, de 90 a 95 tres cuartos, por debajo de 90 la mitad
 const ratingWeight=r=>{const s=smoothed(r);return s>=0.95?1:s>=0.90?0.75:0.5;};
-const siteWeight=r=>promoWeight(r)*ratingWeight(r)*(1+(storeCounts[r.slug]||0));
+const verdictWeight=r=>(verdictOf[r.slug]||{weight:1}).weight;
+const siteWeight=r=>promoWeight(r)*ratingWeight(r)*verdictWeight(r)*(1+(storeCounts[r.slug]||0));
 function weightedPick(list){let x=Math.random()*list.reduce((a,r)=>a+siteWeight(r),0);for(const r of list){x-=siteWeight(r);if(x<0)return r;}return list[list.length-1];}
 const frac=w=>w===0.5?'½':w===0.75?'¾':w===0.25?'¼':String(w);
 function issueUrl(r,date){
@@ -244,6 +250,12 @@ function issueUrl(r,date){
 }
 // bolas extra: balls.json del repo gloryThursday-extraBalls (lo escribe la trastienda); activeBalls descarta las caducadas y las de restaurante sin bolas en su cocina
 function resolveMod(){({balls:modCounts,stores:storeCounts}=activeBalls(BALLS,latestRaffle,rows));}
+// veredicto de la mesa: verdicts.json del repo extraBalls (lo estampa la trastienda)
+function loadVerdicts(){
+  fetch('https://sanhuaaan.github.io/gloryThursday-extraBalls/verdicts.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
+  .then(v=>{VERDICT_FILE=v||{};verdictOf=verdictsBySlug(winners,VERDICT_FILE);renderRoll();render();});
+}
+const stampHtml=(key,small)=>key&&VERDICTS[key]?`<span class="vstamp v-${key}${small?' small':''}">${VERDICTS[key].label}</span>`:'';
 function loadBalls(){
   fetch('https://sanhuaaan.github.io/gloryThursday-extraBalls/balls.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
 }
@@ -256,7 +268,7 @@ function loadWinners(){
     latestRaffle=latestOf(list);
     winners=parseWinners(list).map(w=>{const row=rows.find(r=>r.slug===w.slug);return {...w,name:row?row.name:w.slug};});
     ({quarantine,lastIdx,lastWin}=raffleState(winners,rows));
-    resolveMod();renderRoll();render();
+    verdictOf=verdictsBySlug(winners,VERDICT_FILE);resolveMod();renderRoll();render();
   }).catch(()=>{document.getElementById('roll').innerHTML='<li class="empty">No se pudo leer el palmarés de GitHub.</li>';});
 }
 const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
@@ -265,7 +277,7 @@ function renderRoll(){
   if(!winners.length){ul.innerHTML='<li class="empty">Todavía no hay ganadores registrados.</li>';return;}
   winners.forEach((w,i)=>{
     const li=document.createElement('li');
-    li.innerHTML=`<img src="${w.avatar}&s=88" alt=""><div><b>${w.name}</b><small>${fmtDate(w.date)} · registrado por <a href="${w.url}" target="_blank" rel="noopener">${w.user}</a>${i<COOLDOWN?` · <span class="back">vuelve en ${COOLDOWN-i} sorteo${COOLDOWN-i>1?'s':''}</span>`:''}</small></div>`;
+    li.innerHTML=`<img src="${w.avatar}&s=88" alt=""><div><b>${w.name}</b><small>${fmtDate(w.date)} · registrado por <a href="${w.url}" target="_blank" rel="noopener">${w.user}</a>${i<COOLDOWN?` · <span class="back">vuelve en ${COOLDOWN-i} sorteo${COOLDOWN-i>1?'s':''}</span>`:''}</small>${stampHtml((VERDICT_FILE[w.number]||{}).verdict,true)}</div>`;
     ul.appendChild(li);
   });
 }
@@ -331,7 +343,7 @@ function render(){
     const li=document.createElement('li');li.className='card'+(out?' dim':'')+(q!=null?' quarantine':'');li.dataset.n=r.n;
     li.innerHTML=`<span class="ball ${gcolor[r.group]}"><span>${r.n}</span></span><div>
       <h3><a href="https://glovoapp.com/es/es/donostia-san-sebastian/stores/${r.slug}" target="_blank" rel="noopener">${r.name}</a></h3>
-      <p class="tags">${r.tags.join(' · ')}</p>${r.promo?`<span class="promo">${r.promo}${promoWeight(r)>1?` · ×${promoWeight(r)===2?2:'1,5'}`:''}</span>`:''}${extraStore(r)?` <span class="promo xtra">${ballsLabel(extraStore(r))} extra</span>`:''}
+      <p class="tags">${r.tags.join(' · ')}</p>${r.promo?`<span class="promo">${r.promo}${promoWeight(r)>1?` · ×${promoWeight(r)===2?2:'1,5'}`:''}</span>`:''}${extraStore(r)?` <span class="promo xtra">${ballsLabel(extraStore(r))} extra</span>`:''}${verdictOf[r.slug]?` ${stampHtml(verdictOf[r.slug].key,true)}`:''}
       <div class="meta"><span><b>${r.rating||'sin nota'}</b>${ratingWeight(r)<1?` <span class="rw" title="Nota suavizada ${(100*smoothed(r)).toFixed(1).replace('.',',')} % con ${r.rc} votos: pesa ${frac(ratingWeight(r))} dentro de su cocina">×${frac(ratingWeight(r))}</span>`:''}</span><span>envío <b>${r.fee.toFixed(2)} €</b></span><span>${r.dist}</span></div>
       ${q!=null?`<span class="won">Salió elegido · vuelve en ${q} sorteo${q>1?'s':''}</span>`:whenBadge(r)}
     </div>${q!=null?'':`<button class="out" type="button" aria-pressed="${out}" title="${offGroups.has(r.group)?'Toda la cocina está fuera; pulsa el chip para meterla':''}">${out?'Meter':'Sacar'}</button>`}
@@ -342,7 +354,7 @@ function render(){
   });
 }
 exoticBox.onchange=()=>{persist();render();};
-render();renderUpdated();loadWinners();loadBalls();
+render();renderUpdated();loadWinners();loadBalls();loadVerdicts();
 setInterval(()=>{render();renderUpdated();},60000);
 const vl=document.getElementById('void');DATA.excluded.forEach(n=>{const li=document.createElement('li');li.textContent=n;vl.appendChild(li);});
 const fl2=document.getElementById('franchises');(DATA.leftOut||[]).forEach(n=>{const li=document.createElement('li');li.textContent=n;fl2.appendChild(li);});
