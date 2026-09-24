@@ -4,8 +4,9 @@
 export const COOLDOWN = 6;                                  // sorteos de cuarentena para el sitio ganador
 export const PENALTY = [[2, 0.25], [4, 0.5], [6, 0.75]];    // [sorteos desde que ganó la cocina < límite, peso]
 
-// Un sorteo cuenta solo si el issue lleva la etiqueta "ganador", que solo puede poner quien tiene permisos en el repo:
-// así un issue de cualquiera con una línea "tienda:" no altera el bombo. Las etiquetas llegan como objetos (API) o nombres.
+// Un sorteo cuenta solo si el issue lleva la etiqueta "ganador". El flujo de ganadores (.github/workflows/winners.yml) se la
+// pone a cualquier issue con línea "tienda:", lo abra quien lo abra; quitarla o cerrar el issue deja el sorteo fuera.
+// Las etiquetas llegan como objetos (API de GitHub) o como nombres (data/winners.json).
 export const LABEL = 'ganador';
 const isWinner = i => !i.pull_request && /^\s*tienda:/m.test(i.body || '') && (i.labels || []).some(l => (l.name || l) === LABEL);
 
