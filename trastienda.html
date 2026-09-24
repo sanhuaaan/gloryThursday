@@ -283,7 +283,8 @@ async function setup(){
     const old=await gh('/contents/key.json?ref=main');const oldSha=old.ok?(await old.json()).sha:null;   // repetir la configuración cambia la combinación
     const k=await lock(tok,pw);
     const put=await gh('/contents/key.json',{method:'PUT',body:JSON.stringify({message:'chore: set access key',content:b64(enc.encode(JSON.stringify(k,null,1))),...(oldSha?{sha:oldSha}:{})})});
-    if(!put.ok)throw new Error('No se pudo guardar la clave en el repositorio ('+put.status+'). ¿El token tiene escritura en Contents?');
+    if(!put.ok){let why='';try{why=(await put.json()).message||'';}catch(e){}
+      throw new Error(`GitHub no dejó guardar la clave (HTTP ${put.status}${why?': '+why:''}).`+(put.status===403||put.status===404?` Revisa que el token tenga en "Repository access" el repo ${EXTRA} (no basta con gloryThursday) y "Contents: Read and write".`:''));}
     keyFile=k;ss.set('gt',tok);['sToken','sPw','sPw2'].forEach(x=>$(x).value='');await openSafe('setup');
   }catch(e){token=null;refuse('setup');showError(e.message);}
   $('sGo').disabled=false;
