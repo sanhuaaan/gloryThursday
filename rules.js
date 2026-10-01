@@ -49,6 +49,10 @@ export function activeBalls(file, latest, rows) {
   return out;
 }
 
+// Interruptor del veredicto de la mesa. En false (oculto desde 2026-10-01) ni se ve ni pesa en el bombo, la trastienda
+// ni el recordatorio; el código y verdicts.json siguen intactos. Para recuperarlo basta con ponerlo a true.
+export const VERDICTS_ENABLED = false;
+
 // Veredicto de la mesa: lo estampa la trastienda sobre cada sorteo (verdicts.json del repo extraBalls, {nºissue: {verdict}}).
 // Pesa sobre el restaurante dentro de su cocina; si ha ganado varias veces, manda el veredicto del sorteo más reciente.
 export const VERDICTS = {

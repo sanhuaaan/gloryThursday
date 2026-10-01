@@ -244,7 +244,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   <p class="err" id="error" hidden></p>
 </main>
 <script type="module">
-import {latestRaffle,activeBalls,parseWinners,VERDICTS} from './rules.js';
+import {latestRaffle,activeBalls,parseWinners,VERDICTS,VERDICTS_ENABLED} from './rules.js';
 const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO,ITER=600000;
 // las bolas y la llave viven en un repo aparte: el token solo tiene acceso a él, así que no puede tocar el bombo
 const EXTRA='sanhuaaan/gloryThursday-extraBalls',EXTRA_API='https://api.github.com/repos/'+EXTRA,EXTRA_PAGES='https://sanhuaaan.github.io/gloryThursday-extraBalls/';
@@ -409,7 +409,7 @@ function renderDrawer(pending){
 const VCOLORS={repetir:'#6fd08c',aprobado:'#7fb2ff',nifu:'#f0bf3d',nuncamas:'#ff6b7a'};
 const fmtDay=d=>new Date(d+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
 function renderVerdict(stampedKey){
-  const box=$('verdict');box.hidden=!wins.length;if(!wins.length)return;
+  const box=$('verdict');box.hidden=!VERDICTS_ENABLED||!wins.length;if(box.hidden)return;
   if(!wins.some(w=>w.number===vPicked))vPicked=wins[0].number;
   $('vPick').innerHTML=wins.map(w=>`<option value="${w.number}" ${w.number===vPicked?'selected':''}>${fmtDay(w.date)} · ${w.name}</option>`).join('');
   const cur=(verdicts[vPicked]||{}).verdict,w=wins.find(x=>x.number===vPicked);

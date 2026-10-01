@@ -5,6 +5,7 @@ Bombo de bingo para decidir dónde pedimos la comida en la oficina de Zuatzu (Ju
 - `index.html`: la página. Abrir en el navegador, sin build.
 - `data/stores.json`: restaurantes de Glovo que sí llegan a la oficina, y los que no.
 - `data/slugs.txt`: tiendas a comprobar (slugs de Glovo Donostia). El barrido añade las que aparecen nuevas en los listados de Glovo y quita las que Glovo da por inexistentes.
+- Veredicto de la mesa (sellos tras cada sorteo, en la trastienda): oculto. Se recupera poniendo `VERDICTS_ENABLED = true` en `rules.js`.
 - `rules.js`: reglas del sorteo (ganadores, cuarentena, penalización, bolas extra) que comparten el bombo, la trastienda y el recordatorio.
 - `scripts/sweep.py`: regenera `stores.json` consultando Glovo con las coordenadas de la oficina.
 - `.github/workflows/sweep.yml`: lanza el barrido cada media hora (y a mano desde Actions) y commitea el resultado.

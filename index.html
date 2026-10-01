@@ -193,7 +193,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
     <li><h3>Sitios con promo</h3><p>Dentro de su cocina, un sitio con <b>2x1</b> en Glovo pesa <b>el doble</b> y uno con <b>descuento en porcentaje</b> pesa <b>una vez y media</b>. Se usan las promos del último barrido; no cambian la elección de cocina.</p></li>
     <li><h3>Valoración</h3><p>La nota de Glovo solo resta. Se suaviza con 20 votos a la media del bombo, así que un sitio <b>sin valorar</b> queda <b>neutro</b>. Con 95 % o más pesa entero, de 90 a 95 % <b>tres cuartos</b>, y por debajo de 90 % <b>la mitad</b>. Se multiplica con la promo.</p></li>
     <li><h3>Bolas extra</h3><p>Algunos sorteos llevan <b>bolas extra</b> en ciertas cocinas o restaurantes. Cada bola suma el <b>peso normal</b> de su cocina o restaurante: con una pesa el doble, con dos el triple. Las de restaurante solo valen si su cocina también lleva. Todas caducan al registrar el sorteo. Se gestionan en la <a href="trastienda.html">trastienda</a>.</p></li>
-    <li><h3>Veredicto de la mesa</h3><p>Después de comer, en la <a href="trastienda.html">trastienda</a> se estampa lo que opinó la mesa. Dentro de su cocina, <b>¡Repetiríamos!</b> pesa ×1,25, <b>Aprobado</b> ×1, <b>Ni fu ni fa</b> ×0,75 y <b>Nunca más</b> ×0,25. Si un sitio ha salido varias veces, manda el último veredicto.</p></li>
+    <li id="rule-verdict"><h3>Veredicto de la mesa</h3><p>Después de comer, en la <a href="trastienda.html">trastienda</a> se estampa lo que opinó la mesa. Dentro de su cocina, <b>¡Repetiríamos!</b> pesa ×1,25, <b>Aprobado</b> ×1, <b>Ni fu ni fa</b> ×0,75 y <b>Nunca más</b> ×0,25. Si un sitio ha salido varias veces, manda el último veredicto.</p></li>
     <li><h3>Libro de actas</h3><p>Cada sorteo es un issue del repo, lo saque el bombo de la web o el físico. Quien lo registra queda a la vista. Cerrar el issue anula el sorteo.</p></li>
   </ul>
 </section>
@@ -215,7 +215,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 <p class="method dimmable"><a class="backroom" href="trastienda.html">🎟️ Trastienda</a> Método: consulta a <code>api.glovoapp.com/v3/stores/{slug}</code> con las coordenadas 43.2970, -2.0051 el 9 de septiembre de 2026. Las tiendas fuera de zona responden "No available store address found"; se validó con coordenadas de Bilbao, Hernani y Zarautz. Los horarios son los de ese día y se repiten entre semana. Envío según Glovo sin Prime.</p>
 </div>
 <script type="module">
-import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls,VERDICTS,verdictsBySlug} from './rules.js';
+import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls,VERDICTS,VERDICTS_ENABLED,verdictsBySlug} from './rules.js';
 // todo sale de ficheros publicados en Pages (sin API de GitHub: no hay límite de consultas); el barrido mantiene stores.json
 const DATA=await fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
   .catch(e=>{document.getElementById('count').textContent=`No se pudieron cargar los restaurantes (${e.message}). Recarga la página.`;throw e;});
@@ -354,7 +354,8 @@ function render(){
   });
 }
 exoticBox.onchange=()=>{persist();render();};
-render();renderUpdated();loadWinners();loadBalls();loadVerdicts();
+render();renderUpdated();loadWinners();loadBalls();
+if(VERDICTS_ENABLED)loadVerdicts();else document.getElementById('rule-verdict').hidden=true;
 setInterval(()=>{render();renderUpdated();},60000);
 const vl=document.getElementById('void');DATA.excluded.forEach(n=>{const li=document.createElement('li');li.textContent=n;vl.appendChild(li);});
 const fl2=document.getElementById('franchises');(DATA.leftOut||[]).forEach(n=>{const li=document.createElement('li');li.textContent=n;fl2.appendChild(li);});

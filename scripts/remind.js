@@ -5,7 +5,7 @@
 // El segundo jueves cae entre el 8 y el 14, así que el miércoles anterior cae entre el 7 y el 13.
 // --force salta la comprobación de fecha (pruebas y disparo manual). --dry-run imprime sin enviar.
 import { existsSync, readFileSync } from 'fs';
-import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, VERDICTS } from '../rules.js';
+import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, VERDICTS, VERDICTS_ENABLED } from '../rules.js';
 
 const ROOT = new URL('..', import.meta.url);
 const PAGE = 'https://sanhuaaan.github.io/gloryThursday/';
@@ -30,7 +30,7 @@ const fmt = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('es-ES', { da
 
 // veredictos y bolas extra viven en el repo gloryThursday-extraBalls; si no se pueden leer, el aviso sale sin ellos
 const extraRepo = f => fetch(`https://sanhuaaan.github.io/gloryThursday-extraBalls/${f}?t=${Date.now()}`).then(r => r.ok ? r.json() : {}).catch(() => ({}));
-const verdicts = await extraRepo('verdicts.json');
+const verdicts = VERDICTS_ENABLED ? await extraRepo('verdicts.json') : {};
 
 const lines = ['*Mañana es Jueves de Gloria* 🍽️', ''];
 if (winners.length) {
