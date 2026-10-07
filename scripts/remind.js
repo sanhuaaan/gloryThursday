@@ -4,7 +4,7 @@
 // Uso: CHAT_WEBHOOK=... node scripts/remind.js [--force] [--dry-run]
 // El segundo jueves cae entre el 8 y el 14, así que el miércoles anterior cae entre el 7 y el 13.
 // --force salta la comprobación de fecha (pruebas y disparo manual). --dry-run imprime sin enviar.
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, VERDICTS, VERDICTS_ENABLED } from '../rules.js';
 
 const ROOT = new URL('..', import.meta.url);
@@ -13,6 +13,12 @@ const FRAC = { 0.25: '¼', 0.5: '½', 0.75: '¾' };
 const args = process.argv.slice(2);
 const read = (f, fallback) => existsSync(new URL(f, ROOT)) ? JSON.parse(readFileSync(new URL(f, ROOT), 'utf8')) : fallback;
 
+// fecha de hoy en Madrid (AAAA-MM-DD): marca de "ya enviado" en data/reminder.json para no avisar dos veces el mismo día
+const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date());
+if (!args.includes('--dry-run') && read('data/reminder.json', {}).lastSent === today) {
+  console.log(`El aviso de hoy (${today}) ya se envió; nada que hacer`);
+  process.exit(0);
+}
 const now = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Madrid', weekday: 'short', day: 'numeric' })
   .formatToParts(new Date()).map(p => [p.type, p.value]));
 if (!args.includes('--force') && !(now.weekday === 'Wed' && +now.day >= 7 && +now.day <= 13)) {
@@ -65,3 +71,4 @@ if (!process.env.CHAT_WEBHOOK) { console.error('Falta CHAT_WEBHOOK'); process.ex
 const r = await fetch(process.env.CHAT_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json; charset=UTF-8' }, body: JSON.stringify({ text }) });
 console.log('enviado:', r.status);
 if (!r.ok) process.exit(1);
+writeFileSync(new URL('data/reminder.json', ROOT), JSON.stringify({ lastSent: today }, null, 1) + '\n');

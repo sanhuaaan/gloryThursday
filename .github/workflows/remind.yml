@@ -1,13 +1,20 @@
 name: remind
 on:
   schedule:
-    - cron: "0 6 * * 3"   # miércoles 06:00 UTC = 08:00 Madrid en verano, 07:00 en invierno; el script decide si toca
+    # miércoles 00:00 UTC (02:00 Madrid en verano, 01:00 en invierno): el cron de GitHub llega con horas de retraso,
+    # así hay margen para que el aviso salga por la mañana. El script decide si toca y no envía dos veces el mismo día.
+    - cron: "0 0 * * 3"
   workflow_dispatch:
     inputs:
       force:
-        description: "Enviar aunque no sea el miércoles anterior al segundo jueves"
+        description: "Enviar aunque no sea el miércoles anterior al segundo jueves (no repite si hoy ya se envió)"
         type: boolean
         default: false
+permissions:
+  contents: write
+concurrency:
+  group: remind
+  cancel-in-progress: false
 jobs:
   remind:
     runs-on: ubuntu-latest
@@ -16,3 +23,8 @@ jobs:
       - run: node scripts/remind.js ${{ inputs.force && '--force' || '' }}
         env:
           CHAT_WEBHOOK: ${{ secrets.CHAT_WEBHOOK }}
+      - run: |
+          git config user.name "sweep-bot"
+          git config user.email "sweep-bot@users.noreply.github.com"
+          git add data/reminder.json 2>/dev/null || true
+          git diff --cached --quiet || { git commit -m "chore: reminder sent" && git pull --rebase -X theirs origin main && git push; }
