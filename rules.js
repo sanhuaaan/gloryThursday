@@ -49,18 +49,31 @@ export function activeBalls(file, latest, rows) {
   return out;
 }
 
-// Interruptor del veredicto de la mesa. En false (oculto desde 2026-10-01) ni se ve ni pesa en el bombo, la trastienda
-// ni el recordatorio; el código y verdicts.json siguen intactos. Para recuperarlo basta con ponerlo a true.
-export const VERDICTS_ENABLED = false;
+// Interruptor del veredicto. En false ni se ve ni pesa en el bombo ni en el recordatorio.
+export const VERDICTS_ENABLED = true;
 
-// Veredicto de la mesa: lo estampa la trastienda sobre cada sorteo (verdicts.json del repo extraBalls, {nºissue: {verdict}}).
-// Pesa sobre el restaurante dentro de su cocina; si ha ganado varias veces, manda el veredicto del sorteo más reciente.
+// Veredicto de la oficina: sale de la votación del formulario que se manda al chat el jueves por la tarde
+// (scripts/vote.js). data/votes.json trae los recuentos por sorteo, {nºissue: {repetir, aprobado, nifu, nuncamas}}, ya con
+// un voto por persona. Pesa sobre el restaurante dentro de su cocina; si ha ganado varias veces, manda el sorteo más reciente.
 export const VERDICTS = {
-  repetir:  { label: '¡Repetiríamos!', weight: 1.25 },
-  aprobado: { label: 'Aprobado',       weight: 1 },
-  nifu:     { label: 'Ni fu ni fa',    weight: 0.75 },
-  nuncamas: { label: 'Nunca más',      weight: 0.25 },
+  repetir:  { label: '¡Repetiríamos!', weight: 1.25, score: 4 },
+  aprobado: { label: 'Aprobado',       weight: 1,    score: 3 },
+  nifu:     { label: 'Ni fu ni fa',    weight: 0.75, score: 2 },
+  nuncamas: { label: 'Nunca más',      weight: 0.25, score: 1 },
 };
+export const MIN_VOTES = 3;   // con menos votos el sorteo no tiene veredicto: dos personas no hunden un sitio
+
+// Recuentos → {nºissue: {verdict, votes}}: la media de puntos (4 a 1), redondeada, elige el veredicto.
+export function votesToVerdicts(votes) {
+  const out = {};
+  Object.entries(votes || {}).forEach(([n, c]) => {
+    const keys = Object.keys(VERDICTS), total = keys.reduce((a, k) => a + (c[k] || 0), 0);
+    if (total < MIN_VOTES) return;
+    const avg = Math.round(keys.reduce((a, k) => a + (c[k] || 0) * VERDICTS[k].score, 0) / total);
+    out[n] = { verdict: keys.find(k => VERDICTS[k].score === avg), votes: total };
+  });
+  return out;
+}
 export function verdictsBySlug(winners, verdicts) {
   const out = {};
   winners.forEach(w => {   // winners va del más reciente al más antiguo

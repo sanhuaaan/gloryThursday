@@ -1,7 +1,7 @@
 // Prueba de las reglas del sorteo: node --test scripts/rules.test.js (también la lanza GitHub al cambiar rules.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, verdictsBySlug } from '../rules.js';
+import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, verdictsBySlug, votesToVerdicts } from '../rules.js';
 
 const issue = (number, slug, { fecha, labels = ['ganador'], created = '2026-01-01T10:00:00Z', pr = false } = {}) => ({
   number, created_at: created, html_url: `u${number}`, user: { login: 'x', avatar_url: 'a' }, labels,
@@ -48,4 +48,15 @@ test('veredicto de la mesa: pesa el del sorteo más reciente de cada sitio; los 
   const v = verdictsBySlug(winners, { 5: { verdict: 'nuncamas' }, 9: { verdict: 'repetir' }, 8: { verdict: 'inventado' }, 4: { verdict: 'nifu' } });
   assert.deepEqual(Object.fromEntries(Object.entries(v).map(([s, x]) => [s, x.weight])), { nalu: 1.25, sushi: 0.75 });
   assert.deepEqual(verdictsBySlug(winners, undefined), {});
+});
+
+test('votos: media redondeada de 4 a 1 puntos, mínimo de votos, un sorteo sin votos no tiene veredicto', () => {
+  const v = votesToVerdicts({
+    9: { repetir: 3, nuncamas: 1 },          // (12+1)/4 = 3,25 → aprobado
+    8: { repetir: 2 },                       // 2 votos: menos del mínimo
+    7: { nifu: 2, nuncamas: 2 },             // 1,5 → 2: ni fu ni fa
+    6: { repetir: 2, aprobado: 1, x: 5 },    // opción desconocida: no cuenta
+  });
+  assert.deepEqual(v, { 9: { verdict: 'aprobado', votes: 4 }, 7: { verdict: 'nifu', votes: 4 }, 6: { verdict: 'repetir', votes: 3 } });
+  assert.deepEqual(votesToVerdicts(undefined), {});
 });

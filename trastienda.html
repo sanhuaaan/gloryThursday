@@ -158,20 +158,6 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 .stamp{position:absolute;left:50%;top:50%;padding:.15rem .7rem;white-space:nowrap;border:.2rem solid var(--red);border-radius:.3rem;font-family:'Rye',serif;font-size:1.3rem;color:var(--red);background:rgba(247,233,195,.7);
   opacity:0;transform:translate(-50%,-50%) rotate(-12deg);transition:opacity .2s;pointer-events:none}
 .booth.reject .stamp{opacity:1;transform:translate(-50%,-50%) rotate(-12deg)}
-.verdict{width:100%;display:grid;gap:.6rem;padding:.8rem 1rem;border-radius:.6rem;background:linear-gradient(180deg,#34101a,#240710);border:.15rem solid var(--brass-dark)}
-.vhead{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem}
-.vlabel{font-family:'Rye',serif;font-size:1.15rem;color:var(--brass-light)}
-.vpick select{font:inherit;font-size:.85rem;padding:.3rem .5rem;border-radius:.3rem;border:.12rem solid var(--brass-dark);background:#1e060b;color:var(--chalk)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.vstamps{display:flex;flex-wrap:wrap;gap:.7rem}
-.stamp-btn{font-family:'Rye',serif;font-size:1rem;padding:.35rem .9rem;border-radius:.35rem;background:transparent;cursor:pointer;color:var(--c);border:.18rem double var(--c);opacity:.45;transform:rotate(-3deg);transition:opacity .15s}
-.stamp-btn:nth-child(even){transform:rotate(2deg)}
-.stamp-btn:hover{opacity:.8}
-.stamp-btn.on{opacity:1;background:color-mix(in srgb,var(--c) 14%,transparent);box-shadow:0 0 .8rem color-mix(in srgb,var(--c) 45%,transparent)}
-.stamp-btn.thud{animation:thud .35s cubic-bezier(.3,1.4,.5,1)}
-@keyframes thud{0%{transform:scale(1.7) rotate(-10deg);opacity:0}100%{opacity:1}}
-.stamp-btn[disabled]{cursor:wait}
-.vnote{margin:0;font-size:.8rem;color:var(--chalk-dim)}
 .note{color:var(--chalk-dim);font-size:.82rem;text-align:center;max-width:30rem;margin:0}
 .err{color:#ffb3bd;font-variation-settings:"wght" 700;text-align:center;margin:0}
 [hidden]{display:none!important}
@@ -221,11 +207,6 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   </section>
 
   <section id="panel" hidden>
-    <div class="verdict" id="verdict" hidden>
-      <div class="vhead"><span class="vlabel">Veredicto de la mesa</span><label class="vpick" for="vPick"><span class="sr">Sorteo</span><select id="vPick"></select></label></div>
-      <div class="vstamps" id="vStamps"></div>
-      <p class="vnote" id="vNote"></p>
-    </div>
     <div class="tray" id="list"></div>
     <div class="drawer" id="drawer" aria-hidden="true" inert><div class="dclip"><div class="dbox" id="drawerBox"></div></div></div>
     <div class="foot">
@@ -244,7 +225,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   <p class="err" id="error" hidden></p>
 </main>
 <script type="module">
-import {latestRaffle,activeBalls,parseWinners,VERDICTS,VERDICTS_ENABLED} from './rules.js';
+import {latestRaffle,activeBalls} from './rules.js';
 const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO,ITER=600000;
 // las bolas y la llave viven en un repo aparte: el token solo tiene acceso a él, así que no puede tocar el bombo
 const EXTRA='sanhuaaan/gloryThursday-extraBalls',EXTRA_API='https://api.github.com/repos/'+EXTRA,EXTRA_PAGES='https://sanhuaaan.github.io/gloryThursday-extraBalls/';
@@ -307,7 +288,7 @@ async function login(){
   $('enter').disabled=false;
 }
 
-// ficheros del repo extraBalls (balls.json, verdicts.json): se leen y escriben con el token por la API, así se ven al instante
+// ficheros del repo extraBalls (balls.json): se leen y escriben con el token por la API, así se ven al instante
 async function readJson(path){
   const r=await gh('/contents/'+path+'?ref=main');
   if(r.status===401)throw new Error('token');if(r.status===404)return {sha:null,obj:{}};if(!r.ok)throw new Error(path+': HTTP '+r.status);
@@ -324,13 +305,12 @@ async function writeJson(path,obj,sha,message){
   return (await r.json()).content.sha;
 }
 async function status(){
-  const [data,issues,file,vfile]=await Promise.all([
+  const [data,issues,file]=await Promise.all([
     fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('datos del bombo: HTTP '+r.status);return r.json();}),
     // ganadores del repo principal: API anónima (60/h por IP) y, si corta, la copia que publica el barrido
     fetch(API+'/issues?state=open&per_page=100',{headers:{Accept:'application/vnd.github+json'},cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject())
       .catch(()=>fetch('data/winners.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('ganadores: HTTP '+r.status);return r.json();})),
-    readJson('balls.json'),
-    readJson('verdicts.json')
+    readJson('balls.json')
   ]);
   const latest=latestRaffle(issues);
   const order=[...new Set(data.rows.map(r=>r.group))];
@@ -338,15 +318,13 @@ async function status(){
   const byGroup={};data.rows.forEach(r=>(byGroup[r.group]=byGroup[r.group]||[]).push({slug:r.slug,name:r.name}));
   Object.values(byGroup).forEach(l=>l.sort((a,b)=>a.name.localeCompare(b.name,'es')));
   const cur=activeBalls(file.obj,latest,data.rows);
-  const names=Object.fromEntries(data.rows.map(r=>[r.slug,r.name]));
-  const wins=parseWinners(issues).map(w=>({...w,name:names[w.slug]||w.slug}));
-  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,latest,sha:file.sha,wins,verdicts:vfile.obj,vsha:vfile.sha};
+  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,latest,sha:file.sha};
 }
 const same=(a,b)=>{const k=new Set([...Object.keys(a),...Object.keys(b)]);return [...k].every(x=>(a[x]||0)===(b[x]||0));};
 const sameDraft=(a,b)=>same(a.balls,b.balls)&&same(a.stores,b.stores);
 const total=c=>Object.values(c).reduce((a,n)=>a+n,0);
 const clone=d=>({balls:{...d.balls},stores:{...d.stores}});
-let latest=0,sha=null,wins=[],verdicts={},vsha=null,vPicked=null,byGroup={},openGroup=null,drawerGroup=null,shownPills=new Set(),shownTags=new Set();
+let latest=0,sha=null,byGroup={},openGroup=null,drawerGroup=null,shownPills=new Set(),shownTags=new Set();
 
 function holesHtml(n,color,dropping){return Array.from({length:9},(_,i)=>`<span class="hole">${i<n?`<span class="ball${dropping&&i===n-1?' drop':''}" style="--c:${color}"></span>`:''}</span>`).join('');}
 async function popLast(el){const b=el.querySelectorAll('.ball');const last=b[b.length-1];if(last){last.classList.add('pop');await wait(220);}}
@@ -405,34 +383,13 @@ function renderDrawer(pending){
   if(!d.classList.contains('open'))requestAnimationFrame(()=>{if(openGroup===g&&draft.balls[g]>0)d.classList.add('open');});
 }
 
-// veredicto de la mesa: un sello por sorteo; volver a pulsar el sello puesto lo quita
-const VCOLORS={repetir:'#6fd08c',aprobado:'#7fb2ff',nifu:'#f0bf3d',nuncamas:'#ff6b7a'};
-const fmtDay=d=>new Date(d+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
-function renderVerdict(stampedKey){
-  const box=$('verdict');box.hidden=!VERDICTS_ENABLED||!wins.length;if(box.hidden)return;
-  if(!wins.some(w=>w.number===vPicked))vPicked=wins[0].number;
-  $('vPick').innerHTML=wins.map(w=>`<option value="${w.number}" ${w.number===vPicked?'selected':''}>${fmtDay(w.date)} · ${w.name}</option>`).join('');
-  const cur=(verdicts[vPicked]||{}).verdict,w=wins.find(x=>x.number===vPicked);
-  $('vStamps').innerHTML=Object.entries(VERDICTS).map(([k,v])=>`<button type="button" class="stamp-btn${k===cur?' on':''}${k===stampedKey?' thud':''}" data-k="${k}" style="--c:${VCOLORS[k]}" aria-pressed="${k===cur}">${v.label}</button>`).join('');
-  $('vNote').textContent=cur?`${w.name}: ${VERDICTS[cur].label.replace(/([^!])$/,'$1.')} En el bombo pesa ×${String(VERDICTS[cur].weight).replace('.',',')} dentro de su cocina.`:`¿Qué os pareció ${w.name}? Estampad un sello.`;
-  $('vStamps').querySelectorAll('.stamp-btn').forEach(b=>b.onclick=()=>stampVerdict(b.dataset.k));
-}
-async function stampVerdict(k){
-  const n=vPicked,w=wins.find(x=>x.number===n),next={...verdicts};
-  if((next[n]||{}).verdict===k)delete next[n];else next[n]={verdict:k,slug:w.slug,date:new Date().toISOString().slice(0,10)};
-  $('vStamps').querySelectorAll('button').forEach(b=>b.disabled=true);showError('');
-  try{vsha=await writeJson('verdicts.json',next,vsha,'chore: update table verdicts');verdicts=next;renderVerdict(next[n]?k:null);}
-  catch(e){showError(e.message);renderVerdict();}
-}
-$('vPick').addEventListener('change',e=>{vPicked=+e.target.value;renderVerdict();});
-
 async function refresh(){
   showError('');let s;
   try{s=await status();}catch(e){
     if(e.message==='token'){ss.set('gt',null);token=null;view('login');showError('GitHub ya no acepta el token. Habrá que estrenar la caja con uno nuevo.');return;}
     showError('No se pudo comprobar el estado ('+e.message+'). Reintentando…');clearTimeout(pollTimer);pollTimer=setTimeout(refresh,15000);return;
   }
-  groups=s.groups;gcolor=s.colors;byGroup=s.byGroup;current=s.cur;latest=s.latest;sha=s.sha;wins=s.wins;verdicts=s.verdicts;vsha=s.vsha;renderVerdict();
+  groups=s.groups;gcolor=s.colors;byGroup=s.byGroup;current=s.cur;latest=s.latest;sha=s.sha;
   draft=clone(current);
   if(openGroup&&!(draft.balls[openGroup]>0))openGroup=null;
   $('save').classList.remove('sealed','gone');

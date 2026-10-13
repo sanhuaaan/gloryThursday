@@ -26,3 +26,17 @@ winners = [{"number": i["number"], "body": i["body"], "created_at": i["created_a
 winners.sort(key=lambda w: -w["number"])
 (ROOT / "data/winners.json").write_text(json.dumps(winners, ensure_ascii=False, indent=1) + "\n")
 print(f"{len(winners)} ganadores")
+
+# Recuentos de la votación (pestaña "resultados" de la hoja que mantiene scripts/votes.gs, publicada en la web como CSV):
+# sorteo,repetir,aprobado,nifu,nuncamas → data/votes.json. Sin correos: el Apps Script ya deja un voto por persona.
+VOTES_CSV = ""
+if VOTES_CSV:
+    import csv, io
+    try:
+        with urllib.request.urlopen(VOTES_CSV, timeout=20) as r:
+            rows = list(csv.DictReader(io.StringIO(r.read().decode("utf-8"))))
+        votes = {row.pop("sorteo"): {k: int(v or 0) for k, v in row.items()} for row in rows if row.get("sorteo")}
+        (ROOT / "data/votes.json").write_text(json.dumps(votes, indent=1) + "\n")
+        print(f"votos de {len(votes)} sorteos")
+    except Exception as e:
+        print(f"No se pudieron leer los votos ({e}); votes.json sin cambios")

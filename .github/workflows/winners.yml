@@ -28,5 +28,5 @@ jobs:
       - run: |
           git config user.name "sweep-bot"
           git config user.email "sweep-bot@users.noreply.github.com"
-          git add data/winners.json
+          git add data/winners.json data/votes.json
           git diff --cached --quiet || { git commit -m "chore: refresh winners" && git pull --rebase -X theirs origin main && git push; }

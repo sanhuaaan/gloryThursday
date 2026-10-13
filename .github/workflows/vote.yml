@@ -1,0 +1,30 @@
+name: vote
+on:
+  schedule:
+    # jueves, cada hora de 13 a 19 UTC: 15:00 Madrid cae a las 13 en verano y a las 14 en invierno, y el cron de GitHub
+    # llega tarde o se salta ticks. El script decide si toca (día del sorteo, desde las 15:00) y no avisa dos veces.
+    - cron: "0 13-19 * * 4"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Enviar la votación del último sorteo aunque no sea su día (no repite si ya se envió)"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: vote
+  cancel-in-progress: false
+jobs:
+  vote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/vote.js ${{ inputs.force && '--force' || '' }}
+        env:
+          CHAT_WEBHOOK: ${{ secrets.CHAT_WEBHOOK }}
+      - run: |
+          git config user.name "sweep-bot"
+          git config user.email "sweep-bot@users.noreply.github.com"
+          git add data/poll.json 2>/dev/null || true
+          git diff --cached --quiet || { git commit -m "chore: vote announced" && git pull --rebase -X theirs origin main && git push; }

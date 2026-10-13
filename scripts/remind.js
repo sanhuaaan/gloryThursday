@@ -5,7 +5,7 @@
 // El segundo jueves cae entre el 8 y el 14, así que el miércoles anterior cae entre el 7 y el 13.
 // --force salta la comprobación de fecha (pruebas y disparo manual). --dry-run imprime sin enviar.
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, VERDICTS, VERDICTS_ENABLED } from '../rules.js';
+import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, VERDICTS, VERDICTS_ENABLED, votesToVerdicts } from '../rules.js';
 
 const ROOT = new URL('..', import.meta.url);
 const PAGE = 'https://sanhuaaan.github.io/gloryThursday/';
@@ -34,9 +34,9 @@ const { quarantine, lastIdx } = raffleState(winners, rows);
 const name = slug => (rows.find(r => r.slug === slug) || { name: slug }).name;
 const fmt = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', timeZone: 'UTC' });
 
-// veredictos y bolas extra viven en el repo gloryThursday-extraBalls; si no se pueden leer, el aviso sale sin ellos
+// las bolas extra viven en el repo gloryThursday-extraBalls; si no se pueden leer, el aviso sale sin ellas
 const extraRepo = f => fetch(`https://sanhuaaan.github.io/gloryThursday-extraBalls/${f}?t=${Date.now()}`).then(r => r.ok ? r.json() : {}).catch(() => ({}));
-const verdicts = VERDICTS_ENABLED ? await extraRepo('verdicts.json') : {};
+const verdicts = VERDICTS_ENABLED ? votesToVerdicts(read('data/votes.json', {})) : {};
 
 // El parte de la tómbola: formato elegido el 2026-10-07. Toda la información del aviso clásico, en boletín oficial.
 const inDrum = rows.filter(r => quarantine[r.slug] == null);
