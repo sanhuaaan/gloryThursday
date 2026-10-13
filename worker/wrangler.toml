@@ -1,8 +1,10 @@
 name = "glory-votes"
 main = "index.js"
 compatibility_date = "2026-09-01"
+workers_dev = true
+preview_urls = false
 
 [[d1_databases]]
 binding = "DB"
 database_name = "glory-votes"
-database_id = ""
+database_id = "aba36b8a-0690-46d2-ae1b-cce7e2488030"
