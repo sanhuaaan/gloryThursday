@@ -1,4 +1,4 @@
-// Votos del oráculo (votar.html). Cloudflare Worker + D1.
+// Votos del informe del inspector (votar.html). Cloudflare Worker + D1.
 //   GET  /counts              recuentos de todos los sorteos (público; lo copia scripts/winners.py a data/votes.json)
 //   GET  /vote?sorteo=N       tu voto en ese sorteo y, si ya votaste, cómo va      (Authorization: Bearer <token de Google>)
 //   POST /vote {sorteo, verdict}  vota o cambia el voto; solo en el último sorteo  (ídem)

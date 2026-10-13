@@ -29,12 +29,12 @@ if (!args.includes('--force') && !(w.date === today && hour >= 15)) {
 const name = (read('data/stores.json').rows.find(r => r.slug === w.slug) || { name: w.slug }).name;
 const url = `${PAGE}?sorteo=${w.number}`;
 const text = [
-  '🔮 *TÓMBOLA ANTOJITOS · EL ORÁCULO*',
-  `Madame Antojitos ha consultado la bola de cristal y quiere saber qué tal *${name}*.`,
-  '☀️ El Sol · ⭐ La Estrella · 🌙 La Luna · ⚡ La Torre: elegid carta.',
+  '⭐ *GUÍA DEL JUEVES DE GLORIA · SE BUSCAN INSPECTORES*',
+  `La redacción necesita vuestro dictamen sobre *${name}*.`,
+  '★★★ ¡Repetiríamos! · ★★ Aprobado · ★ Ni fu ni fa · ⊘ Nunca más',
   `👉 ${url}`,
   '',
-  `_Un voto por cabeza con la cuenta de la oficina, y se puede cambiar. Con ${MIN_VOTES} votos o más, las cartas pesan en los próximos sorteos._`,
+  `_Un voto por persona con la cuenta de la oficina, y se puede cambiar. Con ${MIN_VOTES} votos o más, el dictamen pesa en los próximos sorteos._`,
 ].join('\n');
 
 if (args.includes('--dry-run')) { console.log(text); process.exit(0); }
