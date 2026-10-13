@@ -118,10 +118,12 @@ function verdictNote(){
   const total=Object.values(counts||{}).reduce((a,n)=>a+n,0);
   const v=votesToVerdicts({[sorteo]:counts||{}})[sorteo];
   const s=$('stamp');
-  if(v){
-    s.innerHTML=`<span class="s-emb">${embOf(v.verdict)}</span><span class="s-txt">${VERDICTS[v.verdict].label}</span><span class="s-lbl label">${closed?'Dictamen final':'Dictamen provisional'}</span>`;
+  // con dictamen, el sello es el de la oficina; mientras no lo hay, el de tu propio voto
+  const key=v?v.verdict:mine,lbl=v?(closed?'Dictamen final':'Dictamen provisional'):'Tu dictamen';
+  if(key){
+    s.innerHTML=`<span class="s-emb">${embOf(key)}</span><span class="s-txt">${VERDICTS[key].label}</span><span class="s-lbl label">${lbl}</span>`;
     s.hidden=false;
-    if(stamped!==v.verdict){s.classList.remove('thud');void s.offsetWidth;s.classList.add('thud');stamped=v.verdict;}
+    if(stamped!==key+lbl){s.classList.remove('thud');void s.offsetWidth;s.classList.add('thud');stamped=key+lbl;}
   }else s.hidden=true;
   const tail=closed?' La ficha de este sorteo está cerrada.':mine?' Puedes cambiar tu voto cuando quieras.':'';
   if(!v)return `${plural(total,'voto','votos')} hasta ahora; faltan ${MIN_VOTES-total} para el dictamen.${tail}`;
