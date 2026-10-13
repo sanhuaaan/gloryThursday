@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Oráculo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Archivo:wdth,wght@75..125,400..900&display=swap">
+<style>
+:root{
+  --velvet:#2a0f3d; --velvet-deep:#12051c; --plum:#4a1d63;
+  --gold:#e8c35a; --gold-light:#f7e3a1; --gold-dark:#8c6a24;
+  --mist:#cdbbe8; --mist-dim:#9583b3; --ink:#2b1a0e;
+  --sun:#f0bf3d; --star:#7fb2ff; --moon:#d9d2f2; --tower:#ff6b7a;
+  --font-display:'Rye',Georgia,serif; --font-tarot:'IM Fell English SC',Georgia,serif; --font-fell:'IM Fell English',Georgia,serif;
+  --font-body:'Archivo',"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--mist);font-family:var(--font-body);font-size:1rem;line-height:1.5;
+  background:radial-gradient(ellipse at 50% 18%,var(--plum) 0%,var(--velvet) 45%,var(--velvet-deep) 100%) fixed var(--velvet-deep)}
+/* cielo estrellado: puntos sueltos que titilan */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.7;animation:twinkle 6s ease-in-out infinite alternate;
+  background:
+    radial-gradient(.1rem .1rem at 8% 12%,#fff,transparent),radial-gradient(.08rem .08rem at 23% 68%,#fff,transparent),
+    radial-gradient(.12rem .12rem at 37% 22%,var(--gold-light),transparent),radial-gradient(.08rem .08rem at 52% 84%,#fff,transparent),
+    radial-gradient(.1rem .1rem at 66% 9%,#fff,transparent),radial-gradient(.12rem .12rem at 79% 43%,var(--gold-light),transparent),
+    radial-gradient(.08rem .08rem at 91% 77%,#fff,transparent),radial-gradient(.1rem .1rem at 14% 91%,#fff,transparent),
+    radial-gradient(.08rem .08rem at 95% 18%,#fff,transparent),radial-gradient(.1rem .1rem at 44% 52%,#fff,transparent)}
+@keyframes twinkle{to{opacity:.3}}
+.wrap{position:relative;max-width:60rem;margin:0 auto;padding:2.5rem 1rem 4rem;display:grid;gap:2rem;justify-items:center;text-align:center}
+.eyebrow{margin:0;font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-variation-settings:"wdth" 110,"wght" 700}
+h1{margin:.4rem 0 0;font-family:var(--font-display);font-weight:400;font-size:clamp(2.2rem,6.5vw,3.8rem);line-height:1;color:var(--gold-light);text-wrap:balance;
+  text-shadow:0 0 1.2rem rgba(232,195,90,.45),.12rem .12rem 0 var(--gold-dark)}
+.lede{margin:.9rem auto 0;max-width:34rem;font-family:var(--font-fell);font-size:1.2rem;color:var(--mist)}
+.lede b{color:var(--gold-light);font-weight:400;font-style:italic}
+
+/* la bola de cristal, con niebla que gira y un brillo del color de la carta elegida */
+.oracle{display:grid;justify-items:center;gap:0}
+.ball{--glow:#8f6bd1;position:relative;width:15rem;height:15rem;border-radius:50%;display:grid;place-items:center;padding:2.2rem;overflow:hidden;
+  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,0) 20%),
+    radial-gradient(circle at 50% 62%,color-mix(in srgb,var(--glow) 70%,transparent),transparent 72%),#1b0b2e;
+  box-shadow:inset 0 -1rem 2rem rgba(0,0,0,.55),inset 0 .4rem 1.2rem rgba(255,255,255,.12),0 0 2.5rem color-mix(in srgb,var(--glow) 55%,transparent);
+  transition:box-shadow .6s,background .6s}
+.ball::before{content:"";position:absolute;inset:-25%;background:conic-gradient(from 0deg,transparent,rgba(205,187,232,.35),transparent 30%,rgba(232,195,90,.2),transparent 60%,rgba(205,187,232,.3),transparent);
+  filter:blur(1.2rem);animation:swirl 14s linear infinite;mix-blend-mode:screen}
+@keyframes swirl{to{transform:rotate(1turn)}}
+.ball.flash{animation:flash 1s ease-out}
+@keyframes flash{30%{box-shadow:inset 0 -1rem 2rem rgba(0,0,0,.4),0 0 5rem var(--glow)}}
+.ball p{position:relative;margin:0;font-family:var(--font-fell);font-size:1.1rem;line-height:1.3;color:#f4ecff;text-shadow:0 0 .6rem #000;text-wrap:balance}
+.ball p small{display:block;margin-top:.4rem;font-family:var(--font-body);font-size:.75rem;color:var(--mist)}
+.ball p.err{color:#ffc2c9}
+.stand{width:10rem;height:2.6rem;margin-top:-.6rem;clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);
+  background:linear-gradient(180deg,var(--gold-light),var(--gold) 40%,var(--gold-dark))}
+.plaque{min-height:2.75rem;margin-top:1rem;display:grid;place-items:center;gap:.5rem}
+.plaque .who{font-size:.8rem;color:var(--mist-dim)}
+.plaque button{font:inherit;font-size:.8rem;background:none;border:0;color:var(--mist-dim);text-decoration:underline;cursor:pointer}
+
+/* las cartas del tarot */
+.deck{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.4rem;width:100%;max-width:46rem}
+@media (max-width:40rem){.deck{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem 1rem}}
+.deck li{display:grid;gap:.6rem;justify-items:center}
+.card{--c:var(--gold);position:relative;width:100%;aspect-ratio:5/8.4;padding:0;border:0;background:none;cursor:pointer;perspective:40rem;color:inherit;font:inherit;
+  transition:transform .25s cubic-bezier(.3,1.4,.5,1),filter .25s}
+.face{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;align-items:center;padding:.7rem .5rem;border-radius:.6rem;
+  background:linear-gradient(160deg,#f5e7c4,#e6d0a0 55%,#d3b77c);color:var(--ink);
+  border:.2rem double var(--gold-dark);box-shadow:inset 0 0 0 .3rem #f5e7c4,inset 0 0 0 .4rem var(--gold-dark),0 .5rem 1rem rgba(0,0,0,.5);transform-style:preserve-3d}
+.face .num{font-family:var(--font-tarot);font-size:1rem;letter-spacing:.1em}
+.face svg{width:72%;height:auto;margin:0 auto;display:block;filter:drop-shadow(0 .1rem 0 rgba(0,0,0,.25))}
+.face .name{font-family:var(--font-tarot);font-size:1.05rem;letter-spacing:.06em;border-top:.1rem solid var(--gold-dark);padding-top:.35rem;margin:0 .2rem}
+.card:hover:not([disabled]),.card:focus-visible{transform:translateY(-.5rem) rotate(-1.5deg)}
+.card:focus-visible{outline:.2rem solid var(--gold-light);outline-offset:.35rem;border-radius:.6rem}
+.card[aria-pressed="true"]{transform:translateY(-.8rem)}
+.card[aria-pressed="true"] .face{box-shadow:inset 0 0 0 .3rem #f5e7c4,inset 0 0 0 .4rem var(--c),0 0 1.8rem color-mix(in srgb,var(--c) 80%,transparent),0 .5rem 1rem rgba(0,0,0,.5)}
+.card[disabled]{cursor:default;filter:saturate(.35) brightness(.7)}
+.card[aria-pressed="true"][disabled]{filter:none}
+.card.flip .face{animation:flip .7s cubic-bezier(.4,1.3,.5,1)}
+@keyframes flip{from{transform:rotateY(180deg) scale(.9)}to{transform:rotateY(360deg)}}
+.count{position:absolute;top:-.7rem;right:-.7rem;min-width:2rem;height:2rem;padding:0 .4rem;border-radius:999rem;display:grid;place-items:center;
+  font-variation-settings:"wght" 800;font-size:.95rem;font-variant-numeric:tabular-nums;background:var(--c);color:#1b0b2e;box-shadow:0 0 .8rem color-mix(in srgb,var(--c) 70%,transparent)}
+.verdict{font-size:.85rem;font-variation-settings:"wght" 700;color:var(--mist)}
+.small{max-width:36rem;margin:0;font-size:.85rem;color:var(--mist-dim)}
+.small a{color:var(--gold)}
+@media (prefers-reduced-motion:reduce){body::before,.ball::before,.ball.flash,.card.flip .face{animation:none}.card{transition:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow" id="eyebrow">Jueves de Gloria · el oráculo</p>
+    <h1>El Oráculo de Madame Antojitos</h1>
+    <p class="lede" id="lede">La bola de cristal se está despertando…</p>
+  </header>
+
+  <section class="oracle" aria-live="polite">
+    <div class="ball" id="ball"><p id="say">Un momento, que la niebla se aclara…</p></div>
+    <div class="stand" aria-hidden="true"></div>
+    <div class="plaque" id="plaque"><div id="gsi"></div></div>
+  </section>
+
+  <ul class="deck" id="deck" aria-label="Cartas del oráculo"></ul>
+
+  <p class="small" id="rules"></p>
+  <p class="small"><a href="./">← Volver al bombo</a></p>
+</main>
+
+<script type="module">
+import {parseWinners,VERDICTS,MIN_VOTES,votesToVerdicts,VOTE_API,GOOGLE_CLIENT_ID,VOTE_DOMAIN} from './rules.js';
+const $=id=>document.getElementById(id);
+const SVG={
+  sun:'<circle cx="50" cy="50" r="17" fill="#e0a31c" stroke="#7a4f0a" stroke-width="2.5"/><g stroke="#c4850f" stroke-width="5" stroke-linecap="round">'+[...Array(12)].map((_,i)=>{const a=i*Math.PI/6,c=Math.cos(a),s=Math.sin(a);return `<line x1="${50+26*c}" y1="${50+26*s}" x2="${50+(i%2?36:40)*c}" y2="${50+(i%2?36:40)*s}"/>`;}).join('')+'</g>',
+  star:'<polygon points="50,8 61,38 93,38 67,57 77,89 50,70 23,89 33,57 7,38 39,38" fill="#3f78c4" stroke="#1d3f73" stroke-width="2.5" stroke-linejoin="round"/>',
+  moon:'<path d="M60 10A40 40 0 1 0 60 90A55 55 0 0 1 60 10z" fill="#8d84b8" stroke="#3e3666" stroke-width="2.5" stroke-linejoin="round"/><circle cx="76" cy="32" r="3" fill="#8d84b8"/><circle cx="84" cy="58" r="2" fill="#8d84b8"/><circle cx="70" cy="76" r="1.6" fill="#8d84b8"/>',
+  tower:'<path d="M34 92V36h-4V22h7v6h6v-6h14v6h6v-6h7v14h-4v56z" fill="#9b6a4a" stroke="#4a2a18" stroke-width="2.5" stroke-linejoin="round"/><rect x="45" y="70" width="10" height="22" fill="#4a2a18"/><polygon points="58,4 44,30 54,30 46,50 66,22 56,22 64,4" fill="#e23b4e" stroke="#7a1020" stroke-width="2" stroke-linejoin="round"/>',
+};
+// cada veredicto, una carta (el arcano mayor que le pega)
+const CARDS=[
+  {k:'repetir',num:'XIX',name:'El Sol',svg:SVG.sun,c:'var(--sun)'},
+  {k:'aprobado',num:'XVII',name:'La Estrella',svg:SVG.star,c:'var(--star)'},
+  {k:'nifu',num:'XVIII',name:'La Luna',svg:SVG.moon,c:'var(--moon)'},
+  {k:'nuncamas',num:'XVI',name:'La Torre',svg:SVG.tower,c:'var(--tower)'},
+];
+const GLOW={repetir:'#f0bf3d',aprobado:'#5d95f0',nifu:'#b9b0e0',nuncamas:'#ff4f63'};
+let token=null,mine=null,counts=null,busy=false,sorteo=null,open=null,closed=false;
+
+const say=(html,cls='')=>{$('say').innerHTML=html;$('say').className=cls;};
+const cardOf=k=>CARDS.find(c=>c.k===k);
+const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
+$('rules').innerHTML=`Un voto por cabeza, con tu cuenta de ${VOTE_DOMAIN}; puedes cambiar de carta mientras este sea el último sorteo. `+
+  `Con ${MIN_VOTES} votos o más, la carta que salga pesa sobre el sitio dentro de su cocina en los próximos sorteos: `+
+  CARDS.map(c=>`${c.name} ×${String(VERDICTS[c.k].weight).replace('.',',')}`).join(' · ')+'.';
+
+function renderDeck(){
+  $('deck').innerHTML=CARDS.map(c=>`<li><button type="button" class="card" data-k="${c.k}" style="--c:${c.c}" aria-pressed="${mine===c.k}" ${!token||closed||busy?'disabled':''}>
+    <span class="face"><span class="num">${c.num}</span>${`<svg viewBox="0 0 100 100" aria-hidden="true">${c.svg}</svg>`}<span class="name">${c.name}</span></span>
+    ${counts?`<span class="count" aria-label="${plural(counts[c.k]||0,'voto','votos')}">${counts[c.k]||0}</span>`:''}</button>
+    <span class="verdict">${VERDICTS[c.k].label}</span></li>`).join('');
+  $('deck').querySelectorAll('.card').forEach(b=>b.onclick=()=>vote(b.dataset.k));
+}
+
+// lo que dice la bola cuando ya hay votos a la vista
+function prophecy(){
+  const total=Object.values(counts||{}).reduce((a,n)=>a+n,0);
+  const v=votesToVerdicts({[sorteo]:counts||{}})[sorteo];
+  const head=mine?`Tu carta: <b>${cardOf(mine).name}</b>.`:'';
+  if(!v)return `${head}<small>${plural(total,'voto','votos')}; faltan ${MIN_VOTES-total} para que las cartas hablen.</small>`;
+  return `${head} Con ${plural(total,'voto','votos')}, las cartas dicen: <b>${VERDICTS[v.verdict].label}</b><small>${closed?'Este sorteo ya está cerrado.':'Puedes cambiar de carta cuando quieras.'}</small>`;
+}
+
+async function api(method,body){
+  const r=await fetch(`${VOTE_API}/vote${method==='GET'?'?sorteo='+sorteo:''}`,{method,headers:{Authorization:'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},body:body&&JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401){token=null;showLogin(j.error||'La bola ya no te reconoce: vuelve a entrar.');throw new Error('');}
+  if(!r.ok)throw new Error(j.error||'HTTP '+r.status);
+  return j;
+}
+
+async function vote(k){
+  if(!token||busy||closed)return;
+  busy=true;renderDeck();
+  try{
+    ({mine,counts}=await api('POST',{sorteo,verdict:k}));
+    $('ball').style.setProperty('--glow',GLOW[mine]);$('ball').classList.remove('flash');void $('ball').offsetWidth;$('ball').classList.add('flash');
+    busy=false;renderDeck();document.querySelector(`.card[data-k="${k}"]`).classList.add('flip');
+    say(prophecy());
+  }catch(e){busy=false;renderDeck();if(e.message)say(`La niebla se ha espesado: ${e.message}`,'err');}
+}
+
+async function signedIn(credential){
+  token=credential;
+  const email=JSON.parse(decodeURIComponent(escape(atob(credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))))).email;
+  $('plaque').innerHTML=`<span class="who">Salvoconducto de ${email}</span>`;
+  say('Leyendo tu destino…');
+  try{
+    ({mine,counts}=await api('GET'));
+    if(mine)$('ball').style.setProperty('--glow',GLOW[mine]);
+    say(mine?prophecy():'Concéntrate en la comida… y <b>elige una carta</b>.');
+  }catch(e){if(e.message)say(`La niebla se ha espesado: ${e.message}`,'err');}
+  renderDeck();
+}
+
+function showLogin(msg){
+  $('plaque').innerHTML='<div id="gsi"></div>';
+  say(msg||`Muestra tu salvoconducto para consultar las cartas.<small>Entra con tu cuenta de ${VOTE_DOMAIN}</small>`,msg?'err':'');
+  renderDeck();
+  const go=()=>{
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:r=>signedIn(r.credential),hd:VOTE_DOMAIN,auto_select:true,context:'signin'});
+    google.accounts.id.renderButton($('gsi'),{theme:'filled_black',shape:'pill',text:'signin_with',locale:'es'});
+    google.accounts.id.prompt();
+  };
+  if(window.google&&google.accounts)return go();
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=go;
+  s.onerror=()=>say('No se pudo cargar el acceso de Google. ¿Un bloqueador de anuncios?','err');
+  document.head.appendChild(s);
+}
+
+// arranque: qué sorteo se vota, de qué sitio, y si sigue abierto
+const get=f=>fetch(f+'?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error(f+': HTTP '+r.status)));
+try{
+  const [issues,data,votes]=await Promise.all([get('data/winners.json'),get('data/stores.json'),get('data/votes.json').catch(()=>({}))]);
+  const winners=parseWinners(issues);
+  open=(winners[0]||{}).number;
+  sorteo=+new URLSearchParams(location.search).get('sorteo')||open;
+  const w=winners.find(x=>x.number===sorteo);
+  if(!w){say('Las cartas no reconocen ese sorteo.','err');renderDeck();}
+  else{
+    const name=(data.rows.find(r=>r.slug===w.slug)||{name:w.slug}).name;
+    const day=new Date(w.date+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long'});
+    $('eyebrow').textContent=`Jueves de Gloria · sorteo del ${day}`;
+    $('lede').innerHTML=`La bola de cristal ha visto que comisteis en <b>${name}</b>. ¿Qué dicen las cartas?`;
+    document.title=`El Oráculo · ${name}`;
+    closed=sorteo!==open;
+    if(closed){counts=votes[sorteo]||null;$('plaque').innerHTML='';say(counts?prophecy():'Este sorteo ya está cerrado y nadie consultó las cartas.');renderDeck();}
+    else if(!VOTE_API||!GOOGLE_CLIENT_ID){say('Madame Antojitos aún está afinando la bola. Vuelve pronto.');renderDeck();}
+    else showLogin();
+  }
+}catch(e){say(`La bola no arranca: ${e.message}`,'err');renderDeck();}
+</script>
+</body>
+</html>

@@ -52,7 +52,7 @@ export function activeBalls(file, latest, rows) {
 // Interruptor del veredicto. En false ni se ve ni pesa en el bombo ni en el recordatorio.
 export const VERDICTS_ENABLED = true;
 
-// Veredicto de la oficina: sale de la votación del formulario que se manda al chat el jueves por la tarde
+// Veredicto de la oficina: sale de la votación del oráculo (votar.html), cuyo enlace llega al chat el jueves por la tarde
 // (scripts/vote.js). data/votes.json trae los recuentos por sorteo, {nºissue: {repetir, aprobado, nifu, nuncamas}}, ya con
 // un voto por persona. Pesa sobre el restaurante dentro de su cocina; si ha ganado varias veces, manda el sorteo más reciente.
 export const VERDICTS = {
@@ -85,3 +85,8 @@ export function verdictsBySlug(winners, verdicts) {
 
 // Peso de una cocina en la primera fase del sorteo: penalización × (1 + bolas extra).
 export const cuisineWeight = (group, lastIdx, balls) => penaltyWeight(lastIdx[group]) * (1 + (balls[group] || 0));
+
+// Votación: el Worker de Cloudflare (worker/) guarda los votos; solo entran cuentas de Google del dominio de la oficina.
+export const VOTE_API = '';           // https://glory-votes.<cuenta>.workers.dev
+export const GOOGLE_CLIENT_ID = '';   // ID de cliente OAuth (Google Cloud → Credenciales), tipo "Aplicación web"
+export const VOTE_DOMAIN = 'xabet.net';

@@ -5,15 +5,14 @@
 // Solo avisa una vez por sorteo (data/poll.json guarda el último issue avisado). --force salta la comprobación de día y hora,
 // pero no repite un sorteo ya avisado. --dry-run imprime sin enviar.
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { parseWinners, MIN_VOTES } from '../rules.js';
+import { parseWinners, MIN_VOTES, VOTE_API } from '../rules.js';
 
-// enlace prerrellenado del formulario (Formularios → ⋮ → Obtener enlace prerrellenado, con SORTEO en el campo Sorteo); SORTEO se sustituye por "nº · sitio"
-const FORM = '';
+const PAGE = 'https://sanhuaaan.github.io/gloryThursday/votar.html';
 const ROOT = new URL('..', import.meta.url);
 const args = process.argv.slice(2);
 const read = (f, fallback) => existsSync(new URL(f, ROOT)) ? JSON.parse(readFileSync(new URL(f, ROOT), 'utf8')) : fallback;
 
-if (!FORM) { console.log('Falta el enlace del formulario (FORM); nada que enviar'); process.exit(0); }
+if (!VOTE_API) { console.log('La votación aún no está montada (VOTE_API en rules.js); nada que enviar'); process.exit(0); }
 const [w] = parseWinners(read('data/winners.json', []));
 if (!w) { console.log('Aún no hay ganadores'); process.exit(0); }
 if (!args.includes('--dry-run') && read('data/poll.json', {}).lastPolled === w.number) {
@@ -28,14 +27,14 @@ if (!args.includes('--force') && !(w.date === today && hour >= 15)) {
 }
 
 const name = (read('data/stores.json').rows.find(r => r.slug === w.slug) || { name: w.slug }).name;
-const url = FORM.replace('SORTEO', encodeURIComponent(`${w.number} · ${name}`));
+const url = `${PAGE}?sorteo=${w.number}`;
 const text = [
-  '🎟️ *TÓMBOLA ANTOJITOS · BUZÓN DE RECLAMACIONES*',
-  `La Dirección quiere saber qué tal *${name}*.`,
-  '¡Repetiríamos! · Aprobado · Ni fu ni fa · Nunca más',
+  '🔮 *TÓMBOLA ANTOJITOS · EL ORÁCULO*',
+  `Madame Antojitos ha consultado la bola de cristal y quiere saber qué tal *${name}*.`,
+  '☀️ El Sol · ⭐ La Estrella · 🌙 La Luna · ⚡ La Torre: elegid carta.',
   `👉 ${url}`,
   '',
-  `_Un voto por cabeza (se puede cambiar). Con ${MIN_VOTES} votos o más, el veredicto pesa en los próximos sorteos dentro de su cocina: de ×1¼ a ×¼._`,
+  `_Un voto por cabeza con la cuenta de la oficina, y se puede cambiar. Con ${MIN_VOTES} votos o más, las cartas pesan en los próximos sorteos._`,
 ].join('\n');
 
 if (args.includes('--dry-run')) { console.log(text); process.exit(0); }
