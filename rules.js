@@ -87,6 +87,6 @@ export function verdictsBySlug(winners, verdicts) {
 export const cuisineWeight = (group, lastIdx, balls) => penaltyWeight(lastIdx[group]) * (1 + (balls[group] || 0));
 
 // Votación: el Worker de Cloudflare (worker/) guarda los votos; solo entran cuentas de Google del dominio de la oficina.
-export const VOTE_API = '';           // https://glory-votes.<cuenta>.workers.dev
-export const GOOGLE_CLIENT_ID = '';   // ID de cliente OAuth (Google Cloud → Credenciales), tipo "Aplicación web"
+export const VOTE_API = 'https://glory-votes.juevesdegloria.workers.dev';           // https://glory-votes.<cuenta>.workers.dev
+export const GOOGLE_CLIENT_ID = '867747052313-5urh1tb1h3rhhrc7f2no4p2a2t6da2mk.apps.googleusercontent.com';   // ID de cliente OAuth (Google Cloud → Credenciales), tipo "Aplicación web"
 export const VOTE_DOMAIN = 'xabet.net';
