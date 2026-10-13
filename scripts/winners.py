@@ -27,15 +27,29 @@ winners.sort(key=lambda w: -w["number"])
 (ROOT / "data/winners.json").write_text(json.dumps(winners, ensure_ascii=False, indent=1) + "\n")
 print(f"{len(winners)} ganadores")
 
-# Recuentos de la votación (pestaña "resultados" de la hoja que mantiene scripts/votes.gs, publicada en la web como CSV):
-# sorteo,repetir,aprobado,nifu,nuncamas → data/votes.json. Sin correos: el Apps Script ya deja un voto por persona.
+# Votos de la oficina: pestaña "votos" de la hoja del formulario, publicada en la web como CSV. Una fila por persona y sorteo
+# (la fórmula de la hoja ya deja solo el último voto de cada uno), sin correos: "7 · Sushi Fuji","Aprobado".
+# Se cuentan aquí → data/votes.json {nºissue: {repetir, aprobado, nifu, nuncamas}}.
 VOTES_CSV = ""
-if VOTES_CSV:
+OPTIONS = {"¡Repetiríamos!": "repetir", "Aprobado": "aprobado", "Ni fu ni fa": "nifu", "Nunca más": "nuncamas"}  # = VERDICTS de rules.js
+
+
+def count_votes(text):
     import csv, io
+    votes = {}
+    for row in csv.reader(io.StringIO(text)):
+        m, key = re.match(r"\s*(\d+)", row[0]) if row else None, OPTIONS.get(row[1].strip()) if len(row) > 1 else None
+        if m and key:
+            votes.setdefault(m[1], dict.fromkeys(OPTIONS.values(), 0))[key] += 1
+    return votes
+
+
+assert count_votes('7 · Sushi,Aprobado\n7 · Sushi,¡Repetiríamos!\n4 · Taj,Nunca más\nx,Aprobado\n#N/A\n9,Otra\n') == {
+    "7": {"repetir": 1, "aprobado": 1, "nifu": 0, "nuncamas": 0}, "4": {"repetir": 0, "aprobado": 0, "nifu": 0, "nuncamas": 1}}
+if VOTES_CSV:
     try:
         with urllib.request.urlopen(VOTES_CSV, timeout=20) as r:
-            rows = list(csv.DictReader(io.StringIO(r.read().decode("utf-8"))))
-        votes = {row.pop("sorteo"): {k: int(v or 0) for k, v in row.items()} for row in rows if row.get("sorteo")}
+            votes = count_votes(r.read().decode("utf-8"))
         (ROOT / "data/votes.json").write_text(json.dumps(votes, indent=1) + "\n")
         print(f"votos de {len(votes)} sorteos")
     except Exception as e:

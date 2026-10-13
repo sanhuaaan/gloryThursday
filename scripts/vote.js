@@ -7,7 +7,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { parseWinners, MIN_VOTES } from '../rules.js';
 
-// enlace prerrellenado del formulario (lo imprime scripts/votes.gs al montarlo); SORTEO se sustituye por "nº · sitio"
+// enlace prerrellenado del formulario (Formularios → ⋮ → Obtener enlace prerrellenado, con SORTEO en el campo Sorteo); SORTEO se sustituye por "nº · sitio"
 const FORM = '';
 const ROOT = new URL('..', import.meta.url);
 const args = process.argv.slice(2);
