@@ -1,12 +1,12 @@
 {
- "sweptAt": 1791934519083,
+ "sweptAt": 1791975221067,
  "rows": [
   {
    "name": "Baan Thai Streetfood",
    "rating": "100%",
    "rv": 1.0,
    "rc": 167,
-   "fee": 5.19,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Asiática",
@@ -14,38 +14,19 @@
    ],
    "group": "Tailandés / chino",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791973800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "baan-thai-streetfood-espana",
    "promo": null,
    "n": 1
-  },
-  {
-   "name": "Bar Cervecería Pepe",
-   "rating": "100%",
-   "rv": 1.0,
-   "rc": 43,
-   "fee": 4.3,
-   "dist": "2km",
-   "tags": [
-    "Mediterránea"
-   ],
-   "group": "Mediterráneo / español",
-   "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791968400000,
-   "slug": "bar-cerveceria-pepe-san-sebastian",
-   "promo": null,
-   "n": 2
   },
   {
    "name": "Bar Y Restaurante Esmeralda",
    "rating": "100%",
    "rv": 1.0,
    "rc": 23,
-   "fee": 5.19,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Internacional"
@@ -53,56 +34,56 @@
    "group": "Internacional",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791964800000,
+   "when": "Cerrado hasta las 19:00",
+   "next": 1791997200000,
    "slug": "bar-y-restaurante-esmeralda-san-sebastian",
    "promo": null,
-   "n": 3
+   "n": 2
   },
   {
    "name": "Divinumgastroteka",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 11,
-   "fee": 4.8,
+   "rc": 12,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Mediterránea"
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791964800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "divinumgastroteka-san-sebastian",
    "promo": null,
-   "n": 4
+   "n": 3
   },
   {
    "name": "El Quijote",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 16,
-   "fee": 5.69,
+   "rc": 17,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Grill"
    ],
    "group": "Alta cocina / grill",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "el-quijote-donostia-san-sebastian",
    "promo": null,
-   "n": 5
+   "n": 4
   },
   {
    "name": "Empanadas Las Muns",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 72,
-   "fee": 6.19,
+   "rc": 71,
+   "fee": 4.49,
    "dist": "3.3km",
    "tags": [
     "Gourmet",
@@ -110,38 +91,38 @@
    ],
    "group": "Latino / venezolano",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791970200000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "empanadas-las-muns-donostia-san-sebastian",
    "promo": "-20% en algunos productos",
-   "n": 6
+   "n": 5
   },
   {
    "name": "Il Doppio",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 23,
-   "fee": 3.13,
+   "rc": 24,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Pizza"
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791975600000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "il-doppio-san-sebastian",
    "promo": null,
-   "n": 7
+   "n": 6
   },
   {
    "name": "Istambul Turkish Kebab",
    "rating": "100%",
    "rv": 1.0,
    "rc": 22,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Árabe",
@@ -149,19 +130,19 @@
    ],
    "group": "Turco / árabe",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "istambul-turkish-kebab-san-sebastian",
    "promo": null,
-   "n": 8
+   "n": 7
   },
   {
    "name": "La Bokateria del Buen Pas",
    "rating": "100%",
    "rv": 1.0,
    "rc": 26,
-   "fee": 5.69,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Desayuno",
@@ -170,19 +151,19 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791968400000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "la-bokateria-del-buen-pas-donostia-san-sebastian",
    "promo": null,
-   "n": 9
+   "n": 8
   },
   {
    "name": "La Mera Mera",
    "rating": "100%",
    "rv": 1.0,
    "rc": 67,
-   "fee": 3.7,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Mexicana"
@@ -190,18 +171,18 @@
    "group": "Mexicano",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
+   "when": "Cerrado hasta las 13:00",
    "next": 1791975600000,
    "slug": "la-mera-mera-sansebastian",
    "promo": null,
-   "n": 10
+   "n": 9
   },
   {
    "name": "La Rebotika",
    "rating": "100%",
    "rv": 1.0,
    "rc": 10,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.6km",
    "tags": [
     "Hamburguesas",
@@ -211,18 +192,18 @@
    "group": "Alta cocina / grill",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791975600000,
+   "when": "Cerrado hasta las 20:00",
+   "next": 1792000800000,
    "slug": "la-rebotika-sansebastian",
    "promo": null,
-   "n": 11
+   "n": 10
   },
   {
    "name": "La tortilla del txamar (Cervecería Txamarta)",
    "rating": "100%",
    "rv": 1.0,
    "rc": 10,
-   "fee": 4.8,
+   "fee": 3.49,
    "dist": "2.4km",
    "tags": [
     "Española"
@@ -234,13 +215,13 @@
    "next": null,
    "slug": "la-tortilla-del-txamar-donostia-san-sebastian",
    "promo": null,
-   "n": 12
+   "n": 11
   },
   {
    "name": "L'Vecchia",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 80,
+   "rc": 79,
    "fee": 2.5,
    "dist": "2.2km",
    "tags": [
@@ -249,12 +230,12 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "OPEN",
-   "when": "",
-   "next": null,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:30",
+   "next": 1791999000000,
    "slug": "lvecchia-amara-san-sebastian",
    "promo": null,
-   "n": 13
+   "n": 12
   },
   {
    "name": "Marrua",
@@ -270,18 +251,18 @@
    "group": "Hamburguesas",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
+   "when": "Cerrado hasta las 19:30",
    "next": 1791999000000,
    "slug": "marrua-donostia-san-sebastian",
    "promo": null,
-   "n": 14
+   "n": 13
   },
   {
    "name": "Nikkei Bar",
    "rating": "100%",
    "rv": 1.0,
    "rc": 12,
-   "fee": 5.19,
+   "fee": 3.49,
    "dist": "2.8km",
    "tags": [
     "Asiática",
@@ -291,17 +272,17 @@
    "group": "Japonés / sushi / ramen",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
+   "when": "Cerrado hasta las 19:00",
    "next": 1791997200000,
    "slug": "nikkei-bar-donostia",
    "promo": null,
-   "n": 15
+   "n": 14
   },
   {
    "name": "Oilo Toki",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 15,
+   "rc": 16,
    "fee": 0.49,
    "dist": "400m",
    "tags": [
@@ -310,19 +291,19 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "oilo-toki-donostia-san-sebastian",
    "promo": null,
-   "n": 16
+   "n": 15
   },
   {
    "name": "Pizza Berri",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 45,
-   "fee": 3.13,
+   "rc": 46,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Italiana",
@@ -331,11 +312,11 @@
    "group": "Pizza / italiano",
    "exotic": false,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
+   "when": "Programar para: 18:00",
    "next": 1791993600000,
    "slug": "pizza-berri-donostia-san-sebastian",
    "promo": null,
-   "n": 17
+   "n": 16
   },
   {
    "name": "Pizzágoras",
@@ -351,18 +332,18 @@
    "group": "Pizza / italiano",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
+   "when": "Cerrado hasta las 19:00",
    "next": 1791997200000,
    "slug": "pizzagoras-donostia-san-sebastian",
    "promo": null,
-   "n": 18
+   "n": 17
   },
   {
    "name": "Txikito Bar",
    "rating": "100%",
    "rv": 1.0,
    "rc": 11,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Latina",
@@ -375,14 +356,14 @@
    "next": null,
    "slug": "santo-remedio-san-sebastian",
    "promo": null,
-   "n": 19
+   "n": 18
   },
   {
    "name": "Suk Lab",
    "rating": "100%",
    "rv": 1.0,
    "rc": 13,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.6km",
    "tags": [
     "Hamburguesas",
@@ -391,18 +372,18 @@
    "group": "Internacional",
    "exotic": true,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Jueves",
+   "when": "Programar para: Mañana",
    "next": 1792060200000,
    "slug": "suk-lab-san-sebastian",
    "promo": null,
-   "n": 20
+   "n": 19
   },
   {
    "name": "Zen Fusión",
    "rating": "100%",
    "rv": 1.0,
-   "rc": 75,
-   "fee": 5.69,
+   "rc": 76,
+   "fee": 3.99,
    "dist": "2.8km",
    "tags": [
     "Asiática",
@@ -410,59 +391,57 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "zen-fusion-san-sebastian",
+   "promo": null,
+   "n": 20
+  },
+  {
+   "name": "La Perola",
+   "rating": "99%",
+   "rv": 0.997,
+   "rc": 65,
+   "fee": 3.99,
+   "dist": "2.9km",
+   "tags": [
+    "Mediterránea"
+   ],
+   "group": "Mediterráneo / español",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "la-perola-san-sebastian",
    "promo": null,
    "n": 21
   },
   {
-   "name": "Buga Ramen",
+   "name": "TGB - The Good Burger",
    "rating": "99%",
-   "rv": 0.993,
-   "rc": 241,
-   "fee": 5.69,
-   "dist": "3.2km",
+   "rv": 0.997,
+   "rc": 154,
+   "fee": 1.49,
+   "dist": "1.3km",
    "tags": [
-    "Asiática",
-    "Japonesa",
-    "Vegetariana"
+    "Hamburguesas"
    ],
-   "group": "Japonés / sushi / ramen",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "buga-ramen-san-sebastian",
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "tgb-the-good-burger-10",
    "promo": null,
    "n": 22
-  },
-  {
-   "name": "Chino Mandarín",
-   "rating": "99%",
-   "rv": 0.99,
-   "rc": 121,
-   "fee": 6.69,
-   "dist": "4km",
-   "tags": [
-    "Asiática"
-   ],
-   "group": "Tailandés / chino",
-   "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791970200000,
-   "slug": "chino-mandarin-san-sebastian",
-   "promo": null,
-   "n": 23
   },
   {
    "name": "Enxalao",
    "rating": "99%",
    "rv": 0.996,
    "rc": 109,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.9km",
    "tags": [
     "Saludable",
@@ -472,28 +451,49 @@
    "group": "Poke",
    "exotic": true,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Jueves",
+   "when": "Programar para: Mañana",
    "next": 1792049400000,
    "slug": "enxalao-san-sebastian",
+   "promo": null,
+   "n": 23
+  },
+  {
+   "name": "Turkish Kebab Factory",
+   "rating": "99%",
+   "rv": 0.995,
+   "rc": 37,
+   "fee": 3.99,
+   "dist": "2.9km",
+   "tags": [
+    "Árabe"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "turkish-kebab-factory-donostia",
    "promo": null,
    "n": 24
   },
   {
-   "name": "La Perola",
+   "name": "Buga Ramen",
    "rating": "99%",
-   "rv": 0.995,
-   "rc": 67,
-   "fee": 5.69,
-   "dist": "2.9km",
+   "rv": 0.994,
+   "rc": 242,
+   "fee": 3.99,
+   "dist": "3.2km",
    "tags": [
-    "Mediterránea"
+    "Asiática",
+    "Japonesa",
+    "Vegetariana"
    ],
-   "group": "Mediterráneo / español",
-   "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791964800000,
-   "slug": "la-perola-san-sebastian",
+   "group": "Japonés / sushi / ramen",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "buga-ramen-san-sebastian",
    "promo": null,
    "n": 25
   },
@@ -501,7 +501,7 @@
    "name": "ilcapo",
    "rating": "99%",
    "rv": 0.992,
-   "rc": 239,
+   "rc": 242,
    "fee": 2.5,
    "dist": "4.8km",
    "tags": [
@@ -512,7 +512,7 @@
    "group": "Hamburguesas",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
+   "when": "Cerrado hasta las 19:30",
    "next": 1791999000000,
    "slug": "ll-capo-donosti-donostia-san-sebastian",
    "promo": null,
@@ -522,8 +522,8 @@
    "name": "Padthaiwok",
    "rating": "99%",
    "rv": 0.992,
-   "rc": 506,
-   "fee": 6.19,
+   "rc": 508,
+   "fee": 4.49,
    "dist": "3.7km",
    "tags": [
     "Asiática",
@@ -533,18 +533,37 @@
    "group": "Tailandés / chino",
    "exotic": true,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Jueves",
+   "when": "Programar para: Mañana",
    "next": 1792058400000,
    "slug": "padthaiwok-san-sebastian",
    "promo": null,
    "n": 27
   },
   {
+   "name": "Chino Mandarín",
+   "rating": "99%",
+   "rv": 0.991,
+   "rc": 121,
+   "fee": 4.99,
+   "dist": "4km",
+   "tags": [
+    "Asiática"
+   ],
+   "group": "Tailandés / chino",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "chino-mandarin-san-sebastian",
+   "promo": null,
+   "n": 28
+  },
+  {
    "name": "Sushi Fuji",
    "rating": "99%",
    "rv": 0.99,
    "rc": 29,
-   "fee": 4.8,
+   "fee": 3.49,
    "dist": "2.5km",
    "tags": [
     "Japonesa",
@@ -552,172 +571,65 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "sushi-fuji-san-sebastian",
-   "promo": null,
-   "n": 28
-  },
-  {
-   "name": "TGB - The Good Burger",
-   "rating": "99%",
-   "rv": 0.997,
-   "rc": 156,
-   "fee": 2.51,
-   "dist": "1.3km",
-   "tags": [
-    "Hamburguesas"
-   ],
-   "group": "Hamburguesas",
-   "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "tgb-the-good-burger-10",
    "promo": null,
    "n": 29
   },
   {
-   "name": "Turkish Kebab Factory",
-   "rating": "99%",
-   "rv": 0.995,
-   "rc": 36,
-   "fee": 5.69,
-   "dist": "2.9km",
+   "name": "Sushidonosti",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-sushidonostierrotaburu/menu",
+   "rating": "4,9★",
+   "rv": 0.99,
+   "rc": 994,
+   "fee": 0,
+   "min": 0,
+   "dist": "0.9km",
    "tags": [
-    "Árabe"
+    "Sushi",
+    "Japonesa"
    ],
-   "group": "Turco / árabe",
+   "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "turkish-kebab-factory-donostia",
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
    "promo": null,
+   "slug": "je-sushidonostierrotaburu",
    "n": 30
   },
   {
-   "name": "Amara Chicken Factory",
-   "rating": "98%",
-   "rv": 0.982,
-   "rc": 10,
-   "fee": 4.8,
-   "dist": "2.4km",
+   "name": "GP Pizzas And Burgers",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-gp-pizzas-and-burgers-hernani/menu",
+   "rating": "4,9★",
+   "rv": 0.99,
+   "rc": 33,
+   "fee": 2,
+   "min": 9,
+   "dist": "3.8km",
    "tags": [
-    "Pollo"
+    "Pizza",
+    "Hamburguesas"
    ],
-   "group": "Pollo",
+   "group": "Hamburguesas",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "amara-chicken-factory-san-sebastian",
-   "promo": null,
+   "status": "CLOSED",
+   "when": "",
+   "next": 1791999000000,
+   "promo": "Ahorra un 15% • A partir de 30 €",
+   "slug": "je-gp-pizzas-and-burgers-hernani",
    "n": 31
-  },
-  {
-   "name": "Amona",
-   "rating": "98%",
-   "rv": 0.983,
-   "rc": 209,
-   "fee": 6.69,
-   "dist": "6.6km",
-   "tags": [
-    "Mediterránea"
-   ],
-   "group": "Mediterráneo / español",
-   "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791964800000,
-   "slug": "amona-san-sebastian",
-   "promo": "-20% en algunos productos",
-   "n": 32
-  },
-  {
-   "name": "Bar Etorri",
-   "rating": "98%",
-   "rv": 0.982,
-   "rc": 11,
-   "fee": 5.69,
-   "dist": "2.9km",
-   "tags": [
-    "Asiática"
-   ],
-   "group": "Tailandés / chino",
-   "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado",
-   "next": null,
-   "slug": "bar-etorri-donostia-san-sebastian",
-   "promo": null,
-   "n": 33
-  },
-  {
-   "name": "Istambul Antiguo Kebab",
-   "rating": "98%",
-   "rv": 0.983,
-   "rc": 70,
-   "fee": 2.51,
-   "dist": "1.2km",
-   "tags": [
-    "Árabe"
-   ],
-   "group": "Turco / árabe",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "istambul-antiguo-kebab-san-sebastian",
-   "promo": null,
-   "n": 34
-  },
-  {
-   "name": "La Burguessía",
-   "rating": "98%",
-   "rv": 0.987,
-   "rc": 66,
-   "fee": 3.7,
-   "dist": "1.7km",
-   "tags": [
-    "Hamburguesas",
-    "Internacional"
-   ],
-   "group": "Internacional",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1792000800000,
-   "slug": "la-burguessia-san-sebastian",
-   "promo": "-15% en algunos productos",
-   "n": 35
-  },
-  {
-   "name": "La Zurri Jatetxea",
-   "rating": "98%",
-   "rv": 0.987,
-   "rc": 103,
-   "fee": 6.19,
-   "dist": "3.7km",
-   "tags": [
-    "Mediterránea"
-   ],
-   "group": "Mediterráneo / español",
-   "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791957600000,
-   "slug": "la-zurri-jatetxea-san-sebastian",
-   "promo": null,
-   "n": 36
   },
   {
    "name": "Pizzería Don Lukas",
    "rating": "98%",
    "rv": 0.989,
    "rc": 43,
-   "fee": 5.19,
+   "fee": 3.49,
    "dist": "2.8km",
    "tags": [
     "Pizza"
@@ -729,33 +641,72 @@
    "next": null,
    "slug": "pizzeria-don-lukas-san-sebastian",
    "promo": null,
-   "n": 37
+   "n": 32
   },
   {
    "name": "Sutan Dago Menú",
    "rating": "98%",
    "rv": 0.989,
-   "rc": 44,
-   "fee": 5.69,
+   "rc": 43,
+   "fee": 3.99,
    "dist": "3.1km",
    "tags": [
     "Mediterránea"
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791964800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "sutan-dator-menu-donostia-san-sebastian",
    "promo": null,
-   "n": 38
+   "n": 33
+  },
+  {
+   "name": "La Burguessía",
+   "rating": "98%",
+   "rv": 0.987,
+   "rc": 66,
+   "fee": 2.49,
+   "dist": "1.7km",
+   "tags": [
+    "Hamburguesas",
+    "Internacional"
+   ],
+   "group": "Internacional",
+   "exotic": true,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 20:00",
+   "next": 1792000800000,
+   "slug": "la-burguessia-san-sebastian",
+   "promo": "-20% en algunos productos",
+   "n": 34
+  },
+  {
+   "name": "La Zurri Jatetxea",
+   "rating": "98%",
+   "rv": 0.986,
+   "rc": 100,
+   "fee": 4.49,
+   "dist": "3.7km",
+   "tags": [
+    "Mediterránea"
+   ],
+   "group": "Mediterráneo / español",
+   "exotic": false,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: Mañana",
+   "next": 1792044000000,
+   "slug": "la-zurri-jatetxea-san-sebastian",
+   "promo": null,
+   "n": 35
   },
   {
    "name": "TEIKIT Sushi & Pokes",
    "rating": "98%",
    "rv": 0.986,
-   "rc": 504,
-   "fee": 6.19,
+   "rc": 505,
+   "fee": 4.49,
    "dist": "3.9km",
    "tags": [
     "Japonesa",
@@ -763,48 +714,105 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791973800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "teikit-sushi-and-pokes-donostia-san-sebastian",
    "promo": "-10% en algunos productos",
+   "n": 36
+  },
+  {
+   "name": "Amona",
+   "rating": "98%",
+   "rv": 0.984,
+   "rc": 210,
+   "fee": 4.99,
+   "dist": "6.6km",
+   "tags": [
+    "Mediterránea"
+   ],
+   "group": "Mediterráneo / español",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "amona-san-sebastian",
+   "promo": "-20% en algunos productos",
+   "n": 37
+  },
+  {
+   "name": "Istambul Antiguo Kebab",
+   "rating": "98%",
+   "rv": 0.983,
+   "rc": 68,
+   "fee": 1.49,
+   "dist": "1.2km",
+   "tags": [
+    "Árabe"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "istambul-antiguo-kebab-san-sebastian",
+   "promo": null,
+   "n": 38
+  },
+  {
+   "name": "Amara Chicken Factory",
+   "rating": "98%",
+   "rv": 0.982,
+   "rc": 10,
+   "fee": 3.49,
+   "dist": "2.4km",
+   "tags": [
+    "Pollo"
+   ],
+   "group": "Pollo",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "amara-chicken-factory-san-sebastian",
+   "promo": null,
    "n": 39
+  },
+  {
+   "name": "Bar Etorri",
+   "rating": "98%",
+   "rv": 0.982,
+   "rc": 11,
+   "fee": 3.99,
+   "dist": "2.9km",
+   "tags": [
+    "Asiática"
+   ],
+   "group": "Tailandés / chino",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "bar-etorri-donostia-san-sebastian",
+   "promo": null,
+   "n": 40
   },
   {
    "name": "Weitao matia",
    "rating": "98%",
    "rv": 0.981,
    "rc": 111,
-   "fee": 3.7,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Asiática"
    ],
    "group": "Tailandés / chino",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado",
+   "status": "OPEN",
+   "when": "",
    "next": null,
    "slug": "weitao-matia-donostia-san-sebastian",
-   "promo": null,
-   "n": 40
-  },
-  {
-   "name": "Amara Kebab Factory",
-   "rating": "97%",
-   "rv": 0.978,
-   "rc": 54,
-   "fee": 4.8,
-   "dist": "2.4km",
-   "tags": [
-    "Árabe"
-   ],
-   "group": "Turco / árabe",
-   "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
-   "slug": "amara-kebab-factory-san-sebastian",
    "promo": null,
    "n": 41
   },
@@ -812,8 +820,8 @@
    "name": "El Paso",
    "rating": "97%",
    "rv": 0.979,
-   "rc": 319,
-   "fee": 4.8,
+   "rc": 317,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Árabe",
@@ -823,56 +831,17 @@
    "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "next": 1792058400000,
    "slug": "el-paso-donostia-san-sebastian",
    "promo": null,
    "n": 42
   },
   {
-   "name": "EL QUINTO PINO",
-   "rating": "97%",
-   "rv": 0.97,
-   "rc": 43,
-   "fee": 6.19,
-   "dist": "3.4km",
-   "tags": [
-    "Hamburguesas",
-    "Bocadillos"
-   ],
-   "group": "Hamburguesas",
-   "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791961200000,
-   "slug": "el-quinto-pino-donostia",
-   "promo": null,
-   "n": 43
-  },
-  {
-   "name": "Goxo Poke",
-   "rating": "97%",
-   "rv": 0.977,
-   "rc": 224,
-   "fee": 3.13,
-   "dist": "1.5km",
-   "tags": [
-    "Poke"
-   ],
-   "group": "Poke",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791973800000,
-   "slug": "goxo-poke-eas",
-   "promo": null,
-   "n": 44
-  },
-  {
    "name": "IZAKAYA RAMEN",
    "rating": "97%",
-   "rv": 0.978,
+   "rv": 0.979,
    "rc": 73,
-   "fee": 3.7,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Asiática"
@@ -880,18 +849,37 @@
    "group": "Tailandés / chino",
    "exotic": true,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Jueves",
+   "when": "Programar para: Mañana",
    "next": 1792060200000,
    "slug": "izakaya-ramen-donostia-san-sebastian",
    "promo": null,
-   "n": 45
+   "n": 43
+  },
+  {
+   "name": "Amara Kebab Factory",
+   "rating": "97%",
+   "rv": 0.978,
+   "rc": 54,
+   "fee": 3.49,
+   "dist": "2.4km",
+   "tags": [
+    "Árabe"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "amara-kebab-factory-san-sebastian",
+   "promo": null,
+   "n": 44
   },
   {
    "name": "Kafe Taberna Aspaldiko",
    "rating": "97%",
-   "rv": 0.977,
+   "rv": 0.978,
    "rc": 45,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.6km",
    "tags": [
     "Comida local",
@@ -900,18 +888,18 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791968400000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "kafe-taberna-aspaldiko-san-sebastian",
    "promo": null,
-   "n": 46
+   "n": 45
   },
   {
    "name": "Lío (DELÍOVERY)",
    "rating": "97%",
-   "rv": 0.977,
-   "rc": 206,
+   "rv": 0.978,
+   "rc": 207,
    "fee": 2.5,
    "dist": "2.1km",
    "tags": [
@@ -921,19 +909,59 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791973800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "lio-delivery-donostia-san-sebastian",
    "promo": null,
+   "n": 46
+  },
+  {
+   "name": "Pizzería La Mina",
+   "rating": "97%",
+   "rv": 0.978,
+   "rc": 214,
+   "fee": 3.99,
+   "dist": "3km",
+   "tags": [
+    "Pizza"
+   ],
+   "group": "Pizza / italiano",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "pizzeria-la-mina-san-sebastian",
+   "promo": null,
    "n": 47
+  },
+  {
+   "name": "Restaurante Chino Feng Jing",
+   "rating": "97%",
+   "rv": 0.977,
+   "rc": 256,
+   "fee": 3.49,
+   "dist": "2.6km",
+   "tags": [
+    "Asiática",
+    "Mediterránea",
+    "Tailandesa"
+   ],
+   "group": "Tailandés / chino",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "restaurante-chino-feng-jing-donostia-san-sebastian",
+   "promo": null,
+   "n": 48
   },
   {
    "name": "Mandragora",
    "rating": "97%",
    "rv": 0.976,
-   "rc": 60,
-   "fee": 3.13,
+   "rc": 59,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Hamburguesas",
@@ -943,48 +971,28 @@
    "exotic": false,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
-   "next": 1791968400000,
+   "next": 1792054800000,
    "slug": "mandragora-san-sebastian",
-   "promo": null,
-   "n": 48
-  },
-  {
-   "name": "Pizzería La Mina",
-   "rating": "97%",
-   "rv": 0.978,
-   "rc": 215,
-   "fee": 5.69,
-   "dist": "3km",
-   "tags": [
-    "Pizza"
-   ],
-   "group": "Pizza / italiano",
-   "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791973800000,
-   "slug": "pizzeria-la-mina-san-sebastian",
    "promo": null,
    "n": 49
   },
   {
-   "name": "Restaurante Chino Feng Jing",
+   "name": "La tortilla de Mundukuona",
    "rating": "97%",
-   "rv": 0.976,
-   "rc": 255,
-   "fee": 4.8,
-   "dist": "2.6km",
+   "rv": 0.972,
+   "rc": 204,
+   "fee": 4.49,
+   "dist": "3.3km",
    "tags": [
-    "Asiática",
     "Mediterránea",
-    "Tailandesa"
+    "Vegetariana"
    ],
-   "group": "Tailandés / chino",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791970200000,
-   "slug": "restaurante-chino-feng-jing-donostia-san-sebastian",
+   "group": "Mediterráneo / español",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "mundukuona-san-sebastian",
    "promo": null,
    "n": 50
   },
@@ -993,7 +1001,7 @@
    "rating": "97%",
    "rv": 0.972,
    "rc": 19,
-   "fee": 4.8,
+   "fee": 3.49,
    "dist": "2.5km",
    "tags": [
     "Hamburguesas",
@@ -1002,19 +1010,81 @@
    ],
    "group": "Alta cocina / grill",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791964800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "victoria-10-gastrobar-donostia-san-sebastian",
    "promo": null,
    "n": 51
   },
   {
+   "name": "Kebab Factory",
+   "rating": "97%",
+   "rv": 0.971,
+   "rc": 91,
+   "fee": 4.49,
+   "dist": "3.3km",
+   "tags": [
+    "Árabe"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "kebab-factory",
+   "promo": null,
+   "n": 52
+  },
+  {
+   "name": "EL QUINTO PINO",
+   "rating": "97%",
+   "rv": 0.97,
+   "rc": 43,
+   "fee": 4.49,
+   "dist": "3.4km",
+   "tags": [
+    "Hamburguesas",
+    "Bocadillos"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "el-quinto-pino-donostia",
+   "promo": null,
+   "n": 53
+  },
+  {
+   "name": "Nuevo Kebab Azkuene",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-nuevo-kebab-azkuene-pasaia/menu",
+   "rating": "4,7★",
+   "rv": 0.97,
+   "rc": 21,
+   "fee": 1,
+   "min": 12,
+   "dist": "6.9km",
+   "tags": [
+    "Kebab",
+    "Pollo"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791993600000,
+   "promo": null,
+   "slug": "je-nuevo-kebab-azkuene-pasaia",
+   "n": 54
+  },
+  {
    "name": "Bottega Di Filippo",
    "rating": "96%",
-   "rv": 0.963,
-   "rc": 41,
-   "fee": 5.69,
+   "rv": 0.968,
+   "rc": 42,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Pizza"
@@ -1022,77 +1092,114 @@
    "group": "Pizza / italiano",
    "exotic": false,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791975600000,
+   "when": "Programar para: 19:00",
+   "next": 1791997200000,
    "slug": "bottega-di-filippo-donostia-san-sebastian",
    "promo": null,
-   "n": 52
+   "n": 55
   },
   {
-   "name": "Kebab Factory",
+   "name": "Las Americas",
    "rating": "96%",
    "rv": 0.968,
-   "rc": 88,
-   "fee": 6.19,
-   "dist": "3.3km",
+   "rc": 74,
+   "fee": 3.49,
+   "dist": "2.7km",
    "tags": [
-    "Árabe"
+    "Latina"
    ],
-   "group": "Turco / árabe",
+   "group": "Latino / venezolano",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791968400000,
-   "slug": "kebab-factory",
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "las-americas-san-sebastian",
    "promo": null,
-   "n": 53
+   "n": 56
   },
   {
-   "name": "Kenji Sushi Bar",
+   "name": "Takuma",
    "rating": "96%",
-   "rv": 0.962,
-   "rc": 158,
-   "fee": 5.69,
-   "dist": "2.9km",
+   "rv": 0.966,
+   "rc": 70,
+   "fee": 4.49,
+   "dist": "3.9km",
    "tags": [
-    "Japonesa",
-    "Alta Cocina",
-    "Sushi"
+    "Asiática",
+    "Alta Cocina"
    ],
-   "group": "Japonés / sushi / ramen",
+   "group": "Tailandés / chino",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791968400000,
-   "slug": "kenji-san-sebastian",
-   "promo": null,
-   "n": 54
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "takuma-donostia-san-sebastian",
+   "promo": "-15% en algunos productos",
+   "n": 57
   },
   {
-   "name": "La Mejillonera",
+   "name": "Ricky Pollo",
    "rating": "96%",
-   "rv": 0.961,
-   "rc": 42,
-   "fee": 5.69,
-   "dist": "3.3km",
+   "rv": 0.965,
+   "rc": 109,
+   "fee": 3.49,
+   "dist": "2.7km",
    "tags": [
-    "Mediterránea"
+    "Pollo"
    ],
-   "group": "Mediterráneo / español",
+   "group": "Pollo",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791970200000,
-   "slug": "la-mejillonera-sebastian",
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "ricky-pollo-san-sebastian",
    "promo": null,
-   "n": 55
+   "n": 58
+  },
+  {
+   "name": "Taquería Doña Chepina",
+   "rating": "96%",
+   "rv": 0.965,
+   "rc": 69,
+   "fee": 3.49,
+   "dist": "2.7km",
+   "tags": [
+    "Mexicana"
+   ],
+   "group": "Mexicano",
+   "exotic": true,
+   "status": "CLOSED",
+   "when": "Cerrado hasta mañana",
+   "next": 1792062000000,
+   "slug": "taqueria-dona-chepina-donostia-san-sebastian",
+   "promo": null,
+   "n": 59
+  },
+  {
+   "name": "Goxo Poke",
+   "rating": "96%",
+   "rv": 0.964,
+   "rc": 228,
+   "fee": 1.99,
+   "dist": "1.5km",
+   "tags": [
+    "Poke"
+   ],
+   "group": "Poke",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "goxo-poke-eas",
+   "promo": null,
+   "n": 60
   },
   {
    "name": "La Porteña",
    "rating": "96%",
    "rv": 0.964,
-   "rc": 151,
-   "fee": 5.69,
+   "rc": 150,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Hamburguesas",
@@ -1102,116 +1209,39 @@
    "group": "Latino / venezolano",
    "exotic": true,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
+   "when": "Programar para: 19:30",
    "next": 1791999000000,
    "slug": "la-portena-san-sebastian",
-   "promo": null,
-   "n": 56
-  },
-  {
-   "name": "Las Americas",
-   "rating": "96%",
-   "rv": 0.968,
-   "rc": 75,
-   "fee": 5.19,
-   "dist": "2.7km",
-   "tags": [
-    "Latina"
-   ],
-   "group": "Latino / venezolano",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "las-americas-san-sebastian",
-   "promo": null,
-   "n": 57
-  },
-  {
-   "name": "Ricky Pollo",
-   "rating": "96%",
-   "rv": 0.963,
-   "rc": 107,
-   "fee": 5.19,
-   "dist": "2.7km",
-   "tags": [
-    "Pollo"
-   ],
-   "group": "Pollo",
-   "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791973800000,
-   "slug": "ricky-pollo-san-sebastian",
-   "promo": null,
-   "n": 58
-  },
-  {
-   "name": "Sibuya",
-   "rating": "96%",
-   "rv": 0.967,
-   "rc": 191,
-   "fee": 5.69,
-   "dist": "3.3km",
-   "tags": [
-    "Asiática",
-    "Japonesa",
-    "Sushi"
-   ],
-   "group": "Japonés / sushi / ramen",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791975600000,
-   "slug": "sibuya-san-sebastian",
-   "promo": null,
-   "n": 59
-  },
-  {
-   "name": "Takuma",
-   "rating": "96%",
-   "rv": 0.966,
-   "rc": 70,
-   "fee": 6.19,
-   "dist": "3.9km",
-   "tags": [
-    "Asiática",
-    "Alta Cocina"
-   ],
-   "group": "Tailandés / chino",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "takuma-donostia-san-sebastian",
-   "promo": "-15% en algunos productos",
-   "n": 60
-  },
-  {
-   "name": "Taquería Doña Chepina",
-   "rating": "96%",
-   "rv": 0.964,
-   "rc": 70,
-   "fee": 4.8,
-   "dist": "2.7km",
-   "tags": [
-    "Mexicana"
-   ],
-   "group": "Mexicano",
-   "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791975600000,
-   "slug": "taqueria-dona-chepina-donostia-san-sebastian",
    "promo": null,
    "n": 61
   },
   {
+   "name": "Kenji Sushi Bar",
+   "rating": "96%",
+   "rv": 0.962,
+   "rc": 158,
+   "fee": 3.99,
+   "dist": "2.9km",
+   "tags": [
+    "Japonesa",
+    "Alta Cocina",
+    "Sushi"
+   ],
+   "group": "Japonés / sushi / ramen",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "kenji-san-sebastian",
+   "promo": null,
+   "n": 62
+  },
+  {
    "name": "Zuka",
    "rating": "96%",
-   "rv": 0.96,
-   "rc": 206,
-   "fee": 5.69,
+   "rv": 0.962,
+   "rc": 207,
+   "fee": 3.99,
    "dist": "2.9km",
    "tags": [
     "Hamburguesas",
@@ -1219,77 +1249,38 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791973800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "zuka-san-sebastian",
-   "promo": null,
-   "n": 62
-  },
-  {
-   "name": "Antiguo Pollo Frito",
-   "rating": "95%",
-   "rv": 0.958,
-   "rc": 10,
-   "fee": 2.51,
-   "dist": "1.2km",
-   "tags": [
-    "Pollo",
-    "Internacional"
-   ],
-   "group": "Internacional",
-   "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "antiguo-pollo-frito-san-sebastian",
    "promo": null,
    "n": 63
   },
   {
-   "name": "Factory Chicken",
-   "rating": "95%",
-   "rv": 0.958,
-   "rc": 48,
-   "fee": 6.19,
+   "name": "La Mejillonera",
+   "rating": "96%",
+   "rv": 0.961,
+   "rc": 42,
+   "fee": 3.99,
    "dist": "3.3km",
    "tags": [
-    "Pollo"
+    "Mediterránea"
    ],
-   "group": "Pollo",
+   "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
-   "slug": "factory-chicken-san-sebastian",
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 18:00",
+   "next": 1791993600000,
+   "slug": "la-mejillonera-sebastian",
    "promo": null,
    "n": 64
   },
   {
-   "name": "Il Gusto",
-   "rating": "95%",
-   "rv": 0.951,
-   "rc": 76,
-   "fee": 4.8,
-   "dist": "2.5km",
-   "tags": [
-    "Pizza"
-   ],
-   "group": "Pizza / italiano",
-   "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791975600000,
-   "slug": "il-gusto-donostia-san-sebastian",
-   "promo": null,
-   "n": 65
-  },
-  {
    "name": "Malekon",
-   "rating": "95%",
-   "rv": 0.956,
-   "rc": 22,
-   "fee": 6.69,
+   "rating": "96%",
+   "rv": 0.961,
+   "rc": 23,
+   "fee": 4.99,
    "dist": "4km",
    "tags": [
     "Hamburguesas",
@@ -1299,18 +1290,18 @@
    "group": "Hamburguesas",
    "exotic": false,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Jueves",
+   "when": "Programar para: Mañana",
    "next": 1792058400000,
    "slug": "malekon-donostia-san-sebastian",
    "promo": null,
-   "n": 66
+   "n": 65
   },
   {
    "name": "NAP - Neapolitan Authentic Pizza",
-   "rating": "95%",
-   "rv": 0.958,
-   "rc": 130,
-   "fee": 5.69,
+   "rating": "96%",
+   "rv": 0.961,
+   "rc": 129,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Italiana",
@@ -1319,30 +1310,69 @@
    "group": "Pizza / italiano",
    "exotic": false,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
+   "when": "Programar para: 13:00",
    "next": 1791975600000,
    "slug": "nap-donosti-san-sebastian",
+   "promo": null,
+   "n": 66
+  },
+  {
+   "name": "Factory Chicken",
+   "rating": "96%",
+   "rv": 0.96,
+   "rc": 48,
+   "fee": 4.49,
+   "dist": "3.3km",
+   "tags": [
+    "Pollo"
+   ],
+   "group": "Pollo",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "factory-chicken-san-sebastian",
    "promo": null,
    "n": 67
   },
   {
+   "name": "Antiguo Pollo Frito",
+   "rating": "95%",
+   "rv": 0.958,
+   "rc": 10,
+   "fee": 1.49,
+   "dist": "1.2km",
+   "tags": [
+    "Pollo",
+    "Internacional"
+   ],
+   "group": "Internacional",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "antiguo-pollo-frito-san-sebastian",
+   "promo": null,
+   "n": 68
+  },
+  {
    "name": "Qasim's Kebab",
    "rating": "95%",
-   "rv": 0.957,
-   "rc": 133,
-   "fee": 4.8,
+   "rv": 0.956,
+   "rc": 130,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Árabe"
    ],
    "group": "Turco / árabe",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791975600000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "qasim-s-kebab",
    "promo": null,
-   "n": 68
+   "n": 69
   },
   {
    "name": "Tandoori Mashala Indian Restaurant",
@@ -1356,39 +1386,125 @@
    ],
    "group": "Indio",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "tandoori-mashala-indian-restaurant-donostia-san-sebastian",
    "promo": null,
-   "n": 69
+   "n": 70
   },
   {
-   "name": "Gibelurdin 2 Loiola",
-   "rating": "94%",
-   "rv": 0.942,
-   "rc": 48,
-   "fee": 6.19,
-   "dist": "3.6km",
+   "name": "Sibuya",
+   "rating": "95%",
+   "rv": 0.953,
+   "rc": 190,
+   "fee": 3.99,
+   "dist": "3.3km",
    "tags": [
-    "Internacional",
-    "Latina"
+    "Asiática",
+    "Japonesa",
+    "Sushi"
    ],
-   "group": "Latino / venezolano",
+   "group": "Japonés / sushi / ramen",
+   "exotic": true,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 13:00",
+   "next": 1791975600000,
+   "slug": "sibuya-san-sebastian",
+   "promo": null,
+   "n": 71
+  },
+  {
+   "name": "Il Gusto",
+   "rating": "95%",
+   "rv": 0.951,
+   "rc": 76,
+   "fee": 3.49,
+   "dist": "2.5km",
+   "tags": [
+    "Pizza"
+   ],
+   "group": "Pizza / italiano",
+   "exotic": false,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 13:00",
+   "next": 1791975600000,
+   "slug": "il-gusto-donostia-san-sebastian",
+   "promo": null,
+   "n": 72
+  },
+  {
+   "name": "Kebab Hernani",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-kebab_hernani_/menu",
+   "rating": "4,5★",
+   "rv": 0.95,
+   "rc": 154,
+   "fee": 1,
+   "min": 12,
+   "dist": "4.4km",
+   "tags": [
+    "Kebab",
+    "Turca"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1792058400000,
+   "promo": null,
+   "slug": "je-kebab_hernani_",
+   "n": 73
+  },
+  {
+   "name": "Qasim Doner Kebab",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-qasimdonerkebabdonostia1/menu",
+   "rating": "4,5★",
+   "rv": 0.95,
+   "rc": 724,
+   "fee": 0,
+   "min": 20,
+   "dist": "3.2km",
+   "tags": [
+    "Turca",
+    "Kebab"
+   ],
+   "group": "Turco / árabe",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791968400000,
-   "slug": "gibelurdin-2-loiola-donostia-san-sebastian",
-   "promo": null,
-   "n": 70
+   "when": "",
+   "next": 1791976500000,
+   "promo": "20% en artículos seleccionados",
+   "slug": "je-qasimdonerkebabdonostia1",
+   "n": 74
+  },
+  {
+   "name": "Sushi Hikari",
+   "rating": "94%",
+   "rv": 0.948,
+   "rc": 119,
+   "fee": 4.49,
+   "dist": "3.6km",
+   "tags": [
+    "Asiática",
+    "Japonesa"
+   ],
+   "group": "Japonés / sushi / ramen",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "ramen-hikari-san-sebastian",
+   "promo": "2x1 en algunos productos",
+   "n": 75
   },
   {
    "name": "Jaleo Burgers & Pizzas",
    "rating": "94%",
    "rv": 0.947,
    "rc": 74,
-   "fee": 3.7,
+   "fee": 2.49,
    "dist": "1.7km",
    "tags": [
     "Americana",
@@ -1398,11 +1514,50 @@
    "group": "Hamburguesas",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
+   "when": "Cerrado hasta las 19:00",
    "next": 1791997200000,
    "slug": "jaleo-donostia-san-sebastian",
    "promo": "-20% en algunos productos",
-   "n": 71
+   "n": 76
+  },
+  {
+   "name": "Gibelurdin 2 Loiola",
+   "rating": "94%",
+   "rv": 0.946,
+   "rc": 49,
+   "fee": 4.49,
+   "dist": "3.6km",
+   "tags": [
+    "Internacional",
+    "Latina"
+   ],
+   "group": "Latino / venezolano",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "gibelurdin-2-loiola-donostia-san-sebastian",
+   "promo": null,
+   "n": 77
+  },
+  {
+   "name": "La Mila Milanesa",
+   "rating": "94%",
+   "rv": 0.945,
+   "rc": 15,
+   "fee": 2.49,
+   "dist": "1.8km",
+   "tags": [
+    "Pollo"
+   ],
+   "group": "Pollo",
+   "exotic": false,
+   "status": "SCHEDULABLE",
+   "when": "Programar para: 19:00",
+   "next": 1791997200000,
+   "slug": "la-mila-milanesa-san-sebastian-san-sebastian",
+   "promo": null,
+   "n": 78
   },
   {
    "name": "La Pollería de Bera Bera",
@@ -1417,18 +1572,18 @@
    "group": "Pollo",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta el Jueves",
+   "when": "Cerrado hasta mañana",
    "next": 1792060200000,
    "slug": "la-polleria-de-bera-bera-donostia-san-sebastian",
    "promo": null,
-   "n": 72
+   "n": 79
   },
   {
    "name": "Nalu Poké",
    "rating": "94%",
-   "rv": 0.941,
+   "rv": 0.944,
    "rc": 137,
-   "fee": 5.69,
+   "fee": 3.99,
    "dist": "3.1km",
    "tags": [
     "Saludable",
@@ -1437,39 +1592,134 @@
    ],
    "group": "Poke",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "nalu-poke-san-sebastian",
    "promo": null,
-   "n": 73
+   "n": 80
   },
   {
-   "name": "Sushi Hikari",
-   "rating": "94%",
-   "rv": 0.946,
-   "rc": 118,
-   "fee": 6.19,
-   "dist": "3.6km",
+   "name": "Ohara",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-ohara-lasarte-oria/menu",
+   "rating": "4,4★",
+   "rv": 0.94,
+   "rc": 116,
+   "fee": 2.5,
+   "min": 20,
+   "dist": "2.1km",
    "tags": [
-    "Asiática",
-    "Japonesa"
+    "Americana",
+    "Tex-Mex"
    ],
-   "group": "Japonés / sushi / ramen",
+   "group": "Mexicano",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-ohara-lasarte-oria",
+   "n": 81
+  },
+  {
+   "name": "St. Patricks Burger Rekalde",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-st-patricksburger-rekalde-lasarte-oria/menu",
+   "rating": "4,4★",
+   "rv": 0.94,
+   "rc": 23,
+   "fee": 2.5,
+   "min": 20,
+   "dist": "2.1km",
+   "tags": [
+    "Americana",
+    "Hamburguesas"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791999000000,
+   "promo": null,
+   "slug": "je-st-patricksburger-rekalde-lasarte-oria",
+   "n": 82
+  },
+  {
+   "name": "Taj Mahal",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-tajmahalriodeba/menu",
+   "rating": "4,4★",
+   "rv": 0.94,
+   "rc": 776,
+   "fee": 0,
+   "min": 15,
+   "dist": "4.3km",
+   "tags": [
+    "India",
+    "Medio Oriental"
+   ],
+   "group": "Indio",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-tajmahalriodeba",
+   "n": 83
+  },
+  {
+   "name": "Hani Peri Peri Kebab",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-hani-peri-peri-kebab-lasarte-oria/menu",
+   "rating": "4,4★",
+   "rv": 0.94,
+   "rc": 9,
+   "fee": 4,
+   "min": 30,
+   "dist": "2.9km",
+   "tags": [
+    "Kebab",
+    "Turca"
+   ],
+   "group": "Turco / árabe",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
-   "slug": "ramen-hikari-san-sebastian",
-   "promo": "2x1 en algunos productos",
-   "n": 74
+   "when": "",
+   "next": 1791975600000,
+   "promo": "Ahorra un 10% • A partir de 20 €",
+   "slug": "je-hani-peri-peri-kebab-lasarte-oria",
+   "n": 84
+  },
+  {
+   "name": "Pizza Y Pollo Peri Peri",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-pizza-y-pollo-peri-peri-lasarte-oria/menu",
+   "rating": "4,4★",
+   "rv": 0.94,
+   "rc": 8,
+   "fee": 4,
+   "min": 30,
+   "dist": "2.9km",
+   "tags": [
+    "Pollo",
+    "Pizza"
+   ],
+   "group": "Pizza / italiano",
+   "exotic": false,
+   "status": "CLOSED",
+   "when": "",
+   "next": 1791975600000,
+   "promo": null,
+   "slug": "je-pizza-y-pollo-peri-peri-lasarte-oria",
+   "n": 85
   },
   {
    "name": "Kebab Turkia",
    "rating": "93%",
    "rv": 0.939,
-   "rc": 18,
-   "fee": 5.19,
+   "rc": 17,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Árabe",
@@ -1478,38 +1728,19 @@
    ],
    "group": "Turco / árabe",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "kebab-turkia",
    "promo": null,
-   "n": 75
-  },
-  {
-   "name": "La Mila Milanesa",
-   "rating": "93%",
-   "rv": 0.93,
-   "rc": 14,
-   "fee": 3.7,
-   "dist": "1.8km",
-   "tags": [
-    "Pollo"
-   ],
-   "group": "Pollo",
-   "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791975600000,
-   "slug": "la-mila-milanesa-san-sebastian-san-sebastian",
-   "promo": null,
-   "n": 76
+   "n": 86
   },
   {
    "name": "Señorito",
    "rating": "93%",
-   "rv": 0.934,
-   "rc": 106,
-   "fee": 4.8,
+   "rv": 0.939,
+   "rc": 108,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Hamburguesas",
@@ -1517,19 +1748,59 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791968400000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "senorito-donostia-san-sebastian",
    "promo": null,
-   "n": 77
+   "n": 87
+  },
+  {
+   "name": "Bar Cervecería Pepe",
+   "rating": "93%",
+   "rv": 0.937,
+   "rc": 42,
+   "fee": 2.99,
+   "dist": "2km",
+   "tags": [
+    "Mediterránea"
+   ],
+   "group": "Mediterráneo / español",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "bar-cerveceria-pepe-san-sebastian",
+   "promo": null,
+   "n": 88
+  },
+  {
+   "name": "Ñam Restaurante",
+   "rating": "93%",
+   "rv": 0.936,
+   "rc": 40,
+   "fee": 1.99,
+   "dist": "1.4km",
+   "tags": [
+    "Americana",
+    "Hamburguesas",
+    "Pizza"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "nam-san-sebastian-11",
+   "promo": null,
+   "n": 89
   },
   {
    "name": "Poke y Ramen",
    "rating": "93%",
    "rv": 0.932,
    "rc": 45,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.5km",
    "tags": [
     "Asiática",
@@ -1538,19 +1809,19 @@
    ],
    "group": "Japonés / sushi / ramen",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "take-away-donostia-san-sebastian",
    "promo": null,
-   "n": 78
+   "n": 90
   },
   {
    "name": "Caravanserai Café",
    "rating": "92%",
    "rv": 0.927,
    "rc": 20,
-   "fee": 5.69,
+   "fee": 3.99,
    "dist": "2.8km",
    "tags": [
     "Hamburguesas",
@@ -1564,14 +1835,14 @@
    "next": null,
    "slug": "caravanserai-cafe-san-sebastian",
    "promo": null,
-   "n": 79
+   "n": 91
   },
   {
    "name": "GOW",
    "rating": "92%",
-   "rv": 0.922,
-   "rc": 141,
-   "fee": 4.8,
+   "rv": 0.926,
+   "rc": 143,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Americana",
@@ -1580,58 +1851,129 @@
    "group": "Hamburguesas",
    "exotic": false,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
+   "when": "Programar para: 19:30",
    "next": 1791999000000,
    "slug": "gow-burgers-donostia-san-sebastian",
    "promo": "-10% en algunos productos",
-   "n": 80
-  },
-  {
-   "name": "Ñam Restaurante",
-   "rating": "92%",
-   "rv": 0.929,
-   "rc": 39,
-   "fee": 3.13,
-   "dist": "1.4km",
-   "tags": [
-    "Americana",
-    "Hamburguesas",
-    "Pizza"
-   ],
-   "group": "Hamburguesas",
-   "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "nam-san-sebastian-11",
-   "promo": null,
-   "n": 81
+   "n": 92
   },
   {
    "name": "El Arepazo",
-   "rating": "91%",
-   "rv": 0.919,
+   "rating": "92%",
+   "rv": 0.923,
    "rc": 189,
-   "fee": 5.69,
+   "fee": 3.99,
    "dist": "3km",
    "tags": [
     "Venezolana"
    ],
    "group": "Latino / venezolano",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado",
+   "status": "OPEN",
+   "when": "",
    "next": null,
    "slug": "el-arepazo-eas",
-   "promo": "2x1 en algunos productos",
-   "n": 82
+   "promo": null,
+   "n": 93
+  },
+  {
+   "name": "El Mejicano",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-el-mejicano-lasarte-oria/menu",
+   "rating": "4,2★",
+   "rv": 0.9199999999999999,
+   "rc": 24,
+   "fee": 2.5,
+   "min": 20,
+   "dist": "2.1km",
+   "tags": [
+    "Mexicana",
+    "Casera"
+   ],
+   "group": "Mexicano",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-el-mejicano-lasarte-oria",
+   "n": 94
+  },
+  {
+   "name": "Ikoi",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-ikoi-donostiasan-sebastian/menu",
+   "rating": "4,1★",
+   "rv": 0.9099999999999999,
+   "rc": 1013,
+   "fee": 0,
+   "min": 15,
+   "dist": "4.1km",
+   "tags": [
+    "China",
+    "Sushi"
+   ],
+   "group": "Japonés / sushi / ramen",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-ikoi-donostiasan-sebastian",
+   "n": 95
+  },
+  {
+   "name": "Estrella Roja Donner Kebab",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-estrellarojadonnerkebabriodeba/menu",
+   "rating": "4,1★",
+   "rv": 0.9099999999999999,
+   "rc": 459,
+   "fee": 2,
+   "min": 12,
+   "dist": "4.3km",
+   "tags": [
+    "Kebab",
+    "Turca"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": "Ahorra un 25% • A partir de 30 €",
+   "slug": "je-estrellarojadonnerkebabriodeba",
+   "n": 96
+  },
+  {
+   "name": "Estrella Roja Donner Kebab Herrera",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-estrellarojadonostia/menu",
+   "rating": "4,1★",
+   "rv": 0.9099999999999999,
+   "rc": 1004,
+   "fee": 2,
+   "min": 12,
+   "dist": "6.8km",
+   "tags": [
+    "Kebab",
+    "Turca"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791993600000,
+   "promo": null,
+   "slug": "je-estrellarojadonostia",
+   "n": 97
   },
   {
    "name": "Poke House",
-   "rating": "91%",
-   "rv": 0.913,
-   "rc": 311,
-   "fee": 6.69,
+   "rating": "90%",
+   "rv": 0.906,
+   "rc": 314,
+   "fee": 4.99,
    "dist": "5.1km",
    "tags": [
     "Saludable",
@@ -1639,19 +1981,19 @@
    ],
    "group": "Poke",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "poke-house-san-sebastian",
    "promo": "2x1 en algunos productos",
-   "n": 83
+   "n": 98
   },
   {
    "name": "Bar Ivan",
    "rating": "90%",
-   "rv": 0.903,
-   "rc": 80,
-   "fee": 4.3,
+   "rv": 0.902,
+   "rc": 78,
+   "fee": 2.99,
    "dist": "2.2km",
    "tags": [
     "Internacional",
@@ -1661,18 +2003,41 @@
    "group": "Mexicano",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791975600000,
+   "when": "Cerrado hasta las 19:30",
+   "next": 1791999000000,
    "slug": "bar-ivan-san-sebastian",
    "promo": null,
-   "n": 84
+   "n": 99
+  },
+  {
+   "name": "Ghost",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-ghost-lasarte-oria/menu",
+   "rating": "4,0★",
+   "rv": 0.8999999999999999,
+   "rc": 52,
+   "fee": 2.5,
+   "min": 20,
+   "dist": "2.1km",
+   "tags": [
+    "Hamburguesas",
+    "Americana"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-ghost-lasarte-oria",
+   "n": 100
   },
   {
    "name": "Bar Mogambo",
    "rating": "88%",
    "rv": 0.882,
    "rc": 16,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Americana",
@@ -1680,60 +2045,65 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791974700000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "bar-mogambo-san-sebastian",
    "promo": null,
-   "n": 85
+   "n": 101
   },
   {
-   "name": "BAGA BIGA Faktoria",
-   "rating": "87%",
-   "rv": 0.871,
-   "rc": 33,
-   "fee": 6.19,
-   "dist": "3.5km",
+   "name": "Kebab&Pollo Estrella Roja",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-pollo-estrella-roja-donostiasan-sebastian/menu",
+   "rating": "3,8★",
+   "rv": 0.8799999999999999,
+   "rc": 28,
+   "fee": 2,
+   "min": 12,
+   "dist": "3.8km",
    "tags": [
-    "Hamburguesas",
-    "Española"
-   ],
-   "group": "Hamburguesas",
-   "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791997200000,
-   "slug": "baga-biga-faktoria-donostia-san-sebastian",
-   "promo": null,
-   "n": 86
-  },
-  {
-   "name": "Roasters Kebab Y Pizzería",
-   "rating": "87%",
-   "rv": 0.877,
-   "rc": 25,
-   "fee": 4.8,
-   "dist": "2.6km",
-   "tags": [
-    "Árabe",
-    "Hamburguesas",
-    "Kebab"
+    "Kebab",
+    "Pollo"
    ],
    "group": "Turco / árabe",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
-   "slug": "roasters-kebab-y-pizzeria-san-sebastian",
+   "status": "OPEN",
+   "when": "",
+   "next": 1791993600000,
    "promo": null,
-   "n": 87
+   "slug": "je-pollo-estrella-roja-donostiasan-sebastian",
+   "n": 102
+  },
+  {
+   "name": "Pizzeria Trintxerpe",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-pizzanapolidonostia/menu",
+   "rating": "3,8★",
+   "rv": 0.8799999999999999,
+   "rc": 681,
+   "fee": 0,
+   "min": 15,
+   "dist": "6.9km",
+   "tags": [
+    "Italiana",
+    "Pizza"
+   ],
+   "group": "Pizza / italiano",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-pizzanapolidonostia",
+   "n": 103
   },
   {
    "name": "Taupada Taberna",
    "rating": "87%",
    "rv": 0.878,
    "rc": 16,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Grill",
@@ -1743,37 +2113,124 @@
    "group": "Alta cocina / grill",
    "exotic": true,
    "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
+   "when": "Cerrado hasta las 13:00",
    "next": 1791975600000,
    "slug": "taupada-taberna-san-sebastian",
    "promo": null,
-   "n": 88
+   "n": 104
+  },
+  {
+   "name": "Roasters Kebab Y Pizzería",
+   "rating": "87%",
+   "rv": 0.876,
+   "rc": 24,
+   "fee": 3.49,
+   "dist": "2.6km",
+   "tags": [
+    "Árabe",
+    "Hamburguesas",
+    "Kebab"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
+   "slug": "roasters-kebab-y-pizzeria-san-sebastian",
+   "promo": null,
+   "n": 105
+  },
+  {
+   "name": "BAGA BIGA Faktoria",
+   "rating": "87%",
+   "rv": 0.871,
+   "rc": 33,
+   "fee": 4.49,
+   "dist": "3.5km",
+   "tags": [
+    "Hamburguesas",
+    "Española"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "CLOSED",
+   "when": "Cerrado hasta las 19:00",
+   "next": 1791997200000,
+   "slug": "baga-biga-faktoria-donostia-san-sebastian",
+   "promo": null,
+   "n": 106
+  },
+  {
+   "name": "NAPOLI PIZZA",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-napoli-pizza-san-sebastian/menu",
+   "rating": "3,7★",
+   "rv": 0.87,
+   "rc": 16,
+   "fee": 1.99,
+   "min": 14.99,
+   "dist": "4.3km",
+   "tags": [
+    "Italiana",
+    "Pizza"
+   ],
+   "group": "Pizza / italiano",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-napoli-pizza-san-sebastian",
+   "n": 107
   },
   {
    "name": "OTK Doner Kebab",
    "rating": "86%",
    "rv": 0.868,
    "rc": 16,
-   "fee": 3.7,
+   "fee": 2.49,
    "dist": "1.7km",
    "tags": [
     "Árabe"
    ],
    "group": "Turco / árabe",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "otk-kebab",
    "promo": null,
-   "n": 89
+   "n": 108
+  },
+  {
+   "name": "Restaurante Chino Nuevo Siglo",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-restaurantechinonuevosiglo/menu",
+   "rating": "3,6★",
+   "rv": 0.86,
+   "rc": 890,
+   "fee": 2,
+   "min": 18,
+   "dist": "4.0km",
+   "tags": [
+    "China",
+    "Tailandesa"
+   ],
+   "group": "Tailandés / chino",
+   "exotic": true,
+   "status": "CLOSED",
+   "when": "",
+   "next": 1791975600000,
+   "promo": null,
+   "slug": "je-restaurantechinonuevosiglo",
+   "n": 109
   },
   {
    "name": "Bar la fabrica de gas",
    "rating": "84%",
    "rv": 0.849,
    "rc": 31,
-   "fee": 4.3,
+   "fee": 2.99,
    "dist": "2.1km",
    "tags": [
     "Española"
@@ -1781,18 +2238,41 @@
    "group": "Mediterráneo / español",
    "exotic": false,
    "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791975600000,
+   "when": "Programar para: 20:00",
+   "next": 1792000800000,
    "slug": "bar-la-fabrica-de-gas-donostia-san-sebastian",
    "promo": null,
-   "n": 90
+   "n": 110
+  },
+  {
+   "name": "Meneo Hernani",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-meneo-hernani-hernani/menu",
+   "rating": "3,3★",
+   "rv": 0.83,
+   "rc": 16,
+   "fee": 1.95,
+   "min": 13.95,
+   "dist": "4.4km",
+   "tags": [
+    "Pollo",
+    "Americana"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "CLOSED",
+   "when": "",
+   "next": 1791975600000,
+   "promo": null,
+   "slug": "je-meneo-hernani-hernani",
+   "n": 111
   },
   {
    "name": "MONO",
    "rating": "82%",
    "rv": 0.821,
-   "rc": 105,
-   "fee": 4.8,
+   "rc": 104,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Americana",
@@ -1802,17 +2282,109 @@
    "exotic": false,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
-   "next": 1791999000000,
+   "next": 1792062000000,
    "slug": "mono-donostia-san-sebastian",
    "promo": "-10% en algunos productos",
-   "n": 91
+   "n": 112
+  },
+  {
+   "name": "Pizza Napoli",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-pizza-napoli-donostiasan-sebastian/menu",
+   "rating": "2,8★",
+   "rv": 0.7799999999999999,
+   "rc": 161,
+   "fee": 1.5,
+   "min": 20,
+   "dist": "6.9km",
+   "tags": [
+    "Pizza",
+    "Hamburguesas"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791997200000,
+   "promo": null,
+   "slug": "je-pizza-napoli-donostiasan-sebastian",
+   "n": 113
+  },
+  {
+   "name": "Meneo Sanse 3",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-meneo-sanse-3-donostia/menu",
+   "rating": "2,8★",
+   "rv": 0.7799999999999999,
+   "rc": 17,
+   "fee": 2.49,
+   "min": 0,
+   "dist": "1.9km",
+   "tags": [
+    "Pollo",
+    "Americana"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "CLOSED",
+   "when": "",
+   "next": 1791999000000,
+   "promo": null,
+   "slug": "je-meneo-sanse-3-donostia",
+   "n": 114
+  },
+  {
+   "name": "Meneo Lasarte",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-meneo-lasarte-lasarte-oria/menu",
+   "rating": "2,7★",
+   "rv": 0.77,
+   "rc": 17,
+   "fee": 1.95,
+   "min": 13.95,
+   "dist": "2.9km",
+   "tags": [
+    "Pollo",
+    "Americana"
+   ],
+   "group": "Hamburguesas",
+   "exotic": false,
+   "status": "CLOSED",
+   "when": "",
+   "next": 1791975600000,
+   "promo": null,
+   "slug": "je-meneo-lasarte-lasarte-oria",
+   "n": 115
+  },
+  {
+   "name": "Estrella Roja Doner Kebab",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-estrella-roja-doner-kebab-donostiasan-sebastian/menu",
+   "rating": "2,0★",
+   "rv": 0.7,
+   "rc": 29,
+   "fee": 2,
+   "min": 12,
+   "dist": "3.8km",
+   "tags": [
+    "Kebab",
+    "Pollo"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "OPEN",
+   "when": "",
+   "next": 1791993600000,
+   "promo": null,
+   "slug": "je-estrella-roja-doner-kebab-donostiasan-sebastian",
+   "n": 116
   },
   {
    "name": "The Korean Chicken",
-   "rating": "58%",
-   "rv": 0.584,
-   "rc": 22,
-   "fee": 4.8,
+   "rating": "52%",
+   "rv": 0.525,
+   "rc": 24,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Pollo"
@@ -1821,17 +2393,17 @@
    "exotic": false,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
-   "next": 1791973800000,
+   "next": 1792060200000,
    "slug": "the-korean-chicken-san-sebastian",
    "promo": "-10% en algunos productos",
-   "n": 92
+   "n": 117
   },
   {
    "name": "Amara pizzeria y pollo frito",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.8,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Pollo",
@@ -1839,19 +2411,19 @@
    ],
    "group": "Pizza / italiano",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "amara-pizzaria-y-pollo-frito-donostia-san-sebastian",
    "promo": null,
-   "n": 93
+   "n": 118
   },
   {
    "name": "Asti Turkish Kebab",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 6.69,
+   "fee": 4.99,
    "dist": "4.9km",
    "tags": [
     "Árabe",
@@ -1864,14 +2436,14 @@
    "next": null,
    "slug": "asti-turkish-kebab-donostia-san-sebastian",
    "promo": null,
-   "n": 94
+   "n": 119
   },
   {
    "name": "Asti Turkish Kebab Larramendi",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.19,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Árabe"
@@ -1883,14 +2455,14 @@
    "next": null,
    "slug": "asti-turkish-kebab-larramendi-san-sebastian",
    "promo": null,
-   "n": 95
+   "n": 120
   },
   {
    "name": "Auñamendi Taberna",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.3,
+   "fee": 2.99,
    "dist": "2.2km",
    "tags": [
     "Bocadillos",
@@ -1898,19 +2470,19 @@
    ],
    "group": "Mediterráneo / español",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791964800000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "aunamendi-taberna-donostia-san-sebastian",
    "promo": null,
-   "n": 96
+   "n": 121
   },
   {
    "name": "Bar Bederatzi",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.8,
+   "fee": 3.49,
    "dist": "2.6km",
    "tags": [
     "Mediterránea",
@@ -1924,14 +2496,14 @@
    "next": null,
    "slug": "bar-bederatzi-donostia-san-sebastian",
    "promo": null,
-   "n": 97
+   "n": 122
   },
   {
    "name": "Boyer Fried Chicken",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 2.01,
+   "fee": 0.99,
    "dist": "700m",
    "tags": [
     "Pollo",
@@ -1944,14 +2516,14 @@
    "next": null,
    "slug": "boyer-fried-chicken-san-sebastian",
    "promo": null,
-   "n": 98
+   "n": 123
   },
   {
    "name": "Burger Plaza",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Hamburguesas"
@@ -1960,17 +2532,17 @@
    "exotic": false,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "next": 1792058400000,
    "slug": "burger-plaza-san-sebastian",
    "promo": null,
-   "n": 99
+   "n": 124
   },
   {
    "name": "Dakara Bocateria y Milanesas",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.4km",
    "tags": [
     "Hamburguesas",
@@ -1981,17 +2553,17 @@
    "exotic": false,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "next": 1792058400000,
    "slug": "dakara-bocateria-milanesas-donostia-san-sebastian",
    "promo": null,
-   "n": 100
+   "n": 125
   },
   {
    "name": "Doctor Livingstone",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.69,
+   "fee": 3.99,
    "dist": "3.1km",
    "tags": [
     "Americana"
@@ -1999,18 +2571,18 @@
    "group": "Hamburguesas",
    "exotic": false,
    "status": "CLOSED",
-   "when": "Cerrado hasta el Jueves",
-   "next": 1792056600000,
+   "when": "Cerrado",
+   "next": null,
    "slug": "doctor-livingstone-san-sebastian",
    "promo": null,
-   "n": 101
+   "n": 126
   },
   {
    "name": "BERIO KEBAB ESTRELLA ROJA",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 2.51,
+   "fee": 1.49,
    "dist": "1.2km",
    "tags": [
     "Árabe",
@@ -2020,17 +2592,17 @@
    "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
-   "next": 1791975600000,
+   "next": 1792058400000,
    "slug": "donner-kebap-estrella-roja-san-sebastian",
    "promo": null,
-   "n": 102
+   "n": 127
   },
   {
    "name": "Donosti kebab house",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 4.8,
+   "fee": 3.49,
    "dist": "2.4km",
    "tags": [
     "Árabe",
@@ -2038,19 +2610,19 @@
    ],
    "group": "Turco / árabe",
    "exotic": true,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "donosti-kebab-house-donostia-san-sebastian",
    "promo": null,
-   "n": 103
+   "n": 128
   },
   {
    "name": "Food House",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "India"
@@ -2059,17 +2631,17 @@
    "exotic": true,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "next": 1792058400000,
    "slug": "food-house-san-sebastian",
    "promo": null,
-   "n": 104
+   "n": 129
   },
   {
    "name": "Ibaia",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.19,
+   "fee": 3.49,
    "dist": "2.8km",
    "tags": [
     "Árabe",
@@ -2077,19 +2649,19 @@
    ],
    "group": "Turco / árabe",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado",
+   "status": "OPEN",
+   "when": "",
    "next": null,
    "slug": "ibaia-donostia",
    "promo": null,
-   "n": 105
+   "n": 130
   },
   {
    "name": "Kai Street Food",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 6.69,
+   "fee": 4.99,
    "dist": "4km",
    "tags": [
     "Hamburguesas"
@@ -2101,14 +2673,14 @@
    "next": null,
    "slug": "kai-street-food-san-sebastian",
    "promo": null,
-   "n": 106
+   "n": 131
   },
   {
    "name": "KaiXO Sushi by Kai Sushi",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.69,
+   "fee": 3.99,
    "dist": "3.2km",
    "tags": [
     "Asiática",
@@ -2122,14 +2694,14 @@
    "next": null,
    "slug": "kaixo-sushi-by-kai-sushi-bar-san-sebastian",
    "promo": null,
-   "n": 107
+   "n": 132
   },
   {
    "name": "Kyoto Ramen",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.7,
+   "fee": 2.49,
    "dist": "1.8km",
    "tags": [
     "Asiática"
@@ -2141,14 +2713,14 @@
    "next": null,
    "slug": "kyoto-ramen-san-sebastian",
    "promo": null,
-   "n": 108
+   "n": 133
   },
   {
    "name": "La Fresca Vinoteca",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.4km",
    "tags": [
     "Española"
@@ -2160,14 +2732,14 @@
    "next": null,
    "slug": "la-fresca-vinoteca-donostia-san-sebastian",
    "promo": null,
-   "n": 109
+   "n": 134
   },
   {
    "name": "La Issla",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 5.19,
+   "fee": 3.49,
    "dist": "2.7km",
    "tags": [
     "Panadería",
@@ -2181,14 +2753,14 @@
    "next": null,
    "slug": "la-issla-donostia",
    "promo": null,
-   "n": 110
+   "n": 135
   },
   {
    "name": "Mumbai Curry",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.7,
+   "fee": 2.49,
    "dist": "1.9km",
    "tags": [
     "Árabe"
@@ -2197,37 +2769,17 @@
    "exotic": true,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
-   "next": 1791973800000,
+   "next": 1792062000000,
    "slug": "mumbai-curry-san-sebastian",
    "promo": null,
-   "n": 111
-  },
-  {
-   "name": "La tortilla de Mundukuona",
-   "rating": null,
-   "rv": null,
-   "rc": 0,
-   "fee": 3.7,
-   "dist": "1.9km",
-   "tags": [
-    "Mediterránea",
-    "Vegetariana"
-   ],
-   "group": "Mediterráneo / español",
-   "exotic": false,
-   "status": "CLOSED",
-   "when": "Cerrado",
-   "next": null,
-   "slug": "mundukuona-san-sebastian",
-   "promo": null,
-   "n": 112
+   "n": 136
   },
   {
    "name": "Munto Berri",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 3.13,
+   "fee": 1.99,
    "dist": "1.5km",
    "tags": [
     "Americana",
@@ -2236,19 +2788,19 @@
    ],
    "group": "Hamburguesas",
    "exotic": false,
-   "status": "SCHEDULABLE",
-   "when": "Programar para: Mañana",
-   "next": 1791963000000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "munto-berri-san-sebastian",
    "promo": null,
-   "n": 113
+   "n": 137
   },
   {
    "name": "Pizza Fatta",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Pizza"
@@ -2257,17 +2809,17 @@
    "exotic": false,
    "status": "CLOSED",
    "when": "Cerrado hasta mañana",
-   "next": 1791972000000,
+   "next": 1792058400000,
    "slug": "pizza-fatta-san-sebastian",
    "promo": null,
-   "n": 114
+   "n": 138
   },
   {
    "name": "Pizzería Plaza",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.4km",
    "tags": [
     "Pizza"
@@ -2276,29 +2828,52 @@
    "exotic": false,
    "status": "SCHEDULABLE",
    "when": "Programar para: Mañana",
-   "next": 1791972000000,
+   "next": 1792058400000,
    "slug": "pizzeria-plaza-san-sebastian",
    "promo": null,
-   "n": 115
+   "n": 139
   },
   {
    "name": "Venezuela Snacks",
    "rating": null,
    "rv": null,
    "rc": 0,
-   "fee": 6.19,
+   "fee": 4.49,
    "dist": "3.8km",
    "tags": [
     "Venezolana"
    ],
    "group": "Latino / venezolano",
    "exotic": true,
-   "status": "CLOSED",
-   "when": "Cerrado hasta mañana",
-   "next": 1791968400000,
+   "status": "OPEN",
+   "when": "",
+   "next": null,
    "slug": "venezuela-snacks-cafeteria-zuhaizti-eas",
    "promo": null,
-   "n": 116
+   "n": 140
+  },
+  {
+   "name": "Kebab Anaiak Fast Food",
+   "src": "je",
+   "url": "https://www.just-eat.es/restaurants-anaiakfastfoodarriberri/menu",
+   "rating": null,
+   "rv": null,
+   "rc": 0,
+   "fee": 2,
+   "min": 12,
+   "dist": "6.8km",
+   "tags": [
+    "Pollo",
+    "Kebab"
+   ],
+   "group": "Turco / árabe",
+   "exotic": true,
+   "status": "CLOSED",
+   "when": "",
+   "next": 1792058400000,
+   "promo": null,
+   "slug": "je-anaiakfastfoodarriberri",
+   "n": 141
   }
  ],
  "excluded": [
@@ -2322,7 +2897,6 @@
   "ciao-mamma-donostia-san-sebastian",
   "doner-kebab-estrella-roja-renteria",
   "donner-kebab-lanbroa-san-sebastian",
-  "donostia-kebab-san-sebastian",
   "duyi-sushi-y-bubble-tea-donostia-san-sebastian",
   "edorin-onigiri-donostia-san-sebastian",
   "el-txoko-de-mara-san-sebastian",
@@ -2338,7 +2912,6 @@
   "gros-kebab-y-pizzeria-san-sebastian",
   "grosso-pozuelo-san-sebastian",
   "honkaku-1-san-sebastian",
-  "ikoi-san-sebastian",
   "isla-sicilia-donostia",
   "itakate-donostia-san-sebastian",
   "kebab-estrella-roja-pizzeria-donostia-san-sebastian",
@@ -2354,12 +2927,10 @@
   "pasteleria-paries-donostia",
   "peccato-san-sebastian",
   "pikoteos-san-sebastian",
-  "pizza-napoli-donostia-san-sebastian",
   "pizza-ona-san-sebastian",
   "polka-san-sebastian",
   "qmango-tan-chimba-san-sebastian",
   "restaurante-coreano-papapiu-donostia-san-sebastian",
-  "restaurante-taj-mahal-2",
   "smooy-donostia-san-sebastian",
   "taqueria-el-cabron",
   "taqueria-kursaal-san-sebastian",
@@ -2376,8 +2947,11 @@
   "BerryHouse - Specialty Açaí & Coffee",
   "Bokatas",
   "Burger King",
+  "Burger King Okendo",
+  "Burger King Okendo II",
   "Cinesa",
   "Domino's Pizza",
+  "Domino's Pizza Urbil",
   "Doña Chepina Desayunos",
   "East Crema Coffee",
   "Ebenezer",
@@ -2387,7 +2961,10 @@
   "La Tagliatella",
   "Manolo Bakes",
   "Matampé Açaí",
+  "McDonald's San Sebastian",
   "McDonald's®",
+  "Papa Johns Donosti",
+  "Popeyes Urbil",
   "Sandwich LAB",
   "Starbucks",
   "Telepizza",
