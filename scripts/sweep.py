@@ -56,7 +56,8 @@ def fetch(slug):
 
 EXOTIC_GROUPS = {"Japonés / sushi / ramen", "Poke", "Tailandés / chino", "Indio", "Mexicano", "Latino / venezolano",
                  "Turco / árabe", "Alta cocina / grill", "Internacional"}
-GROUP_OVERRIDES = {"mumbai-curry-san-sebastian": "Indio"}  # Glovo lo etiqueta como árabe
+GROUP_OVERRIDES = {"mumbai-curry-san-sebastian": "Indio",  # Glovo lo etiqueta como árabe
+                   "sandwich-lab-donostia-san-sebastian": "Hamburguesas"}  # sándwiches americanos; Bocadillos está fuera del bombo
 LEFT_OUT_GROUPS = {"Dulce / café", "Bocadillos"}  # no son comida de mediodía o son grupos de un solo sitio
 FRANCHISES = {  # grandes cadenas: reparten, pero no entran en el bombo
     "mcdonaldseas",  # McDonald's®,
