@@ -32,7 +32,8 @@ print(f"{len(winners)} ganadores")
 api = re.search(r"VOTE_API = '([^']*)'", (ROOT / "rules.js").read_text())[1]
 if api:
     try:
-        with urllib.request.urlopen(api + "/counts", timeout=20) as r:
+        # Cloudflare rechaza (403) el User-Agent por defecto de Python
+        with urllib.request.urlopen(urllib.request.Request(api + "/counts", headers={"User-Agent": "gloryThursday-sweep"}), timeout=20) as r:
             votes = json.load(r)
         (ROOT / "data/votes.json").write_text(json.dumps(votes, indent=1) + "\n")
         print(f"votos de {len(votes)} sorteos")
