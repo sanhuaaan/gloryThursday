@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La pizarra</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🙋</text></svg>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Gloria+Hallelujah&family=Archivo:wght@500;700&display=swap">
+<style>
+:root{
+  --wood:#6b4423; --wood-dark:#3f2712; --wood-light:#8d5f35;
+  --slate:#26332d; --slate-deep:#1b2520;
+  --chalk:#f1efe6; --chalk-dim:#b9bfb6; --chalk-faint:rgba(241,239,230,.18);
+  --chalk-yellow:#f3dd7a; --chalk-pink:#f2a3b3; --chalk-blue:#a9d3ef;
+  --font-display:'Fredericka the Great',Georgia,serif; --font-hand:'Gloria Hallelujah','Comic Sans MS',cursive; --font-body:'Archivo',"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#2a1a0c radial-gradient(ellipse at 50% 0%,#4a2f17,#2a1a0c 70%);color:var(--chalk);font-family:var(--font-hand);font-size:1.05rem;line-height:1.5}
+.wrap{max-width:46rem;margin:0 auto;padding:2rem 1rem 3rem}
+/* la pizarra: marco de madera y polvo de tiza */
+.board{position:relative;padding:2.2rem 2.4rem 2rem;border-radius:.4rem;
+  background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.06),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(255,255,255,.04),transparent 50%),var(--slate);
+  border:1.1rem solid var(--wood);border-image:linear-gradient(135deg,var(--wood-light),var(--wood) 40%,var(--wood-dark)) 1;
+  box-shadow:inset 0 0 3rem rgba(0,0,0,.55),0 1.2rem 2.5rem rgba(0,0,0,.5)}
+@media (max-width:34rem){.board{padding:1.4rem 1.1rem 1.4rem;border-width:.8rem}}
+.kicker{margin:0;font-family:var(--font-body);font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--chalk-dim)}
+h1{margin:.3rem 0 .2rem;font-family:var(--font-display);font-weight:400;font-size:clamp(2.2rem,8vw,3.4rem);line-height:1.05;color:var(--chalk);text-shadow:0 0 .4rem rgba(241,239,230,.25)}
+.sub{margin:0;color:var(--chalk-dim)}
+.sub b{color:var(--chalk-yellow);font-weight:400}
+hr{border:0;height:.18rem;margin:1.2rem 0;background:linear-gradient(90deg,transparent,var(--chalk-faint) 8%,var(--chalk-faint) 92%,transparent);border-radius:1rem}
+.cred{display:grid;gap:.5rem;justify-items:start}
+.cred p{margin:0}
+.cred .who{font-family:var(--font-body);font-size:.8rem;color:var(--chalk-dim)}
+.cred:empty{display:none}
+
+/* cada cocina, una línea de la pizarra */
+.menu{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
+.dish{width:100%;display:grid;grid-template-columns:2rem 1fr auto;gap:.8rem;align-items:center;padding:.35rem .4rem;border:0;background:none;color:inherit;
+  font:inherit;font-size:1.2rem;text-align:left;cursor:pointer;border-radius:.4rem}
+.dish:hover:not([disabled]){background:rgba(255,255,255,.04)}
+.dish:focus-visible{outline:.15rem dashed var(--chalk-yellow);outline-offset:.1rem}
+.dish[disabled]{cursor:default}
+.dish[disabled]:not([aria-pressed="true"]) .name{color:var(--chalk-dim)}
+/* el redondel de tiza: un círculo imperfecto que se rellena al marcar */
+.ring{width:1.5rem;height:1.5rem;border:.15rem solid var(--chalk);border-radius:48% 52% 45% 55%/55% 45% 52% 48%;transform:rotate(-8deg);opacity:.85;position:relative}
+.dish[aria-pressed="true"] .ring{border-color:var(--chalk-yellow);box-shadow:0 0 .5rem rgba(243,221,122,.35)}
+.dish[aria-pressed="true"] .ring::after{content:"✓";position:absolute;inset:-.55rem 0 0 .15rem;font-size:1.5rem;color:var(--chalk-yellow)}
+.dish[aria-pressed="true"] .name{color:var(--chalk-yellow)}
+.dish.pop .ring{animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:rotate(-30deg) scale(1.6)}}
+.side{display:flex;align-items:center;gap:.7rem;justify-content:flex-end}
+.tally{letter-spacing:.06em;color:var(--chalk);white-space:nowrap}
+.tally s{text-decoration-thickness:.12rem;text-decoration-color:var(--chalk)}
+.balls{font-family:var(--font-body);font-size:.75rem;font-weight:700;padding:.05rem .45rem;border:.12rem solid var(--chalk-pink);color:var(--chalk-pink);border-radius:999rem;white-space:nowrap}
+.note{min-height:1.6rem;margin:1rem 0 0;color:var(--chalk-dim)}
+.note b{color:var(--chalk);font-weight:400}
+.note.err{color:var(--chalk-pink)}
+.fine{margin:0;font-family:var(--font-body);font-size:.8rem;color:var(--chalk-dim)}
+.links{margin:1.2rem 0 0;text-align:center;font-family:var(--font-body);font-size:.85rem}
+.links a{color:#d8c3a5}
+@media (prefers-reduced-motion:reduce){.dish.pop .ring{animation:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="board">
+    <p class="kicker">Jueves de Gloria · la pizarra</p>
+    <h1>Hoy nos apetece…</h1>
+    <p class="sub" id="sub">Borrando la pizarra…</p>
+    <hr>
+    <section class="cred" id="cred" aria-label="Identificación"></section>
+    <ul class="menu" id="menu" aria-label="Cocinas"></ul>
+    <p class="note" id="say" aria-live="polite"></p>
+    <hr>
+    <p class="fine" id="rules"></p>
+  </section>
+  <p class="links"><a href="./">← Volver al bombo</a> · <a href="privacidad.html">Privacidad</a></p>
+</main>
+
+<script type="module">
+import {latestRaffle,parseWinners,cravingBalls,CRAVING_PICKS,CRAVING_PER_BALL,CRAVING_MAX,VOTE_API,GOOGLE_CLIENT_ID,VOTE_DOMAIN} from './rules.js';
+const $=id=>document.getElementById(id);
+let token=null,mine=null,counts=null,busy=false,after=null,groups=[],sites={};
+
+const say=(html,cls='')=>{$('say').innerHTML=html;$('say').className='note '+cls;};
+const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
+// palotes de tiza: de cinco en cinco, el quinto tachando los cuatro
+const tally=n=>'<s>||||</s> '.repeat(Math.floor(n/5))+'|'.repeat(n%5);
+$('rules').textContent=`Marca hasta ${CRAVING_PICKS} cocinas, con tu cuenta de ${VOTE_DOMAIN}; puedes cambiarlas hasta el próximo sorteo. `+
+  `Cada ${CRAVING_PER_BALL} votos dan a esa cocina una bola extra en el bombo (como mucho +${CRAVING_MAX}). La pizarra se borra al registrar el ganador.`;
+
+function render(){
+  const balls=counts?cravingBalls({after,counts},after):{};
+  $('menu').innerHTML=groups.map(g=>{const on=(mine||[]).includes(g),n=(counts||{})[g]||0;return `<li><button type="button" class="dish" data-g="${g}" aria-pressed="${on}" ${!token||busy?'disabled':''}>
+    <span class="ring" aria-hidden="true"></span><span class="name">${g}</span>
+    <span class="side">${counts&&n?`<span class="tally" aria-label="${plural(n,'voto','votos')}">${tally(n)}</span>`:''}${balls[g]?`<span class="balls">🙋 +${balls[g]}</span>`:''}</span>
+  </button></li>`;}).join('');
+  $('menu').querySelectorAll('.dish').forEach(b=>b.onclick=()=>toggle(b.dataset.g));
+}
+function summary(){
+  if(!mine)return 'Rodea lo que te apetece.';
+  const balls=Object.entries(cravingBalls({after,counts},after)).sort((a,b)=>b[1]-a[1]);
+  const left=CRAVING_PICKS-mine.length;
+  return (mine.length?`Has rodeado <b>${mine.join(', ')}</b>${left?` (te ${left===1?'queda una':'quedan '+left})`:''}.`:'No has rodeado nada.')+' '+
+    (balls.length?`Ahora mismo: ${balls.map(([g,b])=>`<b>${g} +${b}</b>`).join(' · ')}.`:`Aún ninguna cocina llega a ${CRAVING_PER_BALL} votos.`);
+}
+
+async function api(method,body){
+  const r=await fetch(`${VOTE_API}/craving`,{method,headers:{Authorization:'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},body:body&&JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401){token=null;showLogin(j.error||'Se ha caducado tu sesión: vuelve a entrar.');throw new Error('');}
+  if(r.status===409){after=j.after;throw new Error('Ha habido un sorteo nuevo y la pizarra se ha borrado. Recarga la página.');}
+  if(!r.ok)throw new Error(j.error||'HTTP '+r.status);
+  return j;
+}
+
+async function toggle(g){
+  if(!token||busy)return;
+  const cur=mine||[],next=cur.includes(g)?cur.filter(x=>x!==g):[...cur,g];
+  if(next.length>CRAVING_PICKS){say(`Solo caben ${CRAVING_PICKS}: borra una antes de rodear otra.`,'err');return;}
+  busy=true;render();
+  try{({mine,counts}=await api('POST',{after,groups:next}));busy=false;render();
+    if(mine&&mine.includes(g))document.querySelector(`.dish[data-g="${CSS.escape(g)}"]`).classList.add('pop');
+    say(summary());}
+  catch(e){busy=false;render();if(e.message)say(e.message,'err');}
+}
+
+async function signedIn(credential){
+  token=credential;
+  const email=JSON.parse(decodeURIComponent(escape(atob(credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))))).email;
+  $('cred').innerHTML=`<span class="who">Apuntando como ${email}</span>`;
+  say('Leyendo la pizarra…');
+  try{({mine,counts}=await api('GET'));say(summary());}
+  catch(e){if(e.message)say(e.message,'err');}
+  render();
+}
+
+function showLogin(msg){
+  $('cred').innerHTML=`<p>Para apuntar, entra con tu cuenta de ${VOTE_DOMAIN}.</p><div id="gsi"></div>`;
+  say(msg||'',msg?'err':'');
+  render();
+  const go=()=>{
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:r=>signedIn(r.credential),hd:VOTE_DOMAIN,auto_select:true,context:'signin'});
+    google.accounts.id.renderButton($('gsi'),{theme:'filled_black',shape:'pill',text:'signin_with',locale:'es'});
+    google.accounts.id.prompt();
+  };
+  if(window.google&&google.accounts)return go();
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=go;
+  s.onerror=()=>say('No se pudo cargar el acceso de Google. ¿Un bloqueador de anuncios?','err');
+  document.head.appendChild(s);
+}
+
+// arranque: cocinas del bombo y sorteo para el que se apunta
+const get=f=>fetch(f+'?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error(f+': HTTP '+r.status)));
+try{
+  const [issues,data]=await Promise.all([get('data/winners.json'),get('data/stores.json')]);
+  after=latestRaffle(issues);
+  data.rows.forEach(r=>sites[r.group]=(sites[r.group]||0)+1);
+  groups=Object.keys(sites).sort((a,b)=>a.localeCompare(b,'es'));
+  const last=parseWinners(issues).find(w=>w.number===after);
+  const lastName=last?(data.rows.find(r=>r.slug===last.slug)||{name:last.slug}).name:null;
+  $('sub').innerHTML=`Para el <b>próximo sorteo</b>${lastName?` (el último fue ${lastName})`:''}. Rodea hasta ${CRAVING_PICKS}.`;
+  if(!VOTE_API||!GOOGLE_CLIENT_ID){say('La pizarra aún no está colgada. Vuelve pronto.');render();}
+  else showLogin();
+}catch(e){$('sub').textContent='';say(`No se pudo cargar la pizarra: ${e.message}`,'err');render();}
+</script>
+</body>
+</html>

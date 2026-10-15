@@ -90,3 +90,17 @@ export const cuisineWeight = (group, lastIdx, balls) => penaltyWeight(lastIdx[gr
 export const VOTE_API = 'https://glory-votes.juevesdegloria.workers.dev';           // https://glory-votes.<cuenta>.workers.dev
 export const GOOGLE_CLIENT_ID = '867747052313-5urh1tb1h3rhhrc7f2no4p2a2t6da2mk.apps.googleusercontent.com';   // ID de cliente OAuth (Google Cloud → Credenciales), tipo "Aplicación web"
 export const VOTE_DOMAIN = 'xabet.net';
+
+// Antojo de la oficina: entre un sorteo y el siguiente, cada persona marca en la pizarra (pizarra.html) hasta CRAVING_PICKS
+// cocinas que le apetecen. Cada CRAVING_PER_BALL votos dan una bola extra a esa cocina, con un máximo de CRAVING_MAX.
+// data/cravings.json = {after: nº del último ganador cuando se votó, counts: {cocina: votos}}; caducan al registrar otro ganador.
+export const CRAVING_PICKS = 3, CRAVING_PER_BALL = 3, CRAVING_MAX = 3;
+export function cravingBalls(file, latest) {
+  const out = {};
+  if (!file || latest == null || file.after !== latest) return out;
+  Object.entries(file.counts || {}).forEach(([g, n]) => {
+    const b = Math.min(CRAVING_MAX, Math.floor(n / CRAVING_PER_BALL));
+    if (b > 0) out[g] = b;
+  });
+  return out;
+}

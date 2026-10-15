@@ -1,7 +1,7 @@
 // Prueba de las reglas del sorteo: node --test scripts/rules.test.js (también la lanza GitHub al cambiar rules.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, verdictsBySlug, votesToVerdicts } from '../rules.js';
+import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, verdictsBySlug, votesToVerdicts, cravingBalls } from '../rules.js';
 
 const issue = (number, slug, { fecha, labels = ['ganador'], created = '2026-01-01T10:00:00Z', pr = false } = {}) => ({
   number, created_at: created, html_url: `u${number}`, user: { login: 'x', avatar_url: 'a' }, labels,
@@ -59,4 +59,11 @@ test('votos: media redondeada de 4 a 1 puntos, mínimo de votos, un sorteo sin v
   });
   assert.deepEqual(v, { 9: { verdict: 'aprobado', votes: 4 }, 7: { verdict: 'nifu', votes: 4 }, 6: { verdict: 'repetir', votes: 3 } });
   assert.deepEqual(votesToVerdicts(undefined), {});
+});
+
+test('antojo: +1 bola cada 3 votos hasta +3, solo para el sorteo en curso', () => {
+  const file = { after: 7, counts: { Indio: 2, Poke: 3, Pizza: 8, Kebab: 20 } };
+  assert.deepEqual(cravingBalls(file, 7), { Poke: 1, Pizza: 2, Kebab: 3 });
+  assert.deepEqual(cravingBalls(file, 8), {});            // ya hubo otro ganador: caducadas
+  assert.deepEqual(cravingBalls(undefined, 7), {});
 });

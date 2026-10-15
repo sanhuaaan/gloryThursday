@@ -2,10 +2,14 @@
 //   GET  /counts              recuentos de todos los sorteos (público; lo copia scripts/winners.py a data/votes.json)
 //   GET  /vote?sorteo=N       tu voto en ese sorteo y, si ya votaste, cómo va      (Authorization: Bearer <token de Google>)
 //   POST /vote {sorteo, verdict}  vota o cambia el voto; solo en el último sorteo  (ídem)
+//   GET  /cravings            antojo de la oficina para el próximo sorteo: {after, counts} (público; lo copia winners.py)
+//   GET  /craving             tus cocinas marcadas en la pizarra y, si ya votaste, cómo va    (Authorization: Bearer …)
+//   POST /craving {after, groups}  marca hasta CRAVING_PICKS cocinas (lista vacía = borra tu voto)  (ídem)
 // Despliegue: cd worker && npx wrangler@4 deploy   (esquema: npx wrangler@4 d1 execute glory-votes --remote --file schema.sql)
-import { parseWinners, VERDICTS, GOOGLE_CLIENT_ID, VOTE_DOMAIN } from '../rules.js';
+import { parseWinners, latestRaffle, VERDICTS, CRAVING_PICKS, GOOGLE_CLIENT_ID, VOTE_DOMAIN } from '../rules.js';
 
 const WINNERS = 'https://sanhuaaan.github.io/gloryThursday/data/winners.json';
+const STORES = 'https://sanhuaaan.github.io/gloryThursday/data/stores.json';
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' };
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
 
@@ -22,7 +26,38 @@ async function voter(req) {
 }
 
 // solo se vota el último sorteo registrado
-const openRaffle = async () => (parseWinners(await fetch(WINNERS, { cf: { cacheTtl: 60 } }).then(r => r.json()))[0] || {}).number;
+const winners = () => fetch(WINNERS, { cf: { cacheTtl: 60 } }).then(r => r.json());
+const openRaffle = async () => (parseWinners(await winners())[0] || {}).number;
+// el antojo vale para el sorteo siguiente al último ganador; las cocinas válidas son las del bombo
+const cravingRound = async () => latestRaffle(await winners());
+const cuisines = async () => new Set((await fetch(STORES, { cf: { cacheTtl: 300 } }).then(r => r.json())).rows.map(r => r.group));
+
+async function cravingCounts(db, after) {
+  const counts = {};
+  (await db.prepare('SELECT groups FROM cravings WHERE after_raffle = ?').bind(after).all()).results
+    .forEach(({ groups }) => JSON.parse(groups).forEach(g => { counts[g] = (counts[g] || 0) + 1; }));
+  return counts;
+}
+
+async function craving(req, db, url) {
+  const after = await cravingRound();
+  if (url.pathname === '/cravings') return json({ after, counts: await cravingCounts(db, after) });
+  const who = await voter(req);
+  if (!who) return json({ error: `Entra con tu cuenta de ${VOTE_DOMAIN}` }, 401);
+  if (req.method === 'POST') {
+    const body = await req.json().catch(() => ({}));
+    if (body.after !== after) return json({ error: 'Esa pizarra ya se borró: ha habido otro sorteo', after }, 409);
+    const groups = [...new Set(Array.isArray(body.groups) ? body.groups : [])];
+    const valid = await cuisines();
+    if (groups.length > CRAVING_PICKS || groups.some(g => !valid.has(g))) return json({ error: `Marca hasta ${CRAVING_PICKS} cocinas del bombo` }, 400);
+    if (groups.length) await db.prepare('INSERT INTO cravings (after_raffle, voter, groups, at) VALUES (?1, ?2, ?3, ?4) ON CONFLICT (after_raffle, voter) DO UPDATE SET groups = ?3, at = ?4')
+      .bind(after, who, JSON.stringify(groups), new Date().toISOString()).run();
+    else await db.prepare('DELETE FROM cravings WHERE after_raffle = ? AND voter = ?').bind(after, who).run();
+  }
+  const row = await db.prepare('SELECT groups FROM cravings WHERE after_raffle = ? AND voter = ?').bind(after, who).first('groups');
+  const mine = row ? JSON.parse(row) : null;
+  return json({ after, mine, counts: mine ? await cravingCounts(db, after) : null });
+}
 
 async function counts(db, raffle) {
   const q = raffle == null ? db.prepare('SELECT raffle, verdict, COUNT(*) n FROM votes GROUP BY raffle, verdict')
@@ -40,6 +75,7 @@ export default {
     const url = new URL(req.url);
     if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
     if (url.pathname === '/counts') return json(await counts(env.DB));
+    if (url.pathname === '/cravings' || url.pathname === '/craving') return craving(req, env.DB, url);
     if (url.pathname !== '/vote') return json({ error: 'no existe' }, 404);
 
     const who = await voter(req);

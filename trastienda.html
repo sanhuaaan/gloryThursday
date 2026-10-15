@@ -162,6 +162,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 .err{color:#ffb3bd;font-variation-settings:"wght" 700;text-align:center;margin:0}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.crav{display:inline-block;margin-left:.4rem;padding:0 .4rem;border-radius:999rem;font-size:.7rem;background:#f2a3b3;color:#2a0f17;vertical-align:.1rem}
 </style>
 </head>
 <body>
@@ -225,7 +226,7 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   <p class="err" id="error" hidden></p>
 </main>
 <script type="module">
-import {latestRaffle,activeBalls} from './rules.js';
+import {latestRaffle,activeBalls,cravingBalls} from './rules.js';
 const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO,ITER=600000;
 // las bolas y la llave viven en un repo aparte: el token solo tiene acceso a él, así que no puede tocar el bombo
 const EXTRA='sanhuaaan/gloryThursday-extraBalls',EXTRA_API='https://api.github.com/repos/'+EXTRA,EXTRA_PAGES='https://sanhuaaan.github.io/gloryThursday-extraBalls/';
@@ -305,12 +306,14 @@ async function writeJson(path,obj,sha,message){
   return (await r.json()).content.sha;
 }
 async function status(){
-  const [data,issues,file]=await Promise.all([
+  const [data,issues,file,crav]=await Promise.all([
     fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('datos del bombo: HTTP '+r.status);return r.json();}),
     // ganadores del repo principal: API anónima (60/h por IP) y, si corta, la copia que publica el barrido
     fetch(API+'/issues?state=open&per_page=100',{headers:{Accept:'application/vnd.github+json'},cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject())
       .catch(()=>fetch('data/winners.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('ganadores: HTTP '+r.status);return r.json();})),
-    readJson('balls.json')
+    readJson('balls.json'),
+    // antojo de la pizarra: se suma en el bombo, aquí solo se enseña
+    fetch('data/cravings.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
   ]);
   const latest=latestRaffle(issues);
   const order=[...new Set(data.rows.map(r=>r.group))];
@@ -318,13 +321,13 @@ async function status(){
   const byGroup={};data.rows.forEach(r=>(byGroup[r.group]=byGroup[r.group]||[]).push({slug:r.slug,name:r.name}));
   Object.values(byGroup).forEach(l=>l.sort((a,b)=>a.name.localeCompare(b.name,'es')));
   const cur=activeBalls(file.obj,latest,data.rows);
-  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,latest,sha:file.sha};
+  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,latest,sha:file.sha,crav:cravingBalls(crav,latest)};
 }
 const same=(a,b)=>{const k=new Set([...Object.keys(a),...Object.keys(b)]);return [...k].every(x=>(a[x]||0)===(b[x]||0));};
 const sameDraft=(a,b)=>same(a.balls,b.balls)&&same(a.stores,b.stores);
 const total=c=>Object.values(c).reduce((a,n)=>a+n,0);
 const clone=d=>({balls:{...d.balls},stores:{...d.stores}});
-let latest=0,sha=null,byGroup={},openGroup=null,drawerGroup=null,shownPills=new Set(),shownTags=new Set();
+let latest=0,sha=null,crav={},byGroup={},openGroup=null,drawerGroup=null,shownPills=new Set(),shownTags=new Set();
 
 function holesHtml(n,color,dropping){return Array.from({length:9},(_,i)=>`<span class="hole">${i<n?`<span class="ball${dropping&&i===n-1?' drop':''}" style="--c:${color}"></span>`:''}</span>`).join('');}
 async function popLast(el){const b=el.querySelectorAll('.ball');const last=b[b.length-1];if(last){last.classList.add('pop');await wait(220);}}
@@ -336,7 +339,7 @@ function render(pending){
   groups.forEach((g,i)=>{
     const n=draft.balls[g]||0,diff=n-(current.balls[g]||0),k=storeBalls(g,draft),row=document.createElement('div');row.className='row';row.style.setProperty('--i',i);
     const tag=diff?`${diff>0?'+'+diff:diff} sin sellar`:storesDiffer(g)?'restaurantes sin sellar':'';
-    row.innerHTML=`${tag?`<span class="tag${shownTags.has(g)?'':' appear'}">${tag}</span>`:''}${n?`<button type="button" class="sites${openGroup===g?' open':''}${shownPills.has(g)?'':' appear'}" aria-expanded="${openGroup===g}">Restaurantes${k?` · ${k}`:''}</button>`:''}<span class="name" title="${g}">${g}</span>
+    row.innerHTML=`${tag?`<span class="tag${shownTags.has(g)?'':' appear'}">${tag}</span>`:''}${n?`<button type="button" class="sites${openGroup===g?' open':''}${shownPills.has(g)?'':' appear'}" aria-expanded="${openGroup===g}">Restaurantes${k?` · ${k}`:''}</button>`:''}<span class="name" title="${g}">${g}${crav[g]?` <span class="crav" title="Antojo de la oficina en la pizarra: se suma en el bombo, aquí no se toca">🙋 +${crav[g]}</span>`:''}</span>
       <span class="ctl"><button type="button" aria-label="Sacar una bola de ${g}" ${n&&!pending?'':'disabled'}>−</button><button type="button" aria-label="Meter una bola en ${g}" ${n<9&&!pending?'':'disabled'}>+</button></span>
       <span class="holes" role="img" aria-label="${n} bolas extra">${holesHtml(n,gcolor[g],lastDrop===g)}</span>`;
     const [minus,plus]=row.querySelectorAll('.ctl button');
@@ -389,7 +392,7 @@ async function refresh(){
     if(e.message==='token'){ss.set('gt',null);token=null;view('login');showError('GitHub ya no acepta el token. Habrá que estrenar la caja con uno nuevo.');return;}
     showError('No se pudo comprobar el estado ('+e.message+'). Reintentando…');clearTimeout(pollTimer);pollTimer=setTimeout(refresh,15000);return;
   }
-  groups=s.groups;gcolor=s.colors;byGroup=s.byGroup;current=s.cur;latest=s.latest;sha=s.sha;
+  groups=s.groups;gcolor=s.colors;byGroup=s.byGroup;current=s.cur;latest=s.latest;sha=s.sha;crav=s.crav;
   draft=clone(current);
   if(openGroup&&!(draft.balls[openGroup]>0))openGroup=null;
   $('save').classList.remove('sealed','gone');

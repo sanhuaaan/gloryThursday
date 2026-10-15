@@ -5,7 +5,7 @@
 // El segundo jueves cae entre el 8 y el 14, así que el miércoles anterior cae entre el 7 y el 13.
 // --force salta la comprobación de fecha (pruebas y disparo manual). --dry-run imprime sin enviar.
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, VERDICTS, VERDICTS_ENABLED, votesToVerdicts } from '../rules.js';
+import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cravingBalls, cuisineWeight, VERDICTS, VERDICTS_ENABLED, votesToVerdicts } from '../rules.js';
 
 const ROOT = new URL('..', import.meta.url);
 const PAGE = 'https://sanhuaaan.github.io/gloryThursday/';
@@ -62,15 +62,21 @@ if (winners.length) {
 }
 
 // bolas extra vigentes, con la probabilidad real de cada cocina (penalización, bolas y cuarentena incluidas)
+// las de la trastienda y las del antojo de la pizarra (data/cravings.json) se suman; en el parte van por separado
 const { balls, stores } = activeBalls(await extraRepo('balls.json'), latest, rows);
+const crav = cravingBalls(read('data/cravings.json', {}), latest);
+const all = { ...balls };
+Object.entries(crav).forEach(([g, n]) => { all[g] = (all[g] || 0) + n; });
 const groups = [...new Set(inDrum.map(r => r.group))];
-const total = groups.reduce((a, g) => a + cuisineWeight(g, lastIdx, balls), 0);
-const parts = Object.entries(balls).sort((a, b) => b[1] - a[1]).filter(([g]) => groups.includes(g)).map(([g, n]) => {
+const total = groups.reduce((a, g) => a + cuisineWeight(g, lastIdx, all), 0);
+const parts = Object.entries(all).sort((a, b) => b[1] - a[1]).filter(([g]) => groups.includes(g)).map(([g]) => {
   const inside = Object.entries(stores).filter(([s]) => (rows.find(r => r.slug === s) || {}).group === g).map(([s, k]) => `${name(s)} +${k}`);
-  return `${g} +${n} (sale el ${Math.round(100 * cuisineWeight(g, lastIdx, balls) / total)} %)${inside.length ? ` — dentro, ${inside.join(', ')}` : ''}`;
+  const label = [balls[g] && `+${balls[g]}`, crav[g] && `🙋 +${crav[g]}`].filter(Boolean).join(' ');
+  return `${g} ${label} (sale el ${Math.round(100 * cuisineWeight(g, lastIdx, all) / total)} %)${inside.length ? ` — dentro, ${inside.join(', ')}` : ''}`;
 });
 if (parts.length) lines.push('🎱 *Bolas extra en juego:* ' + parts.join(' · '));
 
+lines.push(`🙋 *¿Qué os apetece mañana?* Apuntadlo en la pizarra: ${PAGE}pizarra.html`);
 lines.push('', '_El bombo no admite reclamaciones. Firmado: la Dirección._', `👉 ${PAGE}`);
 const text = lines.join('\n');
 

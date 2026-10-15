@@ -27,15 +27,16 @@ winners.sort(key=lambda w: -w["number"])
 (ROOT / "data/winners.json").write_text(json.dumps(winners, ensure_ascii=False, indent=1) + "\n")
 print(f"{len(winners)} ganadores")
 
-# Recuentos de la votación del oráculo (worker/, GET /counts) → data/votes.json {nºissue: {repetir, aprobado, nifu, nuncamas}}.
+# Recuentos de la votación (worker/, GET /counts) → data/votes.json {nºissue: {repetir, aprobado, nifu, nuncamas}},
+# y antojo de la pizarra (GET /cravings) → data/cravings.json {after, counts: {cocina: votos}}.
 # La dirección del Worker vive en rules.js (VOTE_API).
 api = re.search(r"VOTE_API = '([^']*)'", (ROOT / "rules.js").read_text())[1]
 if api:
     try:
         # Cloudflare rechaza (403) el User-Agent por defecto de Python
-        with urllib.request.urlopen(urllib.request.Request(api + "/counts", headers={"User-Agent": "gloryThursday-sweep"}), timeout=20) as r:
-            votes = json.load(r)
-        (ROOT / "data/votes.json").write_text(json.dumps(votes, indent=1) + "\n")
-        print(f"votos de {len(votes)} sorteos")
+        for path, out in (("/counts", "votes.json"), ("/cravings", "cravings.json")):  # dictámenes y antojo de la pizarra
+            with urllib.request.urlopen(urllib.request.Request(api + path, headers={"User-Agent": "gloryThursday-sweep"}), timeout=20) as r:
+                (ROOT / "data" / out).write_text(json.dumps(json.load(r), ensure_ascii=False, indent=1) + "\n")
+        print("votos y antojo copiados")
     except Exception as e:
-        print(f"No se pudieron leer los votos ({e}); votes.json sin cambios")
+        print(f"No se pudieron leer los votos ({e}); votes.json y cravings.json sin cambios")
