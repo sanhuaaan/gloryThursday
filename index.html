@@ -70,6 +70,11 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 .chip button:focus-visible{outline:.2rem solid var(--yellow);outline-offset:-.2rem}
 .chip[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:#1a1208;font-variation-settings:"wght" 700}
 .chip[aria-pressed="true"] .cnt{border-color:rgba(0,0,0,.2)}
+.finder{margin:0 0 1.25rem}
+.finder input{width:100%;max-width:26rem;font:inherit;font-size:1rem;padding:.6rem .9rem;border-radius:999rem;border:.125rem solid var(--felt-line);background:var(--felt-deep);color:var(--chalk)}
+.finder input::placeholder{color:var(--chalk-dim)}
+.finder input:focus-visible{outline:.15rem solid var(--yellow);outline-offset:.15rem}
+.grid .nomatch{grid-column:1/-1;color:var(--chalk-dim);font-style:italic}
 .toggle{margin-left:auto;display:flex;align-items:center;gap:.5rem;font-size:.9rem;cursor:pointer}
 .toggle input{accent-color:var(--red);width:1.1rem;height:1.1rem}
 .count{color:var(--chalk-dim);font-size:.9rem;margin:0 0 1rem;font-variant-numeric:tabular-nums}
@@ -183,6 +188,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
   <label class="toggle"><input type="checkbox" id="exotic"> Solo exóticos y de fantasía</label>
 </div>
 <p class="count dimmable" id="count"></p>
+<div class="finder dimmable"><input type="search" id="find" placeholder="Buscar sitio o cocina…" aria-label="Buscar sitio o cocina" autocomplete="off"></div>
 <ul class="grid dimmable" id="grid"></ul>
 
 <section class="section dimmable">
@@ -336,11 +342,16 @@ function render(){
   const groupsIn=[...new Set(v.map(r=>r.group))],nc=groupsIn.length,pen=groupsIn.filter(x=>weightOf(x)<1).length;
   document.getElementById('count').textContent=`${v.length} bolas en el bombo · ${nc} cocina${nc!==1?'s':''}`+(pen?` (${pen} penalizada${pen>1?'s':''})`:groupsIn.some(extraOf)?'':` al ${nc?Math.round(100/nc):0} % cada una`)+(groupsIn.filter(extraOf).length?` · ${groupsIn.filter(extraOf).length} con bolas extra`:'')+(off?` · ${off} fuera`:'')+(q?` · ${q} en cuarentena`:'');
   const g=document.getElementById('grid');g.innerHTML='';
+  // buscador: solo decide qué cartones se ven; el bombo y las cuentas siguen con todos
+  const fold=t=>t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const terms=fold(document.getElementById('find').value).split(/\s+/).filter(Boolean);
+  const match=r=>{const hay=fold([r.name,r.group,...r.tags,r.src==='je'?'just eat':'glovo'].join(' '));return terms.every(t=>hay.includes(t));};
+  if(terms.length&&!all.some(match))g.innerHTML='<li class="nomatch">Ningún sitio coincide con la búsqueda.</li>';
   groupsOrder.forEach(gr=>{
-    const items=all.filter(r=>r.group===gr);if(!items.length)return;
-    const inside=items.filter(inDrum).length,w=weightOf(gr),offG=offGroups.has(gr);
+    const groupAll=all.filter(r=>r.group===gr),items=groupAll.filter(match);if(!items.length)return;
+    const inside=groupAll.filter(inDrum).length,w=weightOf(gr),offG=offGroups.has(gr);
     const h=document.createElement('li');h.className='ghead'+(offG?' off':'');h.id='g-'+groupsOrder.indexOf(gr);
-    h.innerHTML=`<h3>${gr}</h3><span class="meta">${inside} de ${items.length} en el bombo${w<1?` · <span class="w">pesa ×${frac(w)}</span>`:''}${extraOf(gr)?` · <span class="xb">${ballsLabel(extraOf(gr))} extra</span>`:''}</span><span class="chip" aria-pressed="${!offG}"><button type="button" class="tg">${offG?'Meter la cocina':'Sacar la cocina'}</button></span>`;
+    h.innerHTML=`<h3>${gr}</h3><span class="meta">${inside} de ${groupAll.length} en el bombo${w<1?` · <span class="w">pesa ×${frac(w)}</span>`:''}${extraOf(gr)?` · <span class="xb">${ballsLabel(extraOf(gr))} extra</span>`:''}</span><span class="chip" aria-pressed="${!offG}"><button type="button" class="tg">${offG?'Meter la cocina':'Sacar la cocina'}</button></span>`;
     h.querySelector('.tg').onclick=()=>{offG?offGroups.delete(gr):offGroups.add(gr);persist();render();};
     g.appendChild(h);
     items.forEach(r=>{
@@ -359,6 +370,7 @@ function render(){
   });
 }
 exoticBox.onchange=()=>{persist();render();};
+document.getElementById('find').addEventListener('input',()=>render());
 render();renderUpdated();loadWinners();loadBalls();
 document.getElementById('minVotes').textContent=MIN_VOTES;
 if(VERDICTS_ENABLED)loadVerdicts();else document.getElementById('rule-verdict').hidden=true;
