@@ -44,9 +44,9 @@ const name = (read('data/stores.json').rows.find(r => r.slug === w.slug) || { na
 const url = `${PAGE}?sorteo=${w.number}`;
 const text = [
   '📰 *CRÍTICA GASTRONÓMICA*',
-  `_Jueves de Gloria · hoy, a la mesa del inspector: ${name}_`,
+  `_Jueves de Gloria · hoy, a la mesa de Xabet: ${name}_`,
   '',
-  `La redacción ha comido en *${name}* y quiere vuestro dictamen antes de cerrar la edición:`,
+  'Introduce tu dictamen antes de cerrar la edición:',
   '★★★ ¡Repetiríamos! · ★★ Aprobado · ★ Ni fu ni fa · ⊘ Nunca más',
   `👉 ${url}`,
   '',
