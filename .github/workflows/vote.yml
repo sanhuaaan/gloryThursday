@@ -1,6 +1,7 @@
 name: vote
 on:
-  # justo después de registrar un ganador (cuando winners.json ya está al día): si es antes de las 15:00, espera hasta entonces
+  # justo después de registrar un ganador (cuando winners.json ya está al día): si es antes de las 15:00, espera hasta entonces.
+  # El lanzamiento a mano también espera (sin force), para relanzar el aviso del día sin depender del cron.
   workflow_run:
     workflows: [winners]
     types: [completed]
@@ -27,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main   # en workflow_run, el main de después de que winners.yml haya subido winners.json
-      - run: node scripts/vote.js ${{ github.event_name == 'workflow_run' && '--wait' || '' }} ${{ inputs.force && '--force' || '' }}
+      - run: node scripts/vote.js ${{ github.event_name != 'schedule' && '--wait' || '' }} ${{ inputs.force && '--force' || '' }}
         env:
           CHAT_WEBHOOK: ${{ secrets.CHAT_WEBHOOK }}
       - run: |

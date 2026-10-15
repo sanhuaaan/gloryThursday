@@ -15,7 +15,7 @@ const read = (f, fallback) => existsSync(new URL(f, ROOT)) ? JSON.parse(readFile
 
 if (!VOTE_API) { console.log('La votación aún no está montada (VOTE_API en rules.js); nada que enviar'); process.exit(0); }
 const issues = read('data/winners.json', []);
-const [w] = parseWinners(issues);
+const winners = parseWinners(issues), [w] = winners;
 if (!w) { console.log('Aún no hay ganadores'); process.exit(0); }
 if (!args.includes('--dry-run') && read('data/poll.json', {}).lastPolled === w.number) {
   console.log(`El sorteo ${w.number} ya tiene su votación; nada que hacer`);
@@ -43,8 +43,10 @@ if (!args.includes('--force')) {
 const name = (read('data/stores.json').rows.find(r => r.slug === w.slug) || { name: w.slug }).name;
 const url = `${PAGE}?sorteo=${w.number}`;
 const text = [
-  '⭐ *GUÍA DEL JUEVES DE GLORIA · SE BUSCAN INSPECTORES*',
-  `La redacción necesita vuestro dictamen sobre *${name}*.`,
+  `📰 *CRÍTICA GASTRONÓMICA · Nº ${winners.length}*`,
+  `_Jueves de Gloria · hoy, a la mesa del inspector: ${name}_`,
+  '',
+  `La redacción ha comido en *${name}* y quiere vuestro dictamen antes de cerrar la edición:`,
   '★★★ ¡Repetiríamos! · ★★ Aprobado · ★ Ni fu ni fa · ⊘ Nunca más',
   `👉 ${url}`,
   '',
