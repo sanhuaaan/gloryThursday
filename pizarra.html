@@ -35,23 +35,25 @@ hr{border:0;height:.18rem;margin:1.2rem 0;background:linear-gradient(90deg,trans
 
 /* cada cocina, una línea de la pizarra */
 .menu{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
-.dish{width:100%;display:grid;grid-template-columns:2rem 1fr auto;gap:.8rem;align-items:center;padding:.35rem .4rem;border:0;background:none;color:inherit;
-  font:inherit;font-size:1.2rem;text-align:left;cursor:pointer;border-radius:.4rem}
-.dish:hover:not([disabled]){background:rgba(255,255,255,.04)}
-.dish:focus-visible{outline:.15rem dashed var(--chalk-yellow);outline-offset:.1rem}
-.dish[disabled]{cursor:default}
-.dish[disabled]:not([aria-pressed="true"]) .name{color:var(--chalk-dim)}
-/* el redondel de tiza: un círculo imperfecto que se rellena al marcar */
-.ring{width:1.5rem;height:1.5rem;border:.15rem solid var(--chalk);border-radius:48% 52% 45% 55%/55% 45% 52% 48%;transform:rotate(-8deg);opacity:.85;position:relative}
-.dish[aria-pressed="true"] .ring{border-color:var(--chalk-yellow);box-shadow:0 0 .5rem rgba(243,221,122,.35)}
-.dish[aria-pressed="true"] .ring::after{content:"✓";position:absolute;inset:-.55rem 0 0 .15rem;font-size:1.5rem;color:var(--chalk-yellow)}
-.dish[aria-pressed="true"] .name{color:var(--chalk-yellow)}
-/* tachada: raya de tiza rosa sobre el nombre y aspa en el redondel */
-.dish.struck .ring{border-color:var(--chalk-pink);box-shadow:none}
-.dish.struck .ring::after{content:"✕";color:var(--chalk-pink);inset:-.4rem 0 0 .2rem;font-size:1.25rem}
-.dish.struck .name{color:var(--chalk-pink);text-decoration:line-through;text-decoration-thickness:.15rem;text-decoration-color:var(--chalk-pink)}
-.dish.pop .ring{animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
-@keyframes pop{from{transform:rotate(-30deg) scale(1.6)}}
+.dish{display:grid;grid-template-columns:1fr auto auto;gap:.6rem .8rem;align-items:center;padding:.3rem .4rem;border-radius:.4rem;font-size:1.2rem}
+.dish:hover{background:rgba(255,255,255,.03)}
+.dish .name{position:relative;justify-self:start}
+.dish.up .name{color:var(--chalk-yellow)}
+/* rodeada: óvalo de tiza alrededor del nombre */
+.dish.up .name::before{content:"";position:absolute;inset:-.2rem -.6rem;border:.13rem solid var(--chalk-yellow);border-radius:50% 46% 52% 48%/60% 55% 45% 40%;transform:rotate(-2deg);opacity:.85}
+/* tachada: raya de tiza rosa */
+.dish.down .name{color:var(--chalk-pink);text-decoration:line-through;text-decoration-thickness:.15rem;text-decoration-color:var(--chalk-pink)}
+.acts{display:flex;gap:.4rem}
+.mark{width:2.4rem;height:2.4rem;display:grid;place-items:center;padding:0;border:.13rem dashed var(--chalk-faint);border-radius:50%;background:none;color:var(--chalk-dim);
+  font:inherit;font-size:1.15rem;line-height:1;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.mark:hover:not([disabled]){border-color:var(--chalk-dim);color:var(--chalk)}
+.mark:focus-visible{outline:.15rem dashed var(--chalk-yellow);outline-offset:.1rem}
+.mark[disabled]{cursor:default;opacity:.45}
+.mark.up[aria-pressed="true"]{border-style:solid;border-color:var(--chalk-yellow);color:var(--chalk-yellow);background:rgba(243,221,122,.1);opacity:1}
+.mark.down[aria-pressed="true"]{border-style:solid;border-color:var(--chalk-pink);color:var(--chalk-pink);background:rgba(242,163,179,.1);opacity:1}
+.mark.pop{animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:rotate(-30deg) scale(1.5)}}
+@media (max-width:34rem){.dish{grid-template-columns:1fr auto;font-size:1.1rem}.dish .side{grid-column:1/-1;justify-content:flex-start;order:3}}
 .side{display:flex;align-items:center;gap:.7rem;justify-content:flex-end}
 .tally{letter-spacing:.06em;color:var(--chalk);white-space:nowrap}
 .tally s{text-decoration-thickness:.12rem;text-decoration-color:var(--chalk)}
@@ -65,7 +67,7 @@ hr{border:0;height:.18rem;margin:1.2rem 0;background:linear-gradient(90deg,trans
 .fine{margin:0;font-family:var(--font-body);font-size:.8rem;color:var(--chalk-dim)}
 .links{margin:1.2rem 0 0;text-align:center;font-family:var(--font-body);font-size:.85rem}
 .links a{color:#d8c3a5}
-@media (prefers-reduced-motion:reduce){.dish.pop .ring{animation:none}}
+@media (prefers-reduced-motion:reduce){.mark.pop{animation:none}.mark{transition:none}}
 </style>
 </head>
 <body>
@@ -94,18 +96,19 @@ const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
 // palotes de tiza: de cinco en cinco, el quinto tachando los cuatro
 const tally=n=>'<s>||||</s> '.repeat(Math.floor(n/5))+'|'.repeat(n%5);
 const frac=f=>({0.25:'¼',0.5:'½',0.75:'¾'})[f]||String(f);
-$('rules').textContent=`Tienes ${CRAVING_PICKS} marcas, con tu cuenta de ${VOTE_DOMAIN}: rodea lo que te apetece y tacha lo que no (toca otra vez para cambiar). `+
+$('rules').textContent=`Tienes ${CRAVING_PICKS} marcas, con tu cuenta de ${VOTE_DOMAIN}: ◯ rodea lo que te apetece y ✕ tacha lo que no (el mismo botón la quita). `+
   `Cuenta el neto de cada cocina, a favor menos en contra: cada ${CRAVING_PER_BALL} de neto a favor dan una bola extra en el bombo (como mucho +${CRAVING_MAX}) `+
   `y el neto en contra le baja el peso (${CRAVING_DOWN.slice().reverse().map(([n,f])=>`${n} ×${frac(f)}`).join(', ')}). La pizarra se borra al registrar el ganador.`;
 
-const MARK={'1':'rodeada','-1':'tachada'};
 function render(){
   const {balls,factor}=counts?cravingEffect({after,counts},after):{balls:{},factor:{}};
-  $('menu').innerHTML=groups.map(g=>{const m=(mine||{})[g]||0,c=(counts||{})[g]||{up:0,down:0};return `<li><button type="button" class="dish${m<0?' struck':''}" data-g="${g}" aria-pressed="${m!==0}" aria-label="${g}${m?`, ${MARK[m]}`:''}" ${!token||busy?'disabled':''}>
-    <span class="ring" aria-hidden="true"></span><span class="name">${g}</span>
+  const off=!token||busy?'disabled':'';
+  $('menu').innerHTML=groups.map(g=>{const m=(mine||{})[g]||0,c=(counts||{})[g]||{up:0,down:0};return `<li class="dish${m>0?' up':m<0?' down':''}" data-g="${g}">
+    <span class="name">${g}</span>
     <span class="side">${counts&&c.up?`<span class="tally" title="A favor">${tally(c.up)}</span>`:''}${counts&&c.down?`<span class="tally down" title="En contra">✕ ${tally(c.down)}</span>`:''}${balls[g]?`<span class="balls">🙋 +${balls[g]}</span>`:''}${factor[g]?`<span class="balls down">👎 ×${frac(factor[g])}</span>`:''}</span>
-  </button></li>`;}).join('');
-  $('menu').querySelectorAll('.dish').forEach(b=>b.onclick=()=>toggle(b.dataset.g));
+    <span class="acts"><button type="button" class="mark up" data-v="1" aria-pressed="${m>0}" aria-label="Me apetece ${g}" title="Me apetece" ${off}>◯</button><button type="button" class="mark down" data-v="-1" aria-pressed="${m<0}" aria-label="No me apetece ${g}" title="Ni hablar" ${off}>✕</button></span>
+  </li>`;}).join('');
+  $('menu').querySelectorAll('.mark').forEach(b=>b.onclick=()=>mark(b.closest('.dish').dataset.g,+b.dataset.v));
 }
 const list=a=>a.length>1?a.slice(0,-1).join(', ')+' y '+a.at(-1):a[0];
 function summary(){
@@ -126,15 +129,14 @@ async function api(method,body){
   return j;
 }
 
-async function toggle(g){
+async function mark(g,v){
   if(!token||busy)return;
-  // cada toque: nada → rodeada → tachada → nada
-  const next={...(mine||{})},m=next[g]||0;
-  if(m===0)next[g]=1;else if(m===1)next[g]=-1;else delete next[g];
+  const next={...(mine||{})};
+  if(next[g]===v)delete next[g];else next[g]=v;          // el mismo botón quita la marca; el otro la cambia
   if(Object.keys(next).length>CRAVING_PICKS){say(`Solo tienes ${CRAVING_PICKS} marcas: quita una antes de marcar otra.`,'err');return;}
   busy=true;render();
   try{({mine,counts}=await api('POST',{after,marks:next}));busy=false;render();
-    if(mine&&mine[g])document.querySelector(`.dish[data-g="${CSS.escape(g)}"]`).classList.add('pop');
+    if(mine&&mine[g])document.querySelector(`.dish[data-g="${CSS.escape(g)}"] .mark.${v>0?'up':'down'}`).classList.add('pop');
     say(summary());}
   catch(e){busy=false;render();if(e.message)say(e.message,'err');}
 }
