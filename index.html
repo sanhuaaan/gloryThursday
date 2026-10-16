@@ -144,6 +144,8 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 .chip .xb{background:#1a1208;color:#f0bf3d;box-shadow:none}
 .xb.crav{background:#f2a3b3;color:#2a0f17;box-shadow:0 0 .4rem rgba(242,163,179,.5)}
 .chip .xb.crav{background:#2a0f17;color:#f2a3b3}
+.xb.crav.down{background:#a9d3ef;color:#0f2433;box-shadow:0 0 .4rem rgba(169,211,239,.5)}
+.chip .xb.crav.down{background:#0f2433;color:#a9d3ef}
 .finder .board-link{color:var(--chalk);font-size:.95rem}
 .promo.xtra{background:#f0bf3d;border-color:#8a6a12;box-shadow:0 0 .4rem rgba(240,191,61,.55)}
 .promo{display:inline-block;font-size:.72rem;font-variation-settings:"wdth" 95,"wght" 800;text-transform:uppercase;letter-spacing:.04em;padding:.12rem .5rem;border-radius:.2rem;background:var(--yellow);color:#1a1208;border:.1rem dashed #8a6a12;margin:.15rem 0 .3rem}
@@ -203,7 +205,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
     <li><h3>Sitios con promo</h3><p>Dentro de su cocina, un sitio con <b>2x1</b> en Glovo o Just Eat pesa <b>el doble</b> y uno con <b>descuento en porcentaje</b> pesa <b>una vez y media</b>. Se usan las promos del último barrido; no cambian la elección de cocina.</p></li>
     <li><h3>Valoración</h3><p>La nota de Glovo solo resta (en Just Eat, 4,5★ cuenta como 95 % y 4★ como 90 %). Se suaviza con 20 votos a la media del bombo, así que un sitio <b>sin valorar</b> queda <b>neutro</b>. Con 95 % o más pesa entero, de 90 a 95 % <b>tres cuartos</b>, y por debajo de 90 % <b>la mitad</b>. Se multiplica con la promo.</p></li>
     <li><h3>Bolas extra</h3><p>Algunos sorteos llevan <b>bolas extra</b> en ciertas cocinas o restaurantes. Cada bola suma el <b>peso normal</b> de su cocina o restaurante: con una pesa el doble, con dos el triple. Las de restaurante solo valen si su cocina también lleva. Todas caducan al registrar el sorteo. Se gestionan en la <a href="trastienda.html">trastienda</a>.</p></li>
-    <li><h3>Antojo de la oficina</h3><p>Entre sorteo y sorteo, cada uno rodea en la <a href="pizarra.html">pizarra</a> hasta tres cocinas que le apetecen. Cada <span id="cravPer"></span> votos dan a esa cocina <b>una bola extra</b> (como mucho <span id="cravMax"></span>), que se suma a las de la trastienda y se marca con 🙋. La pizarra se borra al registrar el ganador.</p></li>
+    <li><h3>Antojo de la oficina</h3><p>Entre sorteo y sorteo, cada uno tiene tres marcas en la <a href="pizarra.html">pizarra</a>: rodea las cocinas que le apetecen y tacha las que no. Cuenta el neto de cada cocina: cada <span id="cravPer"></span> a favor dan <b>una bola extra</b> (como mucho <span id="cravMax"></span>, 🙋), que se suma a las de la trastienda, y el neto en contra le <b>baja el peso</b> (<span id="cravDown"></span>, 👎), nunca a cero. La pizarra se borra al registrar el ganador.</p></li>
     <li id="rule-verdict"><h3>Dictamen de la oficina</h3><p>El día en que se registra el ganador, a partir de las 15:00, llega al chat el <a href="votar.html">informe del inspector</a> para votar qué tal la comida, con la cuenta de la oficina: un voto por persona, que se puede cambiar. Con al menos <span id="minVotes"></span> votos, la media decide el dictamen, que pesa sobre el sitio frente a los de su cocina: <b>★★★ ¡Repetiríamos!</b> ×1,25, <b>★★ Aprobado</b> ×1, <b>★ Ni fu ni fa</b> ×0,75 y <b>⊘ Nunca más</b> ×0,25. Si un sitio ha salido varias veces, manda el último dictamen.</p></li>
     <li><h3>Libro de actas</h3><p>Cada sorteo es un issue del repo, lo saque el bombo de la web o el físico. Quien lo registra queda a la vista. Cerrar el issue anula el sorteo.</p></li>
   </ul>
@@ -226,7 +228,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 <p class="method dimmable"><a class="backroom" href="trastienda.html">🎟️ Trastienda</a> Método: consulta a <code>api.glovoapp.com/v3/stores/{slug}</code> con las coordenadas 43.2970, -2.0051 el 9 de septiembre de 2026. Las tiendas fuera de zona responden "No available store address found"; se validó con coordenadas de Bilbao, Hernani y Zarautz. Los horarios son los de ese día y se repiten entre semana. Envío según Glovo sin Prime. Just Eat: su búsqueda pública por código postal (20018) en cada barrido, solo los sitios que no trae Glovo; los que dejan de repartir a ratos siguen en el bombo como cerrados.</p>
 </div>
 <script type="module">
-import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls,VERDICTS,VERDICTS_ENABLED,MIN_VOTES,verdictsBySlug,votesToVerdicts,cravingBalls,CRAVING_PER_BALL,CRAVING_MAX} from './rules.js';
+import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls,VERDICTS,VERDICTS_ENABLED,MIN_VOTES,verdictsBySlug,votesToVerdicts,cravingEffect,CRAVING_DOWN,CRAVING_PER_BALL,CRAVING_MAX} from './rules.js';
 // todo sale de ficheros publicados en Pages (sin API de GitHub: no hay límite de consultas); el barrido mantiene stores.json
 const DATA=await fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
   .catch(e=>{document.getElementById('count').textContent=`No se pudieron cargar los restaurantes (${e.message}). Recarga la página.`;throw e;});
@@ -240,7 +242,7 @@ const offGroups=new Set(store.get('offGroups',[])),offSlugs=new Set(store.get('o
 const exoticBox=document.getElementById('exotic');exoticBox.checked=store.get('exotic',false);
 const REPO='sanhuaaan/gloryThursday';
 // estado del sorteo, calculado con rules.js a partir de los ganadores y las bolas extra
-let winners=[],quarantine={},lastWin={},lastIdx={},latestRaffle=null,BALLS={},CRAVINGS={},cravCounts={},modCounts={},storeCounts={},VERDICT_FILE={},verdictOf={};
+let winners=[],quarantine={},lastWin={},lastIdx={},latestRaffle=null,BALLS={},CRAVINGS={},cravCounts={},cravFactor={},modCounts={},storeCounts={},VERDICT_FILE={},verdictOf={};
 const weightOf=group=>penaltyWeight(lastIdx[group]);
 // promo de Glovo: el 2x1 lleva dos bolas, un descuento en porcentaje bola y media, el resto una
 const promoWeight=r=>!r.promo?1:/\b(2x1|3x2)\b/i.test(r.promo)?2:/%/.test(r.promo)?1.5:1;
@@ -267,7 +269,7 @@ function issueUrl(r,date){
 // las bolas del antojo (pizarra.html, data/cravings.json) se suman a las de la trastienda, pero se muestran aparte
 function resolveMod(){
   ({balls:modCounts,stores:storeCounts}=activeBalls(BALLS,latestRaffle,rows));
-  cravCounts=cravingBalls(CRAVINGS,latestRaffle);
+  ({balls:cravCounts,factor:cravFactor}=cravingEffect(CRAVINGS,latestRaffle));
   Object.entries(cravCounts).forEach(([g,n])=>modCounts[g]=(modCounts[g]||0)+n);
 }
 function loadCravings(){
@@ -282,9 +284,9 @@ const stampHtml=(key,small)=>key&&VERDICTS[key]?`<span class="vstamp v-${key}${s
 function loadBalls(){
   fetch('https://sanhuaaan.github.io/gloryThursday-extraBalls/balls.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
 }
-const drawWeight=g=>weightOf(g)*(1+(modCounts[g]||0));
+const drawWeight=g=>weightOf(g)*(cravFactor[g]||1)*(1+(modCounts[g]||0));
 const extraOf=g=>(modCounts[g]||0)-(cravCounts[g]||0),cravOf=g=>cravCounts[g]||0,anyExtra=g=>modCounts[g]||0,extraStore=r=>storeCounts[r.slug]||0;
-const cravLabel=g=>cravOf(g)?`<span class="xb crav" title="Antojo de la oficina en la pizarra">🙋 +${cravOf(g)}</span>`:'';
+const cravLabel=g=>(cravOf(g)?`<span class="xb crav" title="Antojo de la oficina en la pizarra">🙋 +${cravOf(g)}</span>`:'')+(cravFactor[g]?`<span class="xb crav down" title="Tachada en la pizarra: pesa ${frac(cravFactor[g])}">👎 ×${frac(cravFactor[g])}</span>`:'');
 const ballsLabel=n=>`+${n} bola${n>1?'s':''}`;
 function loadWinners(){
   // copia de los issues ganadores que mantiene scripts/winners.py (barrido y cada cambio en issues)
@@ -341,7 +343,7 @@ function renderChips(){
     const b=document.createElement('span');b.className='chip';b.setAttribute('aria-pressed',String(!offGroups.has(g)));
     const w=weightOf(g),x=extraOf(g),pool=visible(),tot=[...new Set(pool.map(r=>r.group))].reduce((a,y)=>a+drawWeight(y),0);
     const pct=offGroups.has(g)||!pool.some(r=>r.group===g)?0:Math.round(100*drawWeight(g)/tot);
-    b.innerHTML=`<button type="button" class="tg" title="${offGroups.has(g)?'Meter la cocina en el bombo':`${pct} % de salir. Pulsa para sacarla del bombo`}${w<1?`. Ganó el ${fmtDate(lastWin[g])}: pesa ${frac(w)} este sorteo`:''}${x?`. Lleva ${ballsLabel(x)} extra`:''}${cravOf(g)?`. La pizarra le da ${ballsLabel(cravOf(g))} más`:''}">${g}${w<1?`<span class="w">×${frac(w)}</span>`:''}${x?`<span class="xb">${ballsLabel(x)}</span>`:''}${cravLabel(g)}</button><button type="button" class="cnt" title="Ver los ${counts[g]} sitios de ${g}">${counts[g]}</button>`;
+    b.innerHTML=`<button type="button" class="tg" title="${offGroups.has(g)?'Meter la cocina en el bombo':`${pct} % de salir. Pulsa para sacarla del bombo`}${w<1?`. Ganó el ${fmtDate(lastWin[g])}: pesa ${frac(w)} este sorteo`:''}${x?`. Lleva ${ballsLabel(x)} extra`:''}${cravOf(g)?`. La pizarra le da ${ballsLabel(cravOf(g))} más`:''}${cravFactor[g]?`. Tachada en la pizarra: pesa ${frac(cravFactor[g])}`:''}">${g}${w<1?`<span class="w">×${frac(w)}</span>`:''}${x?`<span class="xb">${ballsLabel(x)}</span>`:''}${cravLabel(g)}</button><button type="button" class="cnt" title="Ver los ${counts[g]} sitios de ${g}">${counts[g]}</button>`;
     b.querySelector('.tg').onclick=()=>{offGroups.has(g)?offGroups.delete(g):offGroups.add(g);persist();render();};
     b.querySelector('.cnt').onclick=()=>{const h=document.getElementById('g-'+groupsOrder.indexOf(g));if(h)h.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});};
     controls.insertBefore(b,anchor);
@@ -364,7 +366,7 @@ function render(){
     const groupAll=all.filter(r=>r.group===gr),items=groupAll.filter(match);if(!items.length)return;
     const inside=groupAll.filter(inDrum).length,w=weightOf(gr),offG=offGroups.has(gr);
     const h=document.createElement('li');h.className='ghead'+(offG?' off':'');h.id='g-'+groupsOrder.indexOf(gr);
-    h.innerHTML=`<h3>${gr}</h3><span class="meta">${inside} de ${groupAll.length} en el bombo${w<1?` · <span class="w">pesa ×${frac(w)}</span>`:''}${extraOf(gr)?` · <span class="xb">${ballsLabel(extraOf(gr))} extra</span>`:''}${cravOf(gr)?` · ${cravLabel(gr)}`:''}</span><span class="chip" aria-pressed="${!offG}"><button type="button" class="tg">${offG?'Meter la cocina':'Sacar la cocina'}</button></span>`;
+    h.innerHTML=`<h3>${gr}</h3><span class="meta">${inside} de ${groupAll.length} en el bombo${w<1?` · <span class="w">pesa ×${frac(w)}</span>`:''}${extraOf(gr)?` · <span class="xb">${ballsLabel(extraOf(gr))} extra</span>`:''}${cravOf(gr)||cravFactor[gr]?` · ${cravLabel(gr)}`:''}</span><span class="chip" aria-pressed="${!offG}"><button type="button" class="tg">${offG?'Meter la cocina':'Sacar la cocina'}</button></span>`;
     h.querySelector('.tg').onclick=()=>{offG?offGroups.delete(gr):offGroups.add(gr);persist();render();};
     g.appendChild(h);
     items.forEach(r=>{
@@ -386,7 +388,7 @@ exoticBox.onchange=()=>{persist();render();};
 document.getElementById('find').addEventListener('input',()=>render());
 render();renderUpdated();loadWinners();loadBalls();loadCravings();
 document.getElementById('minVotes').textContent=MIN_VOTES;
-document.getElementById('cravPer').textContent=CRAVING_PER_BALL;document.getElementById('cravMax').textContent='+'+CRAVING_MAX;
+document.getElementById('cravPer').textContent=CRAVING_PER_BALL;document.getElementById('cravMax').textContent='+'+CRAVING_MAX;document.getElementById('cravDown').textContent=CRAVING_DOWN.slice().reverse().map(([n,f])=>`${n}: ×${frac(f)}`).join(', ');
 if(VERDICTS_ENABLED)loadVerdicts();else document.getElementById('rule-verdict').hidden=true;
 setInterval(()=>{render();renderUpdated();},60000);
 const vl=document.getElementById('void');DATA.excluded.forEach(n=>{const li=document.createElement('li');li.textContent=n;vl.appendChild(li);});

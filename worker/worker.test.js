@@ -59,18 +59,22 @@ test('solo votan cuentas del dominio, para nuestra web, en el último sorteo; vo
   assert.deepEqual(await (await call('GET', '/counts')).json(), { 7: { repetir: 0, aprobado: 0, nifu: 2, nuncamas: 0 } });
 });
 
-test('pizarra: hasta 3 cocinas del bombo, un voto por persona que se puede cambiar o borrar, solo para el próximo sorteo', async () => {
-  assert.equal((await call('POST', '/craving', 'gmail', { after: 7, groups: ['Indio'] })).status, 401);
-  assert.equal((await call('POST', '/craving', 'ana', { after: 4, groups: ['Indio'] })).status, 409);    // pizarra de un sorteo pasado
-  assert.equal((await call('POST', '/craving', 'ana', { after: 7, groups: ['Indio', 'Poke', 'Pizza', 'Kebab'] })).status, 400);  // más de 3
-  assert.equal((await call('POST', '/craving', 'ana', { after: 7, groups: ['Fondue'] })).status, 400);   // no es una cocina del bombo
+test('pizarra: hasta 3 marcas (rodear o tachar) de cocinas del bombo, un voto por persona que se puede cambiar o borrar', async () => {
+  assert.equal((await call('POST', '/craving', 'gmail', { after: 7, marks: { Indio: 1 } })).status, 401);
+  assert.equal((await call('POST', '/craving', 'ana', { after: 4, marks: { Indio: 1 } })).status, 409);           // pizarra pasada
+  assert.equal((await call('POST', '/craving', 'ana', { after: 7, marks: { Indio: 1, Poke: -1, Pizza: 1, Kebab: -1 } })).status, 400);  // 4 marcas
+  assert.equal((await call('POST', '/craving', 'ana', { after: 7, marks: { Fondue: 1 } })).status, 400);          // no está en el bombo
+  assert.equal((await call('POST', '/craving', 'ana', { after: 7, marks: { Indio: 5 } })).status, 400);           // ni 1 ni -1
+  assert.equal((await call('POST', '/craving', 'ana', { after: 7, groups: ['Indio'] })).status, 400);             // formato viejo
 
   assert.deepEqual(await (await call('GET', '/craving', 'ana')).json(), { after: 7, mine: null, counts: null });
-  await call('POST', '/craving', 'ana', { after: 7, groups: ['Indio', 'Indio', 'Poke'] });             // repetidas cuentan una vez
-  await call('POST', '/craving', 'bea', { after: 7, groups: ['Indio'] });
-  assert.deepEqual(await (await call('POST', '/craving', 'ana', { after: 7, groups: ['Indio', 'Pizza'] })).json(),
-    { after: 7, mine: ['Indio', 'Pizza'], counts: { Indio: 2, Pizza: 1 } });                             // cambia su voto
-  assert.deepEqual(await (await call('GET', '/cravings')).json(), { after: 7, counts: { Indio: 2, Pizza: 1 } });
-  await call('POST', '/craving', 'bea', { after: 7, groups: [] });                                        // lista vacía: borra
-  assert.deepEqual(await (await call('GET', '/cravings')).json(), { after: 7, counts: { Indio: 1, Pizza: 1 } });
+  await call('POST', '/craving', 'ana', { after: 7, marks: { Indio: 1, Poke: -1 } });
+  await call('POST', '/craving', 'bea', { after: 7, marks: { Indio: -1, Poke: -1 } });
+  assert.deepEqual(await (await call('POST', '/craving', 'ana', { after: 7, marks: { Indio: 1, Pizza: 1, Poke: -1 } })).json(),
+    { after: 7, mine: { Indio: 1, Pizza: 1, Poke: -1 }, counts: { Indio: { up: 1, down: 1 }, Pizza: { up: 1, down: 0 }, Poke: { up: 0, down: 2 } } });
+  await call('POST', '/craving', 'bea', { after: 7, marks: {} });                                                 // {} borra su voto
+  assert.deepEqual(await (await call('GET', '/cravings')).json(),
+    { after: 7, counts: { Indio: { up: 1, down: 0 }, Pizza: { up: 1, down: 0 }, Poke: { up: 0, down: 1 } } });
+  cravings.set('7|viejo', { after: 7, groups: JSON.stringify(['Pizza']) });                                     // fila del formato viejo: rodeadas
+  assert.deepEqual((await (await call('GET', '/cravings')).json()).counts.Pizza, { up: 2, down: 0 });
 });

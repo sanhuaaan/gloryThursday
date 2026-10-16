@@ -83,24 +83,31 @@ export function verdictsBySlug(winners, verdicts) {
   return out;
 }
 
-// Peso de una cocina en la primera fase del sorteo: penalización × (1 + bolas extra).
-export const cuisineWeight = (group, lastIdx, balls) => penaltyWeight(lastIdx[group]) * (1 + (balls[group] || 0));
+// Peso de una cocina en la primera fase: penalización × tachones de la pizarra × (1 + bolas extra).
+export const cuisineWeight = (group, lastIdx, balls, factor = {}) => penaltyWeight(lastIdx[group]) * (factor[group] || 1) * (1 + (balls[group] || 0));
 
 // Votación: el Worker de Cloudflare (worker/) guarda los votos; solo entran cuentas de Google del dominio de la oficina.
 export const VOTE_API = 'https://glory-votes.juevesdegloria.workers.dev';           // https://glory-votes.<cuenta>.workers.dev
 export const GOOGLE_CLIENT_ID = '867747052313-5urh1tb1h3rhhrc7f2no4p2a2t6da2mk.apps.googleusercontent.com';   // ID de cliente OAuth (Google Cloud → Credenciales), tipo "Aplicación web"
 export const VOTE_DOMAIN = 'xabet.net';
 
-// Antojo de la oficina: entre un sorteo y el siguiente, cada persona marca en la pizarra (pizarra.html) hasta CRAVING_PICKS
-// cocinas que le apetecen. Cada CRAVING_PER_BALL votos dan una bola extra a esa cocina, con un máximo de CRAVING_MAX.
-// data/cravings.json = {after: nº del último ganador cuando se votó, counts: {cocina: votos}}; caducan al registrar otro ganador.
+// Antojo de la oficina: entre un sorteo y el siguiente, cada persona tiene CRAVING_PICKS marcas en la pizarra (pizarra.html):
+// rodear una cocina es un voto a favor y tacharla, uno en contra. Cuenta el neto (a favor − en contra) de cada cocina:
+// cada CRAVING_PER_BALL de neto positivo da una bola extra (como mucho CRAVING_MAX) y el neto negativo baja su peso por
+// tramos (CRAVING_DOWN), nunca a cero. data/cravings.json = {after: nº del último ganador, counts: {cocina: {up, down}}};
+// caduca al registrar otro ganador.
 export const CRAVING_PICKS = 3, CRAVING_PER_BALL = 3, CRAVING_MAX = 3;
-export function cravingBalls(file, latest) {
-  const out = {};
-  if (!file || latest == null || file.after !== latest) return out;
-  Object.entries(file.counts || {}).forEach(([g, n]) => {
-    const b = Math.min(CRAVING_MAX, Math.floor(n / CRAVING_PER_BALL));
-    if (b > 0) out[g] = b;
+export const CRAVING_DOWN = [[-9, 0.25], [-6, 0.5], [-3, 0.75]];   // [neto ≤ límite, peso]
+const tally = c => typeof c === 'number' ? { up: c, down: 0 } : { up: (c && c.up) || 0, down: (c && c.down) || 0 };
+export function cravingEffect(file, latest) {
+  const balls = {}, factor = {};
+  if (!file || latest == null || file.after !== latest) return { balls, factor };
+  Object.entries(file.counts || {}).forEach(([g, c]) => {
+    const { up, down } = tally(c), net = up - down;
+    const b = Math.min(CRAVING_MAX, Math.floor(net / CRAVING_PER_BALL));
+    if (b > 0) balls[g] = b;
+    const f = (CRAVING_DOWN.find(([lim]) => net <= lim) || [0, 1])[1];
+    if (f < 1) factor[g] = f;
   });
-  return out;
+  return { balls, factor };
 }

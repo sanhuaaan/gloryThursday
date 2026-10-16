@@ -1,7 +1,7 @@
 // Prueba de las reglas del sorteo: node --test scripts/rules.test.js (también la lanza GitHub al cambiar rules.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, verdictsBySlug, votesToVerdicts, cravingBalls } from '../rules.js';
+import { COOLDOWN, latestRaffle, parseWinners, raffleState, penaltyWeight, activeBalls, cuisineWeight, verdictsBySlug, votesToVerdicts, cravingEffect } from '../rules.js';
 
 const issue = (number, slug, { fecha, labels = ['ganador'], created = '2026-01-01T10:00:00Z', pr = false } = {}) => ({
   number, created_at: created, html_url: `u${number}`, user: { login: 'x', avatar_url: 'a' }, labels,
@@ -61,9 +61,13 @@ test('votos: media redondeada de 4 a 1 puntos, mínimo de votos, un sorteo sin v
   assert.deepEqual(votesToVerdicts(undefined), {});
 });
 
-test('antojo: +1 bola cada 3 votos hasta +3, solo para el sorteo en curso', () => {
-  const file = { after: 7, counts: { Indio: 2, Poke: 3, Pizza: 8, Kebab: 20 } };
-  assert.deepEqual(cravingBalls(file, 7), { Poke: 1, Pizza: 2, Kebab: 3 });
-  assert.deepEqual(cravingBalls(file, 8), {});            // ya hubo otro ganador: caducadas
-  assert.deepEqual(cravingBalls(undefined, 7), {});
+test('antojo: neto a favor da bolas (+1 cada 3, hasta +3), neto en contra baja el peso por tramos; solo el sorteo en curso', () => {
+  const file = { after: 7, counts: { Indio: { up: 2 }, Poke: { up: 3 }, Pizza: { up: 9, down: 1 }, Kebab: 20,
+    Sushi: { up: 4, down: 4 }, Mexicano: { down: 3 }, Pollo: { up: 1, down: 8 }, Grill: { down: 12 } } };
+  assert.deepEqual(cravingEffect(file, 7), {
+    balls: { Poke: 1, Pizza: 2, Kebab: 3 },                                  // Kebab: número suelto = votos a favor
+    factor: { Mexicano: 0.75, Pollo: 0.5, Grill: 0.25 },                     // Sushi: empate, nada
+  });
+  assert.deepEqual(cravingEffect(file, 8), { balls: {}, factor: {} });       // ya hubo otro ganador: caducado
+  assert.equal(cuisineWeight('Pollo', { Pollo: 0 }, { Pollo: 1 }, { Pollo: 0.5 }), 0.25);   // ¼ penalización × ½ tachones × 2
 });

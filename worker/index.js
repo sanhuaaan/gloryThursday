@@ -3,8 +3,8 @@
 //   GET  /vote?sorteo=N       tu voto en ese sorteo y, si ya votaste, cómo va      (Authorization: Bearer <token de Google>)
 //   POST /vote {sorteo, verdict}  vota o cambia el voto; solo en el último sorteo  (ídem)
 //   GET  /cravings            antojo de la oficina para el próximo sorteo: {after, counts} (público; lo copia winners.py)
-//   GET  /craving             tus cocinas marcadas en la pizarra y, si ya votaste, cómo va    (Authorization: Bearer …)
-//   POST /craving {after, groups}  marca hasta CRAVING_PICKS cocinas (lista vacía = borra tu voto)  (ídem)
+//   GET  /craving             tus marcas en la pizarra y, si ya votaste, cómo va    (Authorization: Bearer …)
+//   POST /craving {after, marks: {cocina: 1 | -1}}  hasta CRAVING_PICKS marcas, rodear (1) o tachar (-1); {} = borra  (ídem)
 // Despliegue: cd worker && npx wrangler@4 deploy   (esquema: npx wrangler@4 d1 execute glory-votes --remote --file schema.sql)
 import { parseWinners, latestRaffle, VERDICTS, CRAVING_PICKS, GOOGLE_CLIENT_ID, VOTE_DOMAIN } from '../rules.js';
 
@@ -32,10 +32,13 @@ const openRaffle = async () => (parseWinners(await winners())[0] || {}).number;
 const cravingRound = async () => latestRaffle(await winners());
 const cuisines = async () => new Set((await fetch(STORES, { cf: { cacheTtl: 300 } }).then(r => r.json())).rows.map(r => r.group));
 
+// marcas guardadas como {cocina: 1 | -1}; las primeras versiones guardaban una lista de cocinas rodeadas
+const marksOf = json => { const m = JSON.parse(json); return Array.isArray(m) ? Object.fromEntries(m.map(g => [g, 1])) : m; };
+
 async function cravingCounts(db, after) {
   const counts = {};
-  (await db.prepare('SELECT groups FROM cravings WHERE after_raffle = ?').bind(after).all()).results
-    .forEach(({ groups }) => JSON.parse(groups).forEach(g => { counts[g] = (counts[g] || 0) + 1; }));
+  (await db.prepare('SELECT groups FROM cravings WHERE after_raffle = ?').bind(after).all()).results.forEach(({ groups }) =>
+    Object.entries(marksOf(groups)).forEach(([g, v]) => { const c = counts[g] = counts[g] || { up: 0, down: 0 }; c[v > 0 ? 'up' : 'down']++; }));
   return counts;
 }
 
@@ -47,15 +50,16 @@ async function craving(req, db, url) {
   if (req.method === 'POST') {
     const body = await req.json().catch(() => ({}));
     if (body.after !== after) return json({ error: 'Esa pizarra ya se borró: ha habido otro sorteo', after }, 409);
-    const groups = [...new Set(Array.isArray(body.groups) ? body.groups : [])];
-    const valid = await cuisines();
-    if (groups.length > CRAVING_PICKS || groups.some(g => !valid.has(g))) return json({ error: `Marca hasta ${CRAVING_PICKS} cocinas del bombo` }, 400);
-    if (groups.length) await db.prepare('INSERT INTO cravings (after_raffle, voter, groups, at) VALUES (?1, ?2, ?3, ?4) ON CONFLICT (after_raffle, voter) DO UPDATE SET groups = ?3, at = ?4')
-      .bind(after, who, JSON.stringify(groups), new Date().toISOString()).run();
+    const marks = body.marks && typeof body.marks === 'object' && !Array.isArray(body.marks) ? body.marks : null;
+    const valid = await cuisines(), entries = Object.entries(marks || {});
+    if (!marks || entries.length > CRAVING_PICKS || entries.some(([g, v]) => !valid.has(g) || (v !== 1 && v !== -1)))
+      return json({ error: `Hasta ${CRAVING_PICKS} marcas, rodeando o tachando cocinas del bombo` }, 400);
+    if (entries.length) await db.prepare('INSERT INTO cravings (after_raffle, voter, groups, at) VALUES (?1, ?2, ?3, ?4) ON CONFLICT (after_raffle, voter) DO UPDATE SET groups = ?3, at = ?4')
+      .bind(after, who, JSON.stringify(marks), new Date().toISOString()).run();
     else await db.prepare('DELETE FROM cravings WHERE after_raffle = ? AND voter = ?').bind(after, who).run();
   }
   const row = await db.prepare('SELECT groups FROM cravings WHERE after_raffle = ? AND voter = ?').bind(after, who).first('groups');
-  const mine = row ? JSON.parse(row) : null;
+  const mine = row ? marksOf(row) : null;
   return json({ after, mine, counts: mine ? await cravingCounts(db, after) : null });
 }
 
