@@ -15,3 +15,10 @@ CREATE TABLE IF NOT EXISTS cravings (
   at     TEXT    NOT NULL,
   PRIMARY KEY (after_raffle, voter)
 );
+
+-- Bolas extra de la trastienda: un único documento JSON {balls, stores, mTo, updatedAt} con versión para no pisarse.
+CREATE TABLE IF NOT EXISTS extra_balls (
+  id      INTEGER PRIMARY KEY CHECK (id = 1),
+  doc     TEXT    NOT NULL,
+  version INTEGER NOT NULL
+);

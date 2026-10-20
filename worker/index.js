@@ -5,23 +5,32 @@
 //   GET  /cravings            antojo de la oficina para el próximo sorteo: {after, counts} (público; lo copia winners.py)
 //   GET  /craving             tus marcas en la pizarra y, si ya votaste, cómo va    (Authorization: Bearer …)
 //   POST /craving {after, marks: {cocina: 1 | -1}}  hasta CRAVING_PICKS marcas, rodear (1) o tachar (-1); {} = borra  (ídem)
+//   GET  /balls               bolas extra de la trastienda: {balls, stores, mTo, updatedAt, version} (público; lo lee el bombo)
+//   GET  /backroom            ¿esta cuenta tiene pase a la trastienda?            (Authorization: Bearer …)
+//   PUT  /balls {balls, stores, mTo, version}  guarda las bolas; solo cuentas del secreto BACKROOM (correos separados por comas)
 // Despliegue: cd worker && npx wrangler@4 deploy   (esquema: npx wrangler@4 d1 execute glory-votes --remote --file schema.sql)
 import { parseWinners, latestRaffle, VERDICTS, CRAVING_PICKS, GOOGLE_CLIENT_ID, VOTE_DOMAIN } from '../rules.js';
 
 const WINNERS = 'https://sanhuaaan.github.io/gloryThursday/data/winners.json';
 const STORES = 'https://sanhuaaan.github.io/gloryThursday/data/stores.json';
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' };
+const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS' };
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
 
 // quién vota: Google valida la firma del token; aquí, que sea para nuestra web y de una cuenta de la oficina
-async function voter(req) {
+async function account(req) {
   const token = (req.headers.get('Authorization') || '').replace(/^Bearer /, '');
   if (!token) return null;
   const r = await fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(token));  // ponytail: tokeninfo basta para ~20 votos al mes
   if (!r.ok) return null;
   const t = await r.json();
   if (t.aud !== GOOGLE_CLIENT_ID || t.email_verified !== 'true' || t.hd !== VOTE_DOMAIN) return null;
-  const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t.email.toLowerCase()));
+  return t.email.toLowerCase();
+}
+// en las tablas de votos nunca va el correo, solo su huella
+async function voter(req) {
+  const email = await account(req);
+  if (!email) return null;
+  const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(email));
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
@@ -74,12 +83,45 @@ async function counts(db, raffle) {
   return out;
 }
 
+// Bolas extra de la trastienda: un solo documento con versión, para que dos guardados a la vez no se pisen sin saberlo.
+// Solo valen para el sorteo siguiente al último ganador (mTo); las de restaurante, solo si su cocina lleva bolas.
+const EMPTY_BALLS = { balls: {}, stores: {}, mTo: null, updatedAt: null, version: 0 };
+async function readBalls(db) {
+  const row = await db.prepare('SELECT doc, version FROM extra_balls WHERE id = 1').first();
+  return row ? { ...JSON.parse(row.doc), version: row.version } : EMPTY_BALLS;
+}
+const allowed = (env, email) => (env.BACKROOM || '').toLowerCase().split(',').map(e => e.trim()).includes(email);
+
+async function backroom(req, env, url) {
+  if (url.pathname === '/balls' && req.method === 'GET') return json(await readBalls(env.DB));
+  const email = await account(req);
+  if (!email) return json({ error: `Entra con tu cuenta de ${VOTE_DOMAIN}` }, 401);
+  if (!allowed(env, email)) return json({ error: 'Esta cuenta no tiene pase a la trastienda' }, 403);
+  if (url.pathname === '/backroom') return json({ email });
+  const body = await req.json().catch(() => ({}));
+  const cur = await readBalls(env.DB);
+  if (body.version !== cur.version) return json({ error: 'Alguien ha cambiado las bolas mientras tanto', current: cur }, 409);
+  const latest = latestRaffle(await winners());
+  if (body.mTo !== latest) return json({ error: 'Ha habido un sorteo nuevo: recarga la trastienda', current: cur }, 409);
+  const rows = (await fetch(STORES, { cf: { cacheTtl: 300 } }).then(r => r.json())).rows, groupOf = Object.fromEntries(rows.map(r => [r.slug, r.group]));
+  const ok = n => Number.isInteger(n) && n > 0 && n <= 9, balls = body.balls || {}, stores = body.stores || {};
+  if (Object.entries(balls).some(([g, n]) => !ok(n) || !Object.values(groupOf).includes(g))
+    || Object.entries(stores).some(([slug, n]) => !ok(n) || !balls[groupOf[slug]]))
+    return json({ error: 'Bolas no válidas: de 1 a 9, en cocinas del bombo, y las de restaurante solo si su cocina lleva' }, 400);
+  const doc = { balls, stores, mTo: latest, updatedAt: new Date().toISOString() };
+  const done = await env.DB.prepare('INSERT INTO extra_balls (id, doc, version) VALUES (1, ?1, ?2) ON CONFLICT (id) DO UPDATE SET doc = ?1, version = ?2 WHERE version = ?3')
+    .bind(JSON.stringify(doc), cur.version + 1, cur.version).run();
+  if (done.meta && done.meta.changes === 0) return json({ error: 'Alguien ha cambiado las bolas mientras tanto', current: await readBalls(env.DB) }, 409);
+  return json({ ...doc, version: cur.version + 1 });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
     if (url.pathname === '/counts') return json(await counts(env.DB));
     if (url.pathname === '/cravings' || url.pathname === '/craving') return craving(req, env.DB, url);
+    if (url.pathname === '/balls' || url.pathname === '/backroom') return backroom(req, env, url);
     if (url.pathname !== '/vote') return json({ error: 'no existe' }, 404);
 
     const who = await voter(req);

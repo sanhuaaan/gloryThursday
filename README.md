@@ -5,7 +5,7 @@ Bombo de bingo para decidir dónde pedimos la comida en la oficina de Zuatzu (Ju
 - `index.html`: la página. Abrir en el navegador, sin build.
 - `data/stores.json`: restaurantes de Glovo que sí llegan a la oficina, y los que no.
 - `data/slugs.txt`: tiendas a comprobar (slugs de Glovo Donostia). El barrido añade las que aparecen nuevas en los listados de Glovo y quita las que Glovo da por inexistentes.
-- Veredicto de la mesa (sellos tras cada sorteo, en la trastienda): oculto. Se recupera poniendo `VERDICTS_ENABLED = true` en `rules.js`.
+- Dictamen de la oficina (`votar.html`), antojo de la pizarra (`pizarra.html`) y bolas extra de la trastienda (`trastienda.html`): los guarda el Worker de Cloudflare de `worker/` (D1), con inicio de sesión de Google limitado a xabet.net. La trastienda solo admite los correos del secreto `BACKROOM` del Worker.
 - `rules.js`: reglas del sorteo (ganadores, cuarentena, penalización, bolas extra) que comparten el bombo, la trastienda y el recordatorio.
 - `scripts/sweep.py`: regenera `stores.json` consultando Glovo con las coordenadas de la oficina.
 - `.github/workflows/sweep.yml`: lanza el barrido cada media hora (y a mano desde Actions) y commitea el resultado.
@@ -17,7 +17,7 @@ Para actualizar los datos:
 python3 scripts/sweep.py
 ```
 
-La página lee `data/stores.json`, `data/winners.json` (copia de los issues ganadores, `scripts/winners.py`) y `balls.json` del repo [gloryThursday-extraBalls](https://github.com/sanhuaaan/gloryThursday-extraBalls) (bolas extra, escritas desde `trastienda.html`; va aparte para que el token de la trastienda no pueda tocar este repo) al abrirse, todo desde Pages y sin consultar la API de GitHub, y proyecta el estado de cada tienda sobre la hora real del visitante (Glovo no expone horario semanal ni permite CORS desde otros dominios). Si `stores.json` no carga, la página lo dice y pide recargar.
+La página lee `data/stores.json`, `data/winners.json` (copia de los issues ganadores, `scripts/winners.py`) y las bolas extra de la trastienda (`GET /balls` del Worker) al abrirse, sin consultar la API de GitHub, y proyecta el estado de cada tienda sobre la hora real del visitante (Glovo no expone horario semanal ni permite CORS desde otros dominios). Si `stores.json` no carga, la página lo dice y pide recargar.
 
 ## Reglas del sorteo
 

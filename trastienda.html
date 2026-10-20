@@ -34,23 +34,6 @@ main{position:relative;max-width:96rem;min-height:100vh;min-height:100dvh;margin
 @keyframes flicker{0%,18%,22%,62%,64%{opacity:.25}20%,24%,60%,66%,100%{opacity:1}}
 .sub{margin:0;color:var(--chalk-dim);font-size:.88rem;text-align:center;max-width:44rem}
 
-/* caja fuerte */
-.safe{width:min(22rem,100%);display:grid;gap:1rem;justify-items:center;padding:1.6rem 1.4rem 1.4rem;border-radius:1rem;
-  background:linear-gradient(145deg,#4b4f55,#2a2d31 60%,#1c1e21);border:.3rem solid #15171a;box-shadow:inset 0 .15rem 0 rgba(255,255,255,.12),0 1.2rem 2rem rgba(0,0,0,.55);perspective:60rem}
-.door{display:grid;gap:1rem;justify-items:center;width:100%;transform-origin:left center;transition:transform .9s cubic-bezier(.5,0,.3,1),opacity .9s}
-.safe.open .door{transform:rotateY(-100deg);opacity:0}
-.dial{width:9rem;height:9rem;border-radius:50%;position:relative;
-  background:radial-gradient(circle,#2b2e33 0 38%,transparent 39%),repeating-conic-gradient(from 0deg,var(--brass-light) 0 1.2deg,transparent 1.2deg 9deg),radial-gradient(circle,#8f7330 0 62%,var(--brass) 63% 70%,var(--brass-dark) 71%);
-  box-shadow:0 .4rem .8rem rgba(0,0,0,.6),inset 0 0 .6rem rgba(0,0,0,.5);transition:transform 1.1s cubic-bezier(.3,.9,.3,1)}
-.dial::after{content:"";position:absolute;left:50%;top:-.55rem;width:0;height:0;border-left:.45rem solid transparent;border-right:.45rem solid transparent;border-top:.7rem solid var(--red);transform:translateX(-50%)}
-.dial .knob{position:absolute;inset:35%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f7e3a8,var(--brass) 45%,var(--brass-dark));box-shadow:0 .2rem .4rem rgba(0,0,0,.6)}
-.safe.spin .dial{transform:rotate(720deg)}
-.safe.nope .dial{animation:nope .45s}
-@keyframes nope{20%{transform:rotate(-14deg)}45%{transform:rotate(11deg)}70%{transform:rotate(-6deg)}100%{transform:rotate(0)}}
-.plate{width:100%;display:grid;gap:.6rem;padding:.9rem;border-radius:.4rem;background:linear-gradient(180deg,var(--brass-light),var(--brass) 55%,var(--brass-dark));color:#2a1d05;box-shadow:inset 0 .1rem 0 rgba(255,255,255,.6),0 .2rem .3rem rgba(0,0,0,.5)}
-.plate h2{margin:0;font-family:'Rye',serif;font-weight:400;font-size:1.1rem;text-align:center;letter-spacing:.04em}
-.plate p{margin:0;font-size:.8rem}
-.plate a{color:#6b0f1a;font-variation-settings:"wght" 700}
 label{display:grid;gap:.25rem;font-size:.78rem;font-variation-settings:"wght" 800;text-transform:uppercase;letter-spacing:.1em}
 input{font:inherit;font-size:1rem;letter-spacing:.05em;text-transform:none;padding:.5rem .6rem;border-radius:.3rem;border:.12rem solid #5b4410;background:#fffaf0;color:var(--paper-ink)}
 .btn{font:inherit;font-variation-settings:"wght" 800;padding:.6rem 1.2rem;border-radius:999rem;border:.18rem solid var(--paper);background:var(--red);color:var(--paper);cursor:pointer;box-shadow:0 .3rem 0 #7a1420}
@@ -146,15 +129,12 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
 @keyframes appear{from{opacity:0;transform:translateY(.8rem)}}
 .counter{width:100%;display:grid;justify-items:center;gap:.9rem;padding-top:.2rem;background:linear-gradient(180deg,#3a2408,#2a1a05 .5rem,transparent .5rem)}
 .slot{width:70%;height:.45rem;border-radius:0 0 .4rem .4rem;background:#0b0305;box-shadow:inset 0 .2rem .3rem rgba(0,0,0,.9)}
-.ticket{position:relative;width:88%;display:grid;gap:.3rem;padding:.8rem 1.2rem .7rem;margin-top:-.2rem;color:#4a1a05;cursor:text;
+.ticket{position:relative;width:88%;display:grid;gap:.5rem;justify-items:center;padding:.8rem 1.2rem .7rem;margin-top:-.2rem;color:#4a1a05;
   background:radial-gradient(circle at 0 50%,transparent .55rem,#f7e9c3 .58rem) left/51% 100% no-repeat,radial-gradient(circle at 100% 50%,transparent .55rem,#f7e9c3 .58rem) right/51% 100% no-repeat;
   filter:drop-shadow(0 .25rem .3rem rgba(0,0,0,.45))}
 .ticket::before{content:"";position:absolute;inset:.35rem .9rem;border:.1rem dashed rgba(107,15,26,.45);border-radius:.2rem;pointer-events:none}
 .tk-head,.tk-foot{font-size:.66rem;text-transform:uppercase;letter-spacing:.14em;font-variation-settings:"wght" 800;text-align:center;color:#8a1a28}
 .tk-foot{letter-spacing:.06em;font-variation-settings:"wght" 600;color:#8a6a3f}
-.ticket input{width:100%;border:0;border-bottom:.12rem solid rgba(107,15,26,.35);border-radius:0;background:transparent;text-align:center;font-family:'Rye',serif;font-size:1.25rem;letter-spacing:.2em;padding:.25rem 0;color:#3a1205}
-.ticket input::placeholder{font-family:'Archivo',sans-serif;font-size:.85rem;letter-spacing:.02em;color:#a88a5f}
-.ticket input:focus-visible{outline:none;border-bottom-color:var(--red)}
 .stamp{position:absolute;left:50%;top:50%;padding:.15rem .7rem;white-space:nowrap;border:.2rem solid var(--red);border-radius:.3rem;font-family:'Rye',serif;font-size:1.3rem;color:var(--red);background:rgba(247,233,195,.7);
   opacity:0;transform:translate(-50%,-50%) rotate(-12deg);transition:opacity .2s;pointer-events:none}
 .booth.reject .stamp{opacity:1;transform:translate(-50%,-50%) rotate(-12deg)}
@@ -175,20 +155,6 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   </header>
   <div class="stage">
 
-  <section class="safe" id="setup" hidden>
-    <div class="door">
-      <div class="dial" aria-hidden="true"><span class="knob"></span></div>
-      <div class="plate">
-        <h2>Estrenar la caja</h2>
-        <p>Solo se hace una vez. Crea un token en <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub, tokens de grano fino</a>, con acceso solo al repositorio <b>sanhuaaan/gloryThursday-extraBalls</b> y lectura y escritura en <b>Contents</b>. Elige una combinación larga: el token se guarda cifrado con ella en ese repositorio, que es público.</p>
-        <label>Token<input id="sToken" type="password" autocomplete="off" spellcheck="false"></label>
-        <label>Combinación<input id="sPw" type="password" autocomplete="new-password"></label>
-        <label>Repite la combinación<input id="sPw2" type="password" autocomplete="new-password"></label>
-        <button class="btn" id="sGo" type="button">Cerrar con llave</button>
-      </div>
-    </div>
-  </section>
-
   <section class="booth" id="login" hidden>
     <div class="marquee" aria-hidden="true"><span>Taquilla</span></div>
     <div class="window" aria-hidden="true">
@@ -198,13 +164,12 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
     </div>
     <div class="counter">
       <div class="slot" aria-hidden="true"></div>
-      <label class="ticket" id="ticket">
+      <div class="ticket" id="ticket">
         <span class="tk-head">Admite a uno · Trastienda</span>
-        <input id="pw" type="password" autocomplete="current-password" placeholder="Escribe la combinación" aria-label="Combinación">
-        <span class="tk-foot">Nº 0925 · Válido solo para el próximo sorteo</span>
-        <span class="stamp" aria-hidden="true">No válido</span>
-      </label>
-      <button class="btn" id="enter" type="button">Entregar boleto</button>
+        <div id="gsi"></div>
+        <span class="tk-foot">Solo cuentas con pase · Válido para el próximo sorteo</span>
+        <span class="stamp" aria-hidden="true">Sin pase</span>
+      </div>
     </div>
   </section>
 
@@ -227,92 +192,55 @@ button:focus-visible,input:focus-visible{outline:.2rem solid var(--neon-warm);ou
   <p class="err" id="error" hidden></p>
 </main>
 <script type="module">
-import {latestRaffle,activeBalls,cravingEffect} from './rules.js';
-const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO,ITER=600000;
-// las bolas y la llave viven en un repo aparte: el token solo tiene acceso a él, así que no puede tocar el bombo
-const EXTRA='sanhuaaan/gloryThursday-extraBalls',EXTRA_API='https://api.github.com/repos/'+EXTRA,EXTRA_PAGES='https://sanhuaaan.github.io/gloryThursday-extraBalls/';
+import {latestRaffle,activeBalls,cravingEffect,VOTE_API,GOOGLE_CLIENT_ID,VOTE_DOMAIN} from './rules.js';
+const REPO='sanhuaaan/gloryThursday',API='https://api.github.com/repos/'+REPO;
+// las bolas viven en el Worker de Cloudflare (worker/, GET/PUT /balls); para guardar hace falta una cuenta de Google con pase
 const COLORS=['#d3283a','#f0bf3d','#2a6fb0','#3f9a5a','#f6f2e8'];// mismos colores y orden que el bombo
 const $=id=>document.getElementById(id);
-const enc=new TextEncoder(),dec=new TextDecoder();
-const b64=u=>btoa(String.fromCharCode(...u)),unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){}}};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
-let token=ss.get('gt'),keyFile=null,current={balls:{},stores:{}},draft={balls:{},stores:{}},groups=[],gcolor={},mId=null,pollTimer=null,lastDrop=null;
-// cache:'no-store': GitHub deja cachear sus respuestas 60 s y una lectura vieja haría fallar el guardado
-const gh=(path,opt={})=>fetch(EXTRA_API+path,{cache:'no-store',...opt,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token,...(opt.headers||{})}});
+// el token de Google dura una hora; se guarda en la pestaña para no pedir entrar en cada recarga
+let token=ss.get('gid'),current={balls:{},stores:{}},draft={balls:{},stores:{}},groups=[],gcolor={},pollTimer=null,lastDrop=null;
+const worker=(path,opt={})=>fetch(VOTE_API+path,{cache:'no-store',...opt,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json',...(opt.headers||{})}});
 function showError(m){$('error').textContent=m||'';$('error').hidden=!m;}
-function view(id){['setup','login','panel'].forEach(x=>$(x).hidden=x!==id);}
+function view(id){['login','panel'].forEach(x=>$(x).hidden=x!==id);}
 // el rótulo solo parpadea al cambiar de texto
 function sign(text,kind,sub){const s=$('sign');if(s.dataset.t!==text){s.dataset.t=text;s.textContent=text;s.className='sign '+kind+(reduce?'':' flicker');}$('signSub').textContent=sub||'';}
 
-// token cifrado con la combinación (PBKDF2 + AES-GCM); el fichero es público, la combinación no
-async function aesKey(pw,salt,iter){const base=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
-async function lock(tok,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await aesKey(pw,salt,ITER),enc.encode(tok)));return {v:1,iter:ITER,salt:b64(salt),iv:b64(iv),ct:b64(ct)};}
-async function unlock(k,pw){return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(k.iv)},await aesKey(pw,unb64(k.salt),k.iter),unb64(k.ct)));}
-
-async function openSafe(id){const s=$(id);s.classList.add('spin');await wait(900);s.classList.add('open');await wait(700);s.classList.remove('spin','open');view('panel');refresh();}
-
-function refuse(id){const s=$(id);s.classList.remove('nope');void s.offsetWidth;s.classList.add('nope');}
-
-async function setup(){
-  showError('');const tok=$('sToken').value.trim(),pw=$('sPw').value;
-  if(!tok||!pw)return showError('Rellena el token y la combinación.');
-  if(pw!==$('sPw2').value)return showError('Las combinaciones no coinciden.');
-  if(pw.length<12)return showError('Usa una combinación de al menos 12 caracteres.');
-  $('sGo').disabled=true;token=tok;
-  try{
-    const r=await gh('');if(!r.ok)throw new Error('GitHub no acepta el token para '+EXTRA+' ('+r.status+').');
-    const old=await gh('/contents/key.json?ref=main');const oldSha=old.ok?(await old.json()).sha:null;   // repetir la configuración cambia la combinación
-    const k=await lock(tok,pw);
-    const put=await gh('/contents/key.json',{method:'PUT',body:JSON.stringify({message:'chore: set access key',content:b64(enc.encode(JSON.stringify(k,null,1))),...(oldSha?{sha:oldSha}:{})})});
-    if(!put.ok){let why='';try{why=(await put.json()).message||'';}catch(e){}
-      throw new Error(`GitHub no dejó guardar la clave (HTTP ${put.status}${why?': '+why:''}).`+(put.status===403||put.status===404?` Revisa que el token tenga en "Repository access" el repo ${EXTRA} (no basta con gloryThursday) y "Contents: Read and write".`:''));}
-    keyFile=k;ss.set('gt',tok);['sToken','sPw','sPw2'].forEach(x=>$(x).value='');await openSafe('setup');
-  }catch(e){token=null;refuse('setup');showError(e.message);}
-  $('sGo').disabled=false;
-}
-// taquilla: si la combinación vale, sube la persiana y se entra; si no, el boleto queda sellado hasta que se vuelva a escribir
-async function login(){
-  const b=$('login'),pw=$('pw').value;if(!pw)return $('pw').focus();
-  showError('');$('enter').disabled=true;$('enter').textContent='Comprobando…';b.classList.remove('reject');
-  let tok=null;try{tok=await unlock(keyFile,pw);}catch(e){}
-  $('enter').textContent='Entregar boleto';
-  if(tok){
-    token=tok;ss.set('gt',tok);b.classList.add('open');
+// taquilla: el boleto es la cuenta de Google; si tiene pase, sube la persiana y se entra; si no, el boleto queda sellado
+async function enter(credential){
+  const b=$('login');showError('');b.classList.remove('reject');token=credential;
+  const r=await worker('/backroom').catch(()=>null);
+  if(r&&r.ok){
+    ss.set('gid',token);b.classList.add('open');
     const loading=refresh();                       // se carga mientras sube la persiana
     await wait(550);b.classList.add('leave');
     await Promise.all([wait(380),Promise.race([loading,wait(4000)])]);
-    showPanel();b.classList.remove('open','leave');$('pw').value='';
+    showPanel();b.classList.remove('open','leave');
   }else{
-    b.classList.add('reject');showError('Boleto no válido: la combinación no es correcta.');$('pw').select();
+    token=null;b.classList.add('reject');
+    showError(r&&r.status===403?'Esta cuenta no tiene pase a la trastienda.':r?`Entra con tu cuenta de ${VOTE_DOMAIN}.`:'La taquilla no responde. Prueba otra vez.');
   }
-  $('enter').disabled=false;
+}
+function showLogin(){
+  const go=()=>{
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:r=>enter(r.credential),hd:VOTE_DOMAIN,auto_select:true,context:'signin'});
+    google.accounts.id.renderButton($('gsi'),{theme:'filled_black',shape:'pill',text:'signin_with',locale:'es'});
+  };
+  if(window.google&&google.accounts)return go();
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=go;
+  s.onerror=()=>showError('No se pudo cargar el acceso de Google. ¿Un bloqueador de anuncios?');
+  document.head.appendChild(s);
 }
 
-// ficheros del repo extraBalls (balls.json): se leen y escriben con el token por la API, así se ven al instante
-async function readJson(path){
-  const r=await gh('/contents/'+path+'?ref=main');
-  if(r.status===401)throw new Error('token');if(r.status===404)return {sha:null,obj:{}};if(!r.ok)throw new Error(path+': HTTP '+r.status);
-  const j=await r.json();return {sha:j.sha,obj:JSON.parse(dec.decode(unb64(j.content.replace(/\n/g,''))))};
-}
-// escribe; si la versión que teníamos no era la última (409/422), relee y reintenta una vez
-async function writeJson(path,obj,sha,message){
-  const content=b64(enc.encode(JSON.stringify(obj,null,1)+'\n'));
-  const put=s=>gh('/contents/'+path,{method:'PUT',body:JSON.stringify({message,content,...(s?{sha:s}:{})})});
-  let r=await put(sha);
-  if(r.status===409||r.status===422)r=await put((await readJson(path)).sha);
-  if(!r.ok){let why='';try{why=(await r.json()).message||'';}catch(e){}
-    throw new Error(`GitHub no guardó los cambios (HTTP ${r.status}${why?': '+why:''}).`+(r.status===403||r.status===404?' ¿El token tiene escritura en Contents?':''));}
-  return (await r.json()).content.sha;
-}
 async function status(){
   const [data,issues,file,crav]=await Promise.all([
     fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('datos del bombo: HTTP '+r.status);return r.json();}),
     // ganadores del repo principal: API anónima (60/h por IP) y, si corta, la copia que publica el barrido
     fetch(API+'/issues?state=open&per_page=100',{headers:{Accept:'application/vnd.github+json'},cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject())
       .catch(()=>fetch('data/winners.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('ganadores: HTTP '+r.status);return r.json();})),
-    readJson('balls.json'),
+    fetch(VOTE_API+'/balls',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('bolas: HTTP '+r.status);return r.json();}),
     // antojo de la pizarra: se suma en el bombo, aquí solo se enseña
     fetch('data/cravings.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
   ]);
@@ -321,14 +249,14 @@ async function status(){
   const colors=Object.fromEntries(order.map((g,i)=>[g,COLORS[i%COLORS.length]]));
   const byGroup={};data.rows.forEach(r=>(byGroup[r.group]=byGroup[r.group]||[]).push({slug:r.slug,name:r.name}));
   Object.values(byGroup).forEach(l=>l.sort((a,b)=>a.name.localeCompare(b.name,'es')));
-  const cur=activeBalls(file.obj,latest,data.rows);
-  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,latest,sha:file.sha,crav:cravingEffect(crav,latest)};
+  const cur=activeBalls(file,latest,data.rows);
+  return {groups:[...order].sort((a,b)=>a.localeCompare(b,'es')),colors,byGroup,cur,latest,version:file.version,crav:cravingEffect(crav,latest)};
 }
 const same=(a,b)=>{const k=new Set([...Object.keys(a),...Object.keys(b)]);return [...k].every(x=>(a[x]||0)===(b[x]||0));};
 const sameDraft=(a,b)=>same(a.balls,b.balls)&&same(a.stores,b.stores);
 const total=c=>Object.values(c).reduce((a,n)=>a+n,0);
 const clone=d=>({balls:{...d.balls},stores:{...d.stores}});
-let latest=0,sha=null,crav={balls:{},factor:{}},byGroup={},openGroup=null,drawerGroup=null,shownPills=new Set(),shownTags=new Set();
+let latest=0,version=0,crav={balls:{},factor:{}},byGroup={},openGroup=null,drawerGroup=null,shownPills=new Set(),shownTags=new Set();
 
 function holesHtml(n,color,dropping){return Array.from({length:9},(_,i)=>`<span class="hole">${i<n?`<span class="ball${dropping&&i===n-1?' drop':''}" style="--c:${color}"></span>`:''}</span>`).join('');}
 async function popLast(el){const b=el.querySelectorAll('.ball');const last=b[b.length-1];if(last){last.classList.add('pop');await wait(220);}}
@@ -390,10 +318,9 @@ function renderDrawer(pending){
 async function refresh(){
   showError('');let s;
   try{s=await status();}catch(e){
-    if(e.message==='token'){ss.set('gt',null);token=null;view('login');showError('GitHub ya no acepta el token. Habrá que estrenar la caja con uno nuevo.');return;}
     showError('No se pudo comprobar el estado ('+e.message+'). Reintentando…');clearTimeout(pollTimer);pollTimer=setTimeout(refresh,15000);return;
   }
-  groups=s.groups;gcolor=s.colors;byGroup=s.byGroup;current=s.cur;latest=s.latest;sha=s.sha;crav=s.crav;
+  groups=s.groups;gcolor=s.colors;byGroup=s.byGroup;current=s.cur;latest=s.latest;version=s.version;crav=s.crav;
   draft=clone(current);
   if(openGroup&&!(draft.balls[openGroup]>0))openGroup=null;
   $('save').classList.remove('sealed','gone');
@@ -407,26 +334,29 @@ async function save(){
     const balls={},stores={};
     Object.entries(draft.balls).forEach(([g,n])=>{if(n>0&&n<=9)balls[g]=n;});
     Object.entries(draft.stores).forEach(([slug,n])=>{const g=groups.find(x=>(byGroup[x]||[]).some(r=>r.slug===slug));if(g&&balls[g]&&n>0&&n<=9)stores[slug]=n;});
-    const [newSha]=await Promise.all([writeJson('balls.json',{balls,stores,mTo:latest,updatedAt:new Date().toISOString()},sha,'chore: update extra balls'),wait(700)]);
-    sha=newSha;current=clone({balls,stores});draft=clone(current);
+    // si otro guardó entretanto (409), manda lo de esta pantalla sobre su versión, como hacía el repo de bolas
+    const put=v=>worker('/balls',{method:'PUT',body:JSON.stringify({balls,stores,mTo:latest,version:v})});
+    let [r]=await Promise.all([put(version),wait(700)]);
+    if(r.status===409){const j=await r.json().catch(()=>({}));if(j.current&&j.current.mTo===latest)r=await put(j.current.version);else r={ok:false,status:409,json:async()=>j};}
+    if(r.status===401){closeSafe();throw new Error('La sesión de Google ha caducado: vuelve a entrar.');}
+    if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.error||`No se guardaron los cambios (HTTP ${r.status}).`);}
+    version=(await r.json()).version;current=clone({balls,stores});draft=clone(current);
     env.classList.add('gone');await wait(600);env.classList.remove('sealed','gone');
     $('courier').hidden=false;$('courier').classList.add('done');$('courierText').textContent='Sobre entregado: ya se ve en el bombo.';
     render(false);
   }catch(e){env.classList.remove('sealed','gone');showError(e.message);env.disabled=sameDraft(draft,current);}
 }
 
-$('sGo').onclick=setup;$('enter').onclick=login;$('save').onclick=save;
-$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
-$('pw').addEventListener('input',()=>{$('login').classList.remove('reject');showError('');});
-function closeSafe(){ss.set('gt',null);token=null;clearTimeout(pollTimer);$('courier').hidden=true;sign('Trastienda','','');view('login');replay($('login'),'appear');}
+$('save').onclick=save;
+function closeSafe(){ss.set('gid',null);token=null;if(window.google&&google.accounts)google.accounts.id.disableAutoSelect();clearTimeout(pollTimer);$('courier').hidden=true;sign('Trastienda','','');view('login');replay($('login'),'appear');}
 // al entrar, las cocinas llegan una tras otra; la clase se retira después para que los re-render no repitan la entrada
 function showPanel(){view('panel');replay($('panel'),'appear');const t=$('list');replay(t,'enter');clearTimeout(t._enter);t._enter=setTimeout(()=>t.classList.remove('enter'),reduce?0:1400);}
 function replay(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);}
 $('logout').onclick=closeSafe;
-fetch(EXTRA_PAGES+'key.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(k=>{
-  keyFile=k;if(!k){sign('Trastienda','','');return view('setup');}
-  if(token){refresh().then(()=>{if(token)showPanel();});}else{sign('Trastienda','','');view('login');}
-}).catch(()=>view('setup'));
+showLogin();
+if(token)worker('/backroom').then(r=>{if(r.ok)return refresh().then(()=>showPanel());ss.set('gid',null);token=null;sign('Trastienda','','');view('login');})
+  .catch(()=>{sign('Trastienda','','');view('login');});
+else{sign('Trastienda','','');view('login');}
 </script>
 </body>
 </html>

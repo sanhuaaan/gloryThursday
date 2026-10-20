@@ -228,7 +228,7 @@ body.spinning .dimmable{filter:blur(.25rem) saturate(.5);opacity:.35;pointer-eve
 <p class="method dimmable"><a class="backroom" href="trastienda.html">🎟️ Trastienda</a> Método: consulta a <code>api.glovoapp.com/v3/stores/{slug}</code> con las coordenadas 43.2970, -2.0051 el 9 de septiembre de 2026. Las tiendas fuera de zona responden "No available store address found"; se validó con coordenadas de Bilbao, Hernani y Zarautz. Los horarios son los de ese día y se repiten entre semana. Envío según Glovo sin Prime. Just Eat: su búsqueda pública por código postal (20018) en cada barrido, solo los sitios que no trae Glovo; los que dejan de repartir a ratos siguen en el bombo como cerrados.</p>
 </div>
 <script type="module">
-import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls,VERDICTS,VERDICTS_ENABLED,MIN_VOTES,verdictsBySlug,votesToVerdicts,cravingEffect,CRAVING_DOWN,CRAVING_PER_BALL,CRAVING_MAX} from './rules.js';
+import {COOLDOWN,latestRaffle as latestOf,parseWinners,raffleState,penaltyWeight,activeBalls,VERDICTS,VERDICTS_ENABLED,MIN_VOTES,verdictsBySlug,votesToVerdicts,cravingEffect,CRAVING_DOWN,CRAVING_PER_BALL,CRAVING_MAX,VOTE_API} from './rules.js';
 // todo sale de ficheros publicados en Pages (sin API de GitHub: no hay límite de consultas); el barrido mantiene stores.json
 const DATA=await fetch('data/stores.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
   .catch(e=>{document.getElementById('count').textContent=`No se pudieron cargar los restaurantes (${e.message}). Recarga la página.`;throw e;});
@@ -265,7 +265,7 @@ function issueUrl(r,date){
   const body=`tienda: ${r.slug}\nfecha: ${d}\n\n${r.name} · ${r.tags.join(' · ')}\n${urlOf(r)}`;
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
-// bolas extra: balls.json del repo gloryThursday-extraBalls (lo escribe la trastienda); activeBalls descarta las caducadas y las de restaurante sin bolas en su cocina
+// bolas extra: GET /balls del Worker (lo escribe la trastienda); activeBalls descarta las caducadas y las de restaurante sin bolas en su cocina
 // las bolas del antojo (pizarra.html, data/cravings.json) se suman a las de la trastienda, pero se muestran aparte
 function resolveMod(){
   ({balls:modCounts,stores:storeCounts}=activeBalls(BALLS,latestRaffle,rows));
@@ -282,7 +282,7 @@ function loadVerdicts(){
 }
 const stampHtml=(key,small)=>key&&VERDICTS[key]?`<span class="vstamp v-${key}${small?' small':''}">${VERDICTS[key].label}</span>`:'';
 function loadBalls(){
-  fetch('https://sanhuaaan.github.io/gloryThursday-extraBalls/balls.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
+  fetch(VOTE_API+'/balls',{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(b=>{BALLS=b||{};resolveMod();render();});
 }
 const drawWeight=g=>weightOf(g)*(cravFactor[g]||1)*(1+(modCounts[g]||0));
 const extraOf=g=>(modCounts[g]||0)-(cravCounts[g]||0),cravOf=g=>cravCounts[g]||0,anyExtra=g=>modCounts[g]||0,extraStore=r=>storeCounts[r.slug]||0;
