@@ -62,9 +62,10 @@ if (winners.length) {
 }
 
 // bolas extra vigentes, con la probabilidad real de cada cocina (penalización, bolas y cuarentena incluidas)
-// las de la trastienda y las del antojo de la pizarra (data/cravings.json) se suman; en el parte van por separado
+// las de la trastienda y las del antojo de la pizarra (en directo del Worker; si no responde, data/cravings.json) se suman; en el parte van por separado
 const { balls, stores } = activeBalls(await extraBalls(), latest, rows);
-const { balls: crav, factor: down } = cravingEffect(read('data/cravings.json', {}), latest);
+const cravings = await fetch(`${VOTE_API}/cravings`, { headers: { 'User-Agent': 'gloryThursday-remind' } }).then(r => r.ok ? r.json() : Promise.reject()).catch(() => read('data/cravings.json', {}));
+const { balls: crav, factor: down } = cravingEffect(cravings, latest);
 const all = { ...balls };
 Object.entries(crav).forEach(([g, n]) => { all[g] = (all[g] || 0) + n; });
 const groups = [...new Set(inDrum.map(r => r.group))];

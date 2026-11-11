@@ -266,14 +266,15 @@ function issueUrl(r,date){
   return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`Sorteo ${d}: ${r.name}`)}&labels=ganador&body=${encodeURIComponent(body)}`;
 }
 // bolas extra: GET /balls del Worker (lo escribe la trastienda); activeBalls descarta las caducadas y las de restaurante sin bolas en su cocina
-// las bolas del antojo (pizarra.html, data/cravings.json) se suman a las de la trastienda, pero se muestran aparte
+// las bolas del antojo (pizarra.html; en directo del Worker, y si no responde, la copia del barrido) se suman a las de la trastienda, pero se muestran aparte
 function resolveMod(){
   ({balls:modCounts,stores:storeCounts}=activeBalls(BALLS,latestRaffle,rows));
   ({balls:cravCounts,factor:cravFactor}=cravingEffect(CRAVINGS,latestRaffle));
   Object.entries(cravCounts).forEach(([g,n])=>modCounts[g]=(modCounts[g]||0)+n);
 }
 function loadCravings(){
-  fetch('data/cravings.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(c=>{CRAVINGS=c||{};resolveMod();render();});
+  const copy=()=>fetch('data/cravings.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}));
+  fetch(VOTE_API+'/cravings',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).catch(copy).then(c=>{CRAVINGS=c||{};resolveMod();render();});
 }
 // veredicto de la oficina: recuentos de la votación del chat que copia el barrido en data/votes.json
 function loadVerdicts(){

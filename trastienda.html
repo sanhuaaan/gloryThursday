@@ -242,7 +242,8 @@ async function status(){
       .catch(()=>fetch('data/winners.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('ganadores: HTTP '+r.status);return r.json();})),
     fetch(VOTE_API+'/balls',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('bolas: HTTP '+r.status);return r.json();}),
     // antojo de la pizarra: se suma en el bombo, aquí solo se enseña
-    fetch('data/cravings.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
+    fetch(VOTE_API+'/cravings',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject())
+      .catch(()=>fetch('data/cravings.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{})).catch(()=>({}))
   ]);
   const latest=latestRaffle(issues);
   const order=[...new Set(data.rows.map(r=>r.group))];
