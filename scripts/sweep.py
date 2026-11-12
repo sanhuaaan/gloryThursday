@@ -60,6 +60,10 @@ GROUP_OVERRIDES = {"mumbai-curry-san-sebastian": "Indio",  # Glovo lo etiqueta c
                    "sandwich-lab-donostia-san-sebastian": "Hamburguesas",  # sándwiches americanos; Bocadillos está fuera del bombo
                    "la-issla-donostia": "Dulce / café"}  # panadería y brunch; Glovo también le pone Poke
 LEFT_OUT_GROUPS = {"Dulce / café", "Bocadillos"}  # no son comida de mediodía o son grupos de un solo sitio
+LEFT_OUT_SLUGS = {  # sitios sueltos que la oficina ha decidido dejar fuera (Glovo por slug, Just Eat con je-)
+    "la-perola-san-sebastian",  # La Perola
+    "je-tortillas-la-isla-donostiasan-sebastian",  # Tortillas La Isla
+}
 FRANCHISES = {  # grandes cadenas: reparten, pero no entran en el bombo
     "mcdonaldseas",  # McDonald's®,
     "burger-king-eas1",  # Burger King,
@@ -139,7 +143,7 @@ for slug in sorted(known | listed):
         elif slug in previous["excluded"]:
             excluded.append(slug)
         continue
-    if slug in FRANCHISES or group_of(slug, [f["displayName"] for f in d.get("filters") or []]) in LEFT_OUT_GROUPS:
+    if slug in FRANCHISES or slug in LEFT_OUT_SLUGS or group_of(slug, [f["displayName"] for f in d.get("filters") or []]) in LEFT_OUT_GROUPS:
         left_out.append(d["name"])
         continue
     av = d.get("availability") or {}
@@ -226,6 +230,9 @@ else:
     for x in je:
         tags = [JE_TAGS[c["name"]] for c in x["cuisines"] if c["name"] in JE_TAGS]
         slug = "je-" + x["uniqueName"]
+        if slug in LEFT_OUT_SLUGS:
+            left_out.append(x["name"].strip())
+            continue
         if not x["isDelivery"] and slug in prev_rows:
             added.append({**prev_rows[slug], "status": "CLOSED", "when": "Sin reparto en el último barrido", "next": None})
             continue  # Just Eat quita el reparto según la hora: el sitio sigue en el bombo, cerrado
